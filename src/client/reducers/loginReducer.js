@@ -1,5 +1,10 @@
 import * as types from '../actions/types/loginTypes'
 
+const defaultState = {
+    access_token: '',
+    refresh_token: ''
+}
+
 export default (state = {}, action) => {
     switch (action.type) {
         case types.LOGIN_SUCCESSFUL:

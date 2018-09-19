@@ -4,8 +4,8 @@ import querystring from 'querystring'
 export const loginSuccess = (accessToken, refreshToken) =>  {
     return {
         type: types.LOGIN_SUCCESSFUL,
-        accessToken,
-        refreshToken
+        accessToken: accessToken,
+        refreshToken: refreshToken
     }
 }
 
@@ -54,10 +54,12 @@ export const login = () => dispatch => {
             redirect_uri
         })
 
-        dispatch(loginPending)
+        dispatch(loginPending())
 
         window.location.href = `https://accounts.spotify.com/authorize?${query}`
     } else {
+        console.log(hashParams.access_token)
+        console.log(hashParams.refresh_token)
         dispatch(loginSuccess(hashParams.access_token, hashParams.refresh_token))
     }
 }

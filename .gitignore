@@ -9,6 +9,9 @@
 # production
 /build
 
+# server-side
+/src/server
+
 # misc
 .DS_Store
 .env.local
