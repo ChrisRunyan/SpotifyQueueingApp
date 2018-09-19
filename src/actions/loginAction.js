@@ -1,4 +1,5 @@
 import * as types from './types/loginTypes'
+import querystring from 'querystring'
 
 export const loginSuccess = (accessToken, refreshToken) =>  {
     return {
@@ -32,7 +33,7 @@ export const login = () => dispatch => {
 
     if(!hashParams.access_token) {
         const client_id = '25d7c8c99a33484ca4897f16f6ef10f5'
-        const redirect_uri = encodeURIComponent('localhost:3000/callback/')
+        const redirect_uri = 'http://localhost:3000/callback/'
         const scopes = [
             'playlist-read-private',
             'playlist-read-collaborative',
@@ -42,12 +43,20 @@ export const login = () => dispatch => {
             'user-library-read',
             'user-read-private'
         ]
-        const scope = encodeURIComponent(scopes.join(' '))
+        
+        const scope = scopes.join(' ')
         const response_type = 'token'
+
+        const query = querystring.stringify({
+            response_type,
+            client_id,
+            scope,
+            redirect_uri
+        })
 
         dispatch(loginPending)
 
-        window.location.href = `https://accounts.spotify.com/authorize?client_id=${client_id}&scope=${scope}&response_type=${response_type}&redirect_uri=${redirect_uri}`
+        window.location.href = `https://accounts.spotify.com/authorize?${query}`
     } else {
         dispatch(loginSuccess(hashParams.access_token, hashParams.refresh_token))
     }
