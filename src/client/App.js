@@ -4,8 +4,8 @@ import './App.css';
 
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { login, loginServer } from './actions/loginAction'
-import { isNull } from 'util';
+import { loginServer } from './actions/loginAction'
+import { initAuthorization } from './actions/authAction'
 
 class App extends Component {
 
@@ -25,15 +25,14 @@ class App extends Component {
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
       this.props.login()
-    } else {
-      //do nothing yet
-      console.log(`Hash Params: ${JSON.stringify(hashParams)}`)
+    } else if (!this.props.access_token) {
+      this.props.login(hashParams)
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.access_token) {
-
+      console.log(`nextProps: ${nextProps.access_token}`)
     }
   }
 
@@ -55,19 +54,27 @@ class App extends Component {
 App.propTypes = {
   access_token: PropTypes.string,
   refresh_token: PropTypes.string,
-  login: PropTypes.func
+  scope: PropTypes.string,
+  expires_in: PropTypes.string,
+  token_type: PropTypes.string,
+  login: PropTypes.func,
+  authorize: PropTypes.func
 }
 
 const mapStateToProps = state => {
   return {
-    access_token: state.login.accessToken,
-    refresh_token: state.login.refreshToken
+    access_token: state.login.access_token,
+    refresh_token: state.login.refresh_token,
+    scope: state.login.scope,
+    expires_in: state.login.expires_in,
+    token_type: state.login.token_type
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    login: () => { dispatch(loginServer()) }
+    login: (authParams = null) => { dispatch(loginServer(authParams)) },
+    authorize: (authParams) => { dispatch(initAuthorization(authParams)) }
   }
 }
 
