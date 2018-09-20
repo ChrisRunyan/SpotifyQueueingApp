@@ -8,8 +8,27 @@ import { login, loginServer } from './actions/loginAction'
 import { isNull } from 'util';
 
 class App extends Component {
+
+  getHashParams = () => {
+    let hashParams = {};
+    let e, r = /([^&;=]+)=?([^&;]*)/g,
+    q = window.location.hash.substring(1);
+
+    while ( e = r.exec(q)) {
+        hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+
+    return hashParams
+  }
+
   componentWillMount() {
-    this.props.login()
+    const hashParams = this.getHashParams()
+    if (!hashParams.access_token) {
+      this.props.login()
+    } else {
+      //do nothing yet
+      console.log(`Hash Params: ${JSON.stringify(hashParams)}`)
+    }
   }
 
   componentWillReceiveProps(nextProps) {

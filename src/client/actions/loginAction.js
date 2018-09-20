@@ -66,9 +66,5 @@ export const login = () => dispatch => {
 }
 
 export const loginServer = () => dispatch => {
-    // fetch('/api/login')
-    // .then(res => res.json())
-    // .then(data => console.log(data))
-    // .catch(err => console.log(err))
     window.location.href = '/api/login'
 }
