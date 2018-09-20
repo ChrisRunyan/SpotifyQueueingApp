@@ -1,5 +1,6 @@
 import * as types from './types/loginTypes'
 import querystring from 'querystring'
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 export const loginSuccess = (accessToken, refreshToken) =>  {
     return {
@@ -62,4 +63,12 @@ export const login = () => dispatch => {
         console.log(hashParams.refresh_token)
         dispatch(loginSuccess(hashParams.access_token, hashParams.refresh_token))
     }
+}
+
+export const loginServer = () => dispatch => {
+    // fetch('/api/login')
+    // .then(res => res.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log(err))
+    window.location.href = '/api/login'
 }

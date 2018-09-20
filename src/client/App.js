@@ -4,7 +4,7 @@ import './App.css';
 
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { login } from './actions/loginAction'
+import { login, loginServer } from './actions/loginAction'
 import { isNull } from 'util';
 
 class App extends Component {
@@ -48,7 +48,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    login: () => { dispatch(login()) }
+    login: () => { dispatch(loginServer()) }
   }
 }
 

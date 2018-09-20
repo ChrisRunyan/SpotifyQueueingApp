@@ -11,6 +11,7 @@
 
 # server-side
 /src/server
+*.env
 
 # misc
 .DS_Store
