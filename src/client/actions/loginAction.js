@@ -1,10 +1,12 @@
 import querystring from 'querystring'
+import { dispatch } from 'rxjs/internal/observable/range';
 
 export const LOGIN_PENDING = 'LOGIN_PENDING'
 export const LOGIN_FAILED = 'LOGIN_FAILED'
 export const LOGIN_SUCCESSFUL = 'LOGIN_SUCCESSFUL'
+export const LOGIN_REFRESH = 'LOGIN_REFRESH'
 
-export const loginSuccess = authParams =>  {
+export const loginSuccess = authParams => {
     return {
         type: LOGIN_SUCCESSFUL,
         access_token: authParams.access_token,
@@ -17,13 +19,19 @@ export const loginSuccess = authParams =>  {
 
 export const loginFailure = err => {
     return {
-        type: types.LOGIN_FAILED,
+        type: LOGIN_FAILED,
         error: err
+    }
+}
+
+export const loginRefresh = () => {
+    return {
+        type: LOGIN_REFRESH
     }
 }
 
 export const loginPending = () => {
     return {
-        type: types.LOGIN_PENDING
+        type: LOGIN_PENDING
     }
 }

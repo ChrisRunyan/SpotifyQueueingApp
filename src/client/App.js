@@ -5,7 +5,6 @@ import './App.css';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
-import { initAuthorization } from './actions/authAction'
 
 class App extends Component {
 
@@ -25,7 +24,7 @@ class App extends Component {
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
       window.location.href = '/api/login'
-    } else if (!this.props.access_token) {
+    } else {
       this.props.login(hashParams)
     }
   }
@@ -58,7 +57,6 @@ App.propTypes = {
   expires_in: PropTypes.string,
   token_type: PropTypes.string,
   login: PropTypes.func,
-  authorize: PropTypes.func
 }
 
 const mapStateToProps = state => {
@@ -74,7 +72,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
-    authorize: (authParams) => { dispatch(initAuthorization(authParams)) }
   }
 }
 
