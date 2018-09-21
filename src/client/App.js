@@ -4,7 +4,7 @@ import './App.css';
 
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { loginServer } from './actions/loginAction'
+import { loginSuccess } from './actions/loginAction'
 import { initAuthorization } from './actions/authAction'
 
 class App extends Component {
@@ -24,7 +24,7 @@ class App extends Component {
   componentWillMount() {
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
-      this.props.login()
+      window.location.href = '/api/login'
     } else if (!this.props.access_token) {
       this.props.login(hashParams)
     }
@@ -73,7 +73,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    login: (authParams = null) => { dispatch(loginServer(authParams)) },
+    login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
     authorize: (authParams) => { dispatch(initAuthorization(authParams)) }
   }
 }
