@@ -34,3 +34,54 @@ Webpack is a tool for bundling JavaScript applications.  In this project, it is 
 ## Redux Overview
 
 Redux is a system of application state management.  It is built on the principle of unidirectional data flow, meaning that state changes can flow down to child classes/components but never up to parent components.  This pairs nicely with React's style of state management, where a parent can pass its state as props to its child components but has no way of monitoring for changes is its children's state (with a few exceptions).
+
+### Actions
+
+Actions are JSON objects that have one mandatory parameter: `type`.  Action Creators are functions that create actions.  Actions are dispatched to Redux with the `dispatch` method, and Redux will pass the action to the appropriate reducer based on the `type` of the action.
+
+### Reducers
+
+Reducers update the state of the store by recieving an action and then creating a new state.
+
+```javascript
+export const action => {                    // export the reducer function
+    switch (action.type) {                  // check the type attr. of the action
+        case LOGIN_FAILED:                  
+            return {                        // return a new state
+                ...state,                   // copy the original state
+                loginError: action.error    // update/add a value
+            }
+    }
+}
+
+```
+- Snippet taken from [`loginReducer.js`](/src/client/reducers/loginReducer.js)
+
+#### [reducers/index.js](/src/client/reducers/index.js)
+
+It's important to have a plan for scaling the app, since the number of reducers in use will increase quickly as components and functionality are added.  Redux provides an easy way to do so with the `combineReducers` function.  `combineReducers` does exactly what it sounds like - it combines all of your reducers into one "reducer" object that can be exported.  Here's a simple usage of `combineReducers` from this app:
+
+```javascript
+import { combineReducers } from 'redux'
+import login from './loginReducer'
+
+export default combineReducers({
+    login
+})
+```
+
+When you want to add a reducer to the app, simply import it here and then add the import to the body of the `combineReducers` function.  By putting `combineReducers` into [`index.js`](/src/client/reducers/index.js) they can be imported automatically as shown below:
+
+```javascript
+import reducers from '../reducers'
+```
+
+
+
+### Middleware
+
+### Connect
+
+#### mapStateToProps
+
+#### mapDispatchToProps
