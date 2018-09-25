@@ -43,6 +43,8 @@ Actions are JSON objects that have one mandatory parameter: `type`.  Action Crea
 
 Reducers update the state of the store by recieving an action and then creating a new state.
 
+---
+[`loginAction.js`](/src/client/actions/loginAction.js)
 ```javascript
 export const action => {                    // export the reducer function
     switch (action.type) {                  // check the type attr. of the action
@@ -55,12 +57,14 @@ export const action => {                    // export the reducer function
 }
 
 ```
-- Snippet taken from [`loginReducer.js`](/src/client/reducers/loginReducer.js)
+---
 
-#### [reducers/index.js](/src/client/reducers/index.js)
+#### reducers/index.js
 
 It's important to have a plan for scaling the app, since the number of reducers in use will increase quickly as components and functionality are added.  Redux provides an easy way to do so with the `combineReducers` function.  `combineReducers` does exactly what it sounds like - it combines all of your reducers into one "reducer" object that can be exported.  Here's a simple usage of `combineReducers` from this app:
 
+---
+[`index.js`](src/client/reducers/index.js)
 ```javascript
 import { combineReducers } from 'redux'
 import login from './loginReducer'
@@ -69,6 +73,7 @@ export default combineReducers({
     login
 })
 ```
+---
 
 When you want to add a reducer to the app, simply import it here and then add the import to the body of the `combineReducers` function.  By putting `combineReducers` into [`index.js`](/src/client/reducers/index.js) they can be imported automatically as shown below:
 
@@ -77,8 +82,51 @@ import reducers from '../reducers'
 ```
 
 
-
 ### Middleware
+
+**Fizzbuzz**
+
+### Store
+
+The store is the heart of Redux.  The store represents the application-wide state, and will be the Single Source of Truth for almost all of your components.  Now that we have our reducers and our middleware defined, creating a store is rather simple:
+
+---
+[`store.js`](/src/client/store.js)
+
+```javascript
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import reducers from './reducers'           // get all of our reducers from /reducers/index.js
+
+const initialState = {}                     // initial state can be anything we want
+const middleware = [thunk]                  // create a list of middleware that we want to use
+
+export const store = createStore(
+    reducers,
+    initialState,
+    applyMiddleware(...middleware)          // applyMiddleware() tells Redux how to integrate each middleware
+)
+```
+---
+The createStore() method provided by Redux is simple to use and doesn't have many surprises.  The first parameter it takes is all of our reducers.  This object could be created in `store.js` if desired, but here we're importing all of our reducers from `reducers/index.js` for maintainability/to allow for scaling in the future.
+
+One the store is created, it's time to link it with our components.  React-Redux defines a `Provider` component that links the store to all of its child components.  Because data-flow in Redux (and React) is unidirectional, and because we want **all** of our components to have access to the store, the most sensible place to put the  `Provider` is in `client/index.js`.
+
+---
+[`index.js`](src/client/index.js)
+```javascript
+import { Provider } from 'react-redux'
+import store from 'store'
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>, 
+    document.getElementById('root')
+);
+```
+---
+
+As you can see, `Provider` is very simple to use.  We import the store that we just created, and then pass that to `Provider` as a prop.  Then, by adding `App` as a child to `Provider`, all of our components in the application will have access to the store.  In the next section we'll see how we can connect a component to the store.
 
 ### Connect
 
