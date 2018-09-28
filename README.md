@@ -13,9 +13,12 @@ Apollo is a web application that allows users to set up shared rooms to queue mu
 ## Running this app
 
 1. Clone the repository
+2. Install `npm`, `yarn`, and `create-react-app`
 2. In the project root, run the command `yarn install`
 3. Create `src/server/index.js`.  This will be the entry point for the Node server.
 4. Run the command `yarn dev` to start the client and server.  The client will run on port 3000 and the server will run on port 8080.
+
+The following sections will go over the fundamentals of this project.  For more in-depth (and not secondhand) information, check out the [links](#helpful-links) section.
 
 ## Project Structure Overview
 
@@ -130,6 +133,39 @@ As you can see, `Provider` is very simple to use.  We import the store that we j
 
 ### Connect
 
+Once the Redux store is created, you need a way to tell your components how to interact with it.  React-Redux provides the `connect` method to do so automatically.  `connect` is commonly used as shown below:
+
+---
+[`App.js`](src/client/App.js)
+```javascript
+/* Export this instead of the standard `export default App` */
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+```
+---
+
+`connect` requires two functions or objects to describe how to link your component to the store - [`mapStateToProps`](#mapstatetoprops) and [`mapDispatchToProps`](#mapdispatchtoprops).  These are simple functions, however it may not be immediately obvious how to use them.  More detail about them is available below.
+
 #### mapStateToProps
 
+A `mapStateToProps` function links the `props` of a React component to the Redux store.
+
+---
+[`App.js`](src/client/App.js)
+```javascript
+const mapStateToProps = state => {
+  return {
+    access_token: state.login.access_token,
+    refresh_token: state.login.refresh_token,
+    scope: state.login.scope,
+    expires_in: state.login.expires_in,
+    token_type: state.login.token_type
+  }
+}
+```
+---
+Each key in the return object is the name of a prop for the component.  The value given is a value of the Redux state.  These values are determined by your actions and reducers.  For example, `state.login` is derived from [`combineReducers`](src/client/reducers/index.js), and `state.login.access_token` is derived from the [`loginSuccess`](src/client/actions/loginAction.js) action creator.
+
 #### mapDispatchToProps
+
+
+## Helpful Links
