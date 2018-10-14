@@ -6,6 +6,17 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
 
+import firebase from 'firebase';
+
+var firebaseConf ={
+  apiKey: "AIzaSyDqOLOBFwnUPqRAVRZY2HjDKNAZ3ZqlzKU",
+  authDomain: "apollo-queue-app.firebaseapp.com",
+  databaseURL: "https://apollo-queue-app.firebaseio.com",
+  projectId: "apollo-queue-app",
+  storageBucket: "apollo-queue-app.appspot.com",
+  messagingSenderId: "873661626171"
+}
+
 class App extends Component {
 
   getHashParams = () => {

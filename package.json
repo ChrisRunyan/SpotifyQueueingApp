@@ -17,7 +17,10 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0"
   },
   "dependencies": {
+    "cors": "^2.8.4",
     "dotenv": "^6.0.0",
+    "firebase-tools": "^5.0.1",
+    "nodemon": "^1.18.4",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-redux": "^5.0.7",
@@ -25,9 +28,7 @@
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.3.0",
-    "cors": "^2.8.4",
-    "request": "^2.88.0",
-    "nodemon": "^1.18.4"
+    "request": "^2.88.0"
   },
   "scripts": {
     "start": "react-scripts start",
