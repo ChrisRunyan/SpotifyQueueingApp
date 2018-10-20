@@ -13,3 +13,13 @@ export const fetchRoom = roomId => dispatch => {
         })
     })
 }
+
+export const fetchSong = songId => dispatch => {
+    dispatch({ type: FETCH_PENDING })
+    songRef.child(songId).once("value", song => {
+        console.log(JSON.stringify(song))
+        dispatch({
+            type: FETCH_SONG
+        })
+    })
+}
