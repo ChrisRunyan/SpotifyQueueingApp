@@ -4,9 +4,9 @@ import thunk from 'redux-thunk'
 import reducers from './reducers'
 
 const initialState = {}
-const middleware = [thunk]
+let middleware = [thunk]
 
-export const store = createStore(
+export default createStore(
     reducers,
     initialState,
     composeWithDevTools(

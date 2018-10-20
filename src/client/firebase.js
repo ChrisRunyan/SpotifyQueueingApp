@@ -14,6 +14,8 @@ const app = firebase.initializeApp(config)
 
 export default app
 export const databaseRef = app.database().ref()
+export const roomRef = databaseRef.child("rooms");
+export const songRef = databaseRef.child("songs");
 
 //TODO get rooms ref && export
 //TODO get songs ref && export
