@@ -5,6 +5,7 @@ import './App.css';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
+import { fetchRoom, fetchSong } from './actions/firebaseAction'
 
 class App extends Component {
 
@@ -44,6 +45,8 @@ class App extends Component {
         </header>
         <p className="App-intro">
           { this.props.access_token }
+          { this.props.getRoom("test_room") }
+          { this.props.getSong("test_song_1")}
         </p>
       </div>
     );
@@ -57,6 +60,7 @@ App.propTypes = {
   expires_in: PropTypes.string,
   token_type: PropTypes.string,
   login: PropTypes.func,
+  getRoom: PropTypes.func,
 }
 
 const mapStateToProps = state => {
@@ -72,6 +76,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
+    getRoom: (roomId) => { dispatch(fetchRoom(roomId)) },
+    getSong: (songId) => { dispatch(fetchSong(songId)) },
   }
 }
 
