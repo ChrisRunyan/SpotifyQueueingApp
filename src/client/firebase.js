@@ -1,5 +1,5 @@
 import firebase from 'firebase'
-
+const dotenv = require('dotenv').config()
 
 const config = {
     apiKey: "AIzaSyDqOLOBFwnUPqRAVRZY2HjDKNAZ3ZqlzKU",
@@ -8,7 +8,7 @@ const config = {
     projectId: "apollo-queue-app",
     storageBucket: "apollo-queue-app.appspot.com",
     messagingSenderId: "873661626171"
-}
+  }
 
 const app = firebase.initializeApp(config)
 
