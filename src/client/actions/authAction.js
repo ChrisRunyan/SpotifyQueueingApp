@@ -1,5 +1,3 @@
-
-
 export const INIT_AUTH = 'INIT_AUTH'
 export const REFRESH_AUTH = 'REFRESH_AUTH'
 
