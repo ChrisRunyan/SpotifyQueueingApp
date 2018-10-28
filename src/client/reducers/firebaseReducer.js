@@ -5,10 +5,12 @@ export default (state = {}, action) => {
         case FETCH_ROOM:
             return {
                 ...state,
+                rooms: action.payload
             }
         case FETCH_SONG:
             return {
                 ...state,
+                songs: action.payload
             }
         default:
             return {
