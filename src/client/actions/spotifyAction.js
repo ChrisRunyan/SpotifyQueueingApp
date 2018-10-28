@@ -42,7 +42,7 @@ export const pausePlayback = access_token => dispatch => {
     .catch(error => handleError(error))
 }
 
-export const pausePlayback = access_token => dispatch => {
+export const resumePlayback = access_token => dispatch => {
     const request = makeRequest(access_token, PLAYER_ENDPOINT + '/play', null)
     dispatch({ type: REQUEST_PENDING })
     fetch(request)

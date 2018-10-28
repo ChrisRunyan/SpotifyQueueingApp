@@ -12,5 +12,9 @@ export default (state = {}, action) => {
                 ...state,
                 isPlaying: true
             }
+        default:
+            return {
+                ...state,
+            }
     }
 }

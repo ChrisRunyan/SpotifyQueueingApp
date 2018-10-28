@@ -7,6 +7,8 @@ import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
 import { fetchRoom, fetchSong, pushSong } from './actions/firebaseAction'
 
+import SongList from './components/SongList'
+
 class App extends Component {
 
   getHashParams = () => {
@@ -48,11 +50,13 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <p className="App-intro">
-          { this.props.auth.access_token }
-          { JSON.stringify(this.props.rooms) }
+          {/* { this.props.auth.access_token } */}
+          {/* { JSON.stringify(this.props.rooms) } */}
           {/* { this.props.getRoom("test_room") } */}
           {/* { this.props.getSong("test_song_1")} */}
-          <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song3</button>
+          <SongList />
+          <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
+
         </p>
       </div>
     );
