@@ -1,6 +1,6 @@
 import { roomRef, songRef } from '../firebase'
 
-export const FETCH_ROOM = 'FIREBASE_FETCH_ROOM';
+export const JOIN_ROOM = 'FIREBASE_JOIN_ROOM';
 export const FETCH_SONG = 'FIREBASE_FETCH_SONG';
 export const FETCH_PENDING = 'FIREBASE_FETCH_PENDING'
 export const PUSH_SONG_PENDING = 'PUSH_SONG_PENDING'
@@ -12,20 +12,24 @@ export const CREATE_ROOM_FAILED = 'CREATE_ROOM_FAILED'
 export const VOTE_PENDING = 'VOTE_PENDING'
 export const VOTE_COMPLETE = 'VOTE_COMPLETE'
 
-export const fetchRoom = roomId => dispatch => {
+export const joinRoom = roomId => dispatch => {
     dispatch({ type: FETCH_PENDING})
     roomRef.child(roomId).once("value", room => {
         console.log(JSON.stringify(room))
         dispatch({
-            type: FETCH_ROOM,
+            type: JOIN_ROOM,
             payload: room
         })
     })
 }
 
-export const createRooom = roomId => dispatch => {
+export const createRooom = (roomId, ownerName) => dispatch => {
     dispatch({ type: CREATE_ROOM_PENDING });
-    let newRoomRef = roomRef.push(roomId);
+    let newRoomRef = roomRef.push({
+        roomId,
+        ownerName,
+        songList: []
+    });
     dispatch({
         type: CREATE_ROOM_COMPLETE,
         payload: {

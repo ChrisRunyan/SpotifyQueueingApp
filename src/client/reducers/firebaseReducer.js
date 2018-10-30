@@ -1,18 +1,18 @@
-import { FETCH_ROOM, FETCH_SONG, PUSH_COMPLETE } from '../actions/firebaseAction'
+import { JOIN_ROOM, FETCH_SONG, PUSH_SONG_COMPLETE } from '../actions/firebaseAction'
 
 export default (state = {}, action) => {
     switch(action.type) {
-        case FETCH_ROOM:
+        case JOIN_ROOM:
             return {
                 ...state,
-                rooms: action.payload
+                room: action.payload
             }
         case FETCH_SONG:
             return {
                 ...state,
                 songs: action.payload
             }
-        case PUSH_COMPLETE:
+        case PUSH_SONG_COMPLETE:
             return {
                 ...state,
                 songs: {

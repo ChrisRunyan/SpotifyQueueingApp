@@ -26,15 +26,14 @@ const makeRequest = (access_token, endpoint, data) => {
 
 const handleError = err => {
     if(err.status === 401) { /* ACCESS TOKEN EXPIRED */ }
-    /* START HANDLING ERRORS DIFFERENTLY HERE */
+    console.log(err)
 }
 
 export const pausePlayback = access_token => dispatch => {
     const request = makeRequest(access_token, PLAYER_ENDPOINT + '/pause', null)
     dispatch({ type: REQUEST_PENDING })
     fetch(request)
-    .then(res => res.json())
-    .then(response => {
+    .then(_ => {
         dispatch({
             type: PAUSE_PLAYBACK,
         })
@@ -46,8 +45,7 @@ export const resumePlayback = access_token => dispatch => {
     const request = makeRequest(access_token, PLAYER_ENDPOINT + '/play', null)
     dispatch({ type: REQUEST_PENDING })
     fetch(request)
-    .then(res => res.json())
-    .then(response => {
+    .then(_ => {
         dispatch({
             type: RESUME_PLAYBACK,
         })

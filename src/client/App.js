@@ -5,7 +5,8 @@ import './App.css';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
-import { fetchRoom, fetchSong, pushSong } from './actions/firebaseAction'
+import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+import { pausePlayback, resumePlayback } from './actions/spotifyAction'
 
 import SongList from './components/SongList'
 
@@ -39,7 +40,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.props.getRoom("test_room")
+    this.props.joinRoom("test_room")
+  }
+
+  togglePlayback = () => {
+    const access_token = this.props.auth.access_token
+    if(this.props.isPlaying) {
+      this.props.pause(access_token)
+    } else {
+      this.props.resume(access_token)
+    }
   }
 
   render() {
@@ -50,13 +60,8 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <p className="App-intro">
-          {/* { this.props.auth.access_token } */}
-          {/* { JSON.stringify(this.props.rooms) } */}
-          {/* { this.props.getRoom("test_room") } */}
-          {/* { this.props.getSong("test_song_1")} */}
-          <SongList />
           <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
-
+          <button onClick={ this.togglePlayback } >Play/Pause</button> 
         </p>
       </div>
     );
@@ -65,27 +70,33 @@ class App extends Component {
 
 App.propTypes = {
   auth: PropTypes.objectOf(PropTypes.string),
-  rooms: PropTypes.objectOf(PropTypes.string),
+  room: PropTypes.objectOf(PropTypes.string),
   songs: PropTypes.objectOf(PropTypes.string),
   login: PropTypes.func,
-  getRoom: PropTypes.func,
+  joinRoom: PropTypes.func,
   addSong: PropTypes.func,
+  isPlaying: PropTypes.bool,
+  pause: PropTypes.func,
+  resume: PropTypes.func,
 }
 
 const mapStateToProps = state => {
   return {
     auth: state.login,
-    rooms: state.firebase.rooms,
-    songs: state.firebase.songs
+    room: state.firebase.room,
+    songs: state.firebase.songs,
+    isPlaying: state.spotify.isPlaying,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
-    getRoom: (roomId) => { dispatch(fetchRoom(roomId)) },
+    joinRoom: (roomId) => { dispatch(joinRoom(roomId)) },
     getSong: (songId) => { dispatch(fetchSong(songId)) },
     addSong: (roomId, songId) => { dispatch(pushSong(roomId, songId)) },
+    pause: (token) => { dispatch(pausePlayback(token)) },
+    resume: (token) => { dispatch(resumePlayback(token)) },
   }
 }
 
