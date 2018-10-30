@@ -21,7 +21,9 @@ export const loginFailure = err => {
     }
 }
 
-export const loginRefresh = () => {
+export const loginRefresh = refresh_token => dispatch => {
+    dispatch(loginPending())
+    window.location.href = `/api/refresh?refresh_token=${refresh_token}`;
     return {
         type: LOGIN_REFRESH
     }
