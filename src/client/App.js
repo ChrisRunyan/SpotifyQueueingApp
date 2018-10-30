@@ -6,10 +6,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loginSuccess } from './actions/loginAction'
 import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
-import { pausePlayback, resumePlayback } from './actions/spotifyAction'
 
 import SongList from './components/SongList'
 import SongControls from './components/SongControls'
+import { getCurrentPlaybackState } from './actions/spotifyAction';
 
 class App extends Component {
 
@@ -35,22 +35,18 @@ class App extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth) {
-      console.log(`nextProps: ${nextProps.auth.access_token}`)
+    if(nextProps.auth.access_token) {
+      this.props.readPlayback({ access_token: nextProps.auth.access_token })
     }
   }
 
   componentDidMount() {
     this.props.joinRoom("test_room")
-  }
-
-  togglePlayback = () => {
-    const access_token = this.props.auth.access_token
-    if(this.props.isPlaying) {
-      this.props.pause(access_token)
-    } else {
-      this.props.resume(access_token)
-    }
+    console.log(`[DidMount] Access Token: ${this.props.auth.access_token}`)
+    // this.props.readPlayback({
+    //   access_token: this.props.auth.access_token,
+    //   refresh_token: this.props.auth.refresh_token
+    // })
   }
 
   render() {
@@ -62,7 +58,6 @@ class App extends Component {
         </header>
         <p className="App-intro">
           <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
-          <button onClick={ this.togglePlayback } >Play/Pause</button> 
         </p>
         <SongControls />
       </div>
@@ -77,9 +72,7 @@ App.propTypes = {
   login: PropTypes.func,
   joinRoom: PropTypes.func,
   addSong: PropTypes.func,
-  isPlaying: PropTypes.bool,
-  pause: PropTypes.func,
-  resume: PropTypes.func,
+  readPlayback: PropTypes.func,
 }
 
 const mapStateToProps = state => {
@@ -97,8 +90,7 @@ const mapDispatchToProps = dispatch => {
     joinRoom: (roomId) => { dispatch(joinRoom(roomId)) },
     getSong: (songId) => { dispatch(fetchSong(songId)) },
     addSong: (roomId, songId) => { dispatch(pushSong(roomId, songId)) },
-    pause: (token) => { dispatch(pausePlayback(token)) },
-    resume: (token) => { dispatch(resumePlayback(token)) },
+    readPlayback: tokens => dispatch(getCurrentPlaybackState(tokens)),
   }
 }
 

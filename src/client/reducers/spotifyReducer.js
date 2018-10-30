@@ -1,4 +1,4 @@
-import { PAUSE_PLAYBACK, RESUME_PLAYBACK } from '../actions/spotifyAction'
+import { PAUSE_PLAYBACK, RESUME_PLAYBACK, READ_PLAYBACK_STATE } from '../actions/spotifyAction'
 
 export default (state = {}, action) => {
     switch(action.type) {
@@ -11,6 +11,11 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 isPlaying: true
+            }
+        case READ_PLAYBACK_STATE:
+            console.log(action.payload)
+            return {
+                ...state,
             }
         default:
             return {

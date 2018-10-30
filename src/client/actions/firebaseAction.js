@@ -15,7 +15,6 @@ export const VOTE_COMPLETE = 'VOTE_COMPLETE'
 export const joinRoom = roomId => dispatch => {
     dispatch({ type: FETCH_PENDING})
     roomRef.child(roomId).once("value", room => {
-        console.log(JSON.stringify(room))
         dispatch({
             type: JOIN_ROOM,
             payload: room
