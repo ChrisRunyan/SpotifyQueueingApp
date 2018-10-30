@@ -9,6 +9,7 @@ import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 import { pausePlayback, resumePlayback } from './actions/spotifyAction'
 
 import SongList from './components/SongList'
+import SongControls from './components/SongControls'
 
 class App extends Component {
 
@@ -63,6 +64,7 @@ class App extends Component {
           <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
           <button onClick={ this.togglePlayback } >Play/Pause</button> 
         </p>
+        <SongControls />
       </div>
     );
   }
