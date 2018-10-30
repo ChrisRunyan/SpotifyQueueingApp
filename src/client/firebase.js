@@ -1,6 +1,5 @@
 import firebase from 'firebase'
 
-
 const config = {
     apiKey: "AIzaSyDqOLOBFwnUPqRAVRZY2HjDKNAZ3ZqlzKU",
     authDomain: "apollo-queue-app.firebaseapp.com",
@@ -8,7 +7,7 @@ const config = {
     projectId: "apollo-queue-app",
     storageBucket: "apollo-queue-app.appspot.com",
     messagingSenderId: "873661626171"
-}
+  }
 
 const app = firebase.initializeApp(config)
 
