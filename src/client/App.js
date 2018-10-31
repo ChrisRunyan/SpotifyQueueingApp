@@ -9,6 +9,7 @@ import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 
 import SongList from './components/SongList'
 import SongControls from './components/SongControls'
+import SongListItem from './components/SongListItem'
 import { getCurrentPlaybackState } from './actions/spotifyAction';
 
 class App extends Component {
@@ -50,6 +51,7 @@ class App extends Component {
   }
 
   render() {
+    // const songList = this.props.auth.access_token ? <SongListItem /> : <div />
     return (
       <div className="App">
         <header className="App-header">
@@ -60,6 +62,7 @@ class App extends Component {
           <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
         </p>
         <SongControls />
+        <SongListItem />
       </div>
     );
   }
