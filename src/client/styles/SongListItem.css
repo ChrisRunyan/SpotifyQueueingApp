@@ -1,15 +1,23 @@
-div.SongListItem {
+div.song-list-item {
     display: inline-block;
-    height: 50px;
+    height: 100px;
     width: auto;
 }
 
-div.AlbumArt {
+div.album-art {
     float: left;
-    max-height: 100%;
+    max-height: inherit;
     width: auto;
 }
 
-div.AlbumInfo {
+div.album-art img {
+    float: left;
+    max-height: 50%;
+    width: auto;
+}
+
+div.album-info {
     float: right;
+    max-height: inherit;
+    width: auto;
 }

@@ -11,11 +11,11 @@ const SongListItem = props => {
     let albumArtUrl = props.album ? props.album.image_url : ''
 
     return (
-        <div className="SongListItem">
-            <div className="AlbumArt">
+        <div className="song-list-item">
+            <div className="album-art">
                 <img src={albumArtUrl} alt="Art"></img>
             </div>
-            <div className="AlbumInfo">
+            <div className="album-info">
                 <h2>
                     Currently Playing: { songName } by { artistName }
                 </h2>
