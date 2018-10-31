@@ -50,13 +50,11 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">Apollo Queue for Spotify</h1>
         </header>
-        <p className="App-intro">
-          <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
-        </p>
-        <SongControls />
-        <SongListItem />
+        <SongListItem>
+          <SongControls />
+        </SongListItem>
       </div>
     );
   }

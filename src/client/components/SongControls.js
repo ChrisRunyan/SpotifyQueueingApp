@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-
+import '../styles/SongControls.css'
 import { pausePlayback, resumePlayback } from '../actions/spotifyAction'
 
 const SongControls = props => { 
@@ -14,8 +14,8 @@ const SongControls = props => {
         }
     }
     return (
-        <div>
-            <button onClick={togglePlayback}>{ playButtonText }</button>
+        <div className="container">
+            <button className="play-button" onClick={togglePlayback}>{ playButtonText }</button>
         </div>
     )
 }

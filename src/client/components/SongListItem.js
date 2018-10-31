@@ -17,9 +17,12 @@ const SongListItem = props => {
             </div>
             <div className="album-info">
                 <h2>
-                    Currently Playing: { songName } by { artistName }
+                    { songName } - { albumName }
                 </h2>
-                <p>{ albumName }</p>
+                <h3>{ artistName }</h3>
+            </div>
+            <div className="controls">
+                { props.children }
             </div>
         </div>
     )
