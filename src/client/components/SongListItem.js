@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
+import '../styles/SongListItem.css'
+
 const SongListItem = props => {
     let songName = props.song ? props.song.name : ''
     let artistName = props.artist ? props.artist.name : ''
@@ -9,13 +11,16 @@ const SongListItem = props => {
     let albumArtUrl = props.album ? props.album.image_url : ''
 
     return (
-        <div >
-            <div>
+        <div className="SongListItem">
+            <div className="AlbumArt">
                 <img src={albumArtUrl} alt="Art"></img>
             </div>
-            <h2>
-                Currently Playing: { songName } by { artistName }</h2>
-            <p>{ albumName }</p>
+            <div className="AlbumInfo">
+                <h2>
+                    Currently Playing: { songName } by { artistName }
+                </h2>
+                <p>{ albumName }</p>
+            </div>
         </div>
     )
 }

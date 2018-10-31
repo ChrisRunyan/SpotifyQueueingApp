@@ -1,0 +1,15 @@
+div.SongListItem {
+    display: inline-block;
+    height: 50px;
+    width: auto;
+}
+
+div.AlbumArt {
+    float: left;
+    max-height: 100%;
+    width: auto;
+}
+
+div.AlbumInfo {
+    float: right;
+}
