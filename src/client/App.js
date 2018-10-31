@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './styles/App.css';
 
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -9,6 +9,7 @@ import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 
 import SongList from './components/SongList'
 import SongControls from './components/SongControls'
+import SongListItem from './components/SongListItem'
 import { getCurrentPlaybackState } from './actions/spotifyAction';
 
 class App extends Component {
@@ -40,26 +41,20 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    this.props.joinRoom("test_room")
-    console.log(`[DidMount] Access Token: ${this.props.auth.access_token}`)
-    // this.props.readPlayback({
-    //   access_token: this.props.auth.access_token,
-    //   refresh_token: this.props.auth.refresh_token
-    // })
-  }
+  // componentDidMount() {
+  //   this.props.joinRoom("test_room")
+  // }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">Apollo Queue for Spotify</h1>
         </header>
-        <p className="App-intro">
-          <button onClick={ () => this.props.addSong("test_room", "song3") } >Push song 3</button>
-        </p>
-        <SongControls />
+        <SongListItem>
+          <SongControls />
+        </SongListItem>
       </div>
     );
   }
