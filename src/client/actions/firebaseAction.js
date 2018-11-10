@@ -1,4 +1,4 @@
-import { roomRef, songRef } from '../firebase'
+import { roomRef } from '../firebase'
 
 export const JOIN_ROOM = 'FIREBASE_JOIN_ROOM';
 export const FETCH_SONG = 'FIREBASE_FETCH_SONG';
@@ -38,36 +38,48 @@ export const createRooom = (roomId, ownerName) => dispatch => {
     })
 }
 
-export const fetchSong = songId => dispatch => {
-    dispatch({ type: FETCH_PENDING })
-    songRef.child(songId).once("value", song => {
-        console.log(JSON.stringify(song))
-        dispatch({
-            type: FETCH_SONG,
-            payload: song
-        })
-    })
-}
+// export const fetchSong = songId => dispatch => {
+//     dispatch({ type: FETCH_PENDING })
+//     songRef.child(songId).once("value", song => {
+//         console.log(JSON.stringify(song))
+//         dispatch({
+//             type: FETCH_SONG,
+//             payload: song
+//         })
+//     })
+// }
 
-export const pushSong = (roomId, songId) => dispatch => {
+export const pushSong = (song, roomId, userId = 'default') => dispatch => {
     dispatch({ type: PUSH_PENDING })
-    let newSongRef = roomRef.child(roomId).push({
-        songId,
-        votes: 0
+    let newSongRef = roomRef.child(roomId).child(songs).push({
+        ...song,
+        votes: 0,
+        added_by: userId,
     })
     dispatch({
         type: PUSH_COMPLETE,
         payload: {
-            path: newSongRef.toString(),
-            key: newSongRef.key,
-            id: songId,
+            ...newSongRef.toJSON(),
             votes: 0,
+            firebase: {
+                path: newSongRef.toString(),
+                key: newSongRef.key,
+            }
         }
     })
 }
 
 export const voteOnSong = (roomId, songKey, currentVotes) => dispatch => {
     dispatch({ type: VOTE_PENDING })
-    roomRef.child(roomId).child(songKey).child("votes").set(currentVotes + 1)
-    dispatch({ type: VOTE_COMPLETE })
+    const key = `${songKey}/votes`
+    roomRef.child(roomId).child(songs).update({
+        [key]: currentVotes + 1
+    });
+    dispatch({
+        type: VOTE_COMPLETE,
+        payload: {
+            song_key: songKey,
+            newVotes: currentVotes + 1
+        }
+    })
 }
