@@ -12,6 +12,10 @@ import SongControls from './components/SongControls'
 import SongListItem from './components/SongListItem'
 import { getCurrentPlaybackState } from './actions/spotifyAction';
 
+import io from 'socket.io-client'
+
+const socket = io({ path: '/ws' })
+
 class App extends Component {
 
   getHashParams = () => {
@@ -30,6 +34,7 @@ class App extends Component {
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
       window.location.href = '/api/login'
+      //socket.emit('login')
     } else {
       this.props.login(hashParams)
     }
@@ -41,9 +46,11 @@ class App extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   this.props.joinRoom("test_room")
-  // }
+  componentDidMount() {
+    console.log("DidMount: Going to emit")
+    socket.emit("ping")
+    socket.emit('firebase-join', "test_room")
+  }
 
   render() {
     return (
@@ -52,9 +59,10 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Apollo Queue for Spotify</h1>
         </header>
-        <SongListItem>
+        <button onClick={() => socket.emit("firebase-join", "test_room")} >Join</button>
+        {/* <SongListItem>
           <SongControls />
-        </SongListItem>
+        </SongListItem> */}
       </div>
     );
   }
