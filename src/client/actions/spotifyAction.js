@@ -27,6 +27,8 @@ const makeRequest = (access_token, endpoint, data, method) => {
 
 const makePutRequest = (access_token, endpoint, data) => makeRequest(access_token, endpoint, data, 'PUT')
 const makeGetRequest = (access_token, endpoint, data) => makeRequest(access_token, endpoint, data, 'GET')
+const makePostRequest = (access_token, endpoint, data) => makeRequest(access_token, endpoint, data, 'POST')
+
 
 const handleError = (response, tokens) => {
     if(response.status === 401) {   /* ACCESS TOKEN INVALID */ 
@@ -52,8 +54,9 @@ export const pausePlayback = tokens => dispatch => {
 }
 
 export const resumePlayback = tokens => dispatch => {
+    console.log('resumePlayback', tokens)
     const request = makePutRequest(tokens.access_token, PLAYER_ENDPOINT + '/play', null)
-    dispatch({ type: REQUEST_PENDING })
+    // dispatch({ type: REQUEST_PENDING })
     fetch(request)
     .then(response => {
         if(response.status !== 200) {
@@ -62,6 +65,21 @@ export const resumePlayback = tokens => dispatch => {
         dispatch({
             type: RESUME_PLAYBACK,
         })
+    })
+    .catch(error => handleError(error, tokens))
+}
+
+export const nextSong = tokens => dispatch => {
+    const request = makePostRequest(tokens.access_token, PLAYER_ENDPOINT + '/next', null)
+    dispatch({ type: REQUEST_PENDING })
+    fetch(request)
+    .then(response => {
+        if(response.status !== 200) {
+            handleError(response)
+        }
+        // dispatch({
+        //     type: NEXT_PLAYBACK
+        // })
     })
     .catch(error => handleError(error, tokens))
 }
@@ -77,6 +95,7 @@ export const getCurrentPlaybackState = tokens => dispatch => {
         return response.json()
     })
     .then(res => {
+        console.log(JSON.stringify(res))
         dispatch({
             type: READ_PLAYBACK_STATE,
             payload: res
