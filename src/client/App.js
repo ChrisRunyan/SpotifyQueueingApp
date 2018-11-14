@@ -36,7 +36,7 @@ class App extends Component {
       window.location.href = '/api/login'
       //socket.emit('login')
     } else {
-      this.props.login(hashParams)
+      socket.emit('login')
     }
   }
 
