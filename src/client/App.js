@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './styles/App.css';
 
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { loginSuccess } from './actions/loginAction'
-import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
 
-import SongList from './components/SongList'
-import SongControls from './components/SongControls'
-import SongListItem from './components/SongListItem'
-import { getCurrentPlaybackState } from './actions/spotifyAction';
 
+<<<<<<< HEAD
 import io from 'socket.io-client'
 
 const socket = io({ path: '/ws' })
@@ -22,11 +15,20 @@ class App extends Component {
     let hashParams = {};
     let e, r = /([^&;=]+)=?([^&;]*)/g,
     q = window.location.hash.substring(1);
+=======
+// import PropTypes from 'prop-types'
+// import { connect } from 'react-redux'
+// import { loginSuccess } from './actions/loginAction'
+// import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+>>>>>>> b6dd6591896b741b64ca9bddd8cddb84455c318d
 
-    while ( e = r.exec(q)) {
-        hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
+import Song from './components/Song'
+import SongSearch from './components/SongSearch'
+// import SongControls from './components/SongControls'
+// import SongListItem from './components/SongListItem'
+// import { getCurrentPlaybackState } from './actions/spotifyAction';
 
+<<<<<<< HEAD
     return hashParams
   }
 
@@ -94,7 +96,88 @@ const mapDispatchToProps = dispatch => {
     getSong: (songId) => { dispatch(fetchSong(songId)) },
     addSong: (roomId, songId) => { dispatch(pushSong(roomId, songId)) },
     readPlayback: tokens => dispatch(getCurrentPlaybackState(tokens)),
+=======
+class App extends Component {
+  state = {
+    roomCode: "HJRA",
+    songs: [
+      {
+        title: "Chicago",
+        artist: "Sufjan Stevens",
+        album: "Illinois",
+        songLength: "6:05",
+        votes: 5,
+        id: 0
+      },
+      {
+        title: "Dean Town",
+        artist: "Vulfpeck",
+        album: "The Beautiful Game",
+        songLength: "3:33",
+        votes: 3,
+        id: 1
+      },
+      {
+        title: "What I Got",
+        artist: "Sublime",
+        album: "Sublime",
+        songLength: "2:51",
+        votes: 0,
+        id: 2
+      },
+    ]
+  };
+
+  render() {
+    return(
+      <Grid>
+          <PageHeader>
+            <Row>
+              <Col md={9}>
+                Apollo
+              </Col>
+              <Col md= {3}>
+                <small> Room Code: {this.state.roomCode}</small>
+              </Col>
+            </Row>
+            </PageHeader>
+            <Row>
+              <SongSearch />
+            </Row>
+            <Row>
+              <Table striped bordered condensed hover>
+                <thead>
+                  <tr>
+                    <th>Song</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Length</th>
+                    <th>Votes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Song list */}
+                  {this.state.songs.map( (song, index) =>
+                  <Song 
+                  title = {song.title}
+                  artist = {song.artist}
+                  album = {song.album}
+                  songLength = {song.songLength}
+                  votes = {song.votes}
+                  id = {song.id}
+                  key={song.id.toString()} 
+                  index = {index}
+                  />
+                  )}
+                </tbody>
+              </Table>
+            
+            </Row>
+      </Grid>
+      
+    )
+>>>>>>> b6dd6591896b741b64ca9bddd8cddb84455c318d
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App;
