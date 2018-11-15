@@ -55,10 +55,14 @@ class App extends Component {
     wrapper.joinRoom("test_room_id")
     .then(room => {
       console.log(room)
+      this.setState({ room: room })
     })
   }
 
   render() {
+    let roomCode = this.state.room ? this.state.room.roomCode : this.state.roomCode
+    let songs = this.state.room ? this.state.room.songs : this.state.songs
+    console.log(songs)
     return(
       <Grid>
           <PageHeader>
@@ -67,7 +71,8 @@ class App extends Component {
                 Apollo
               </Col>
               <Col md= {3}>
-                <small> Room Code: {this.state.roomCode}</small>
+                {/* <small> Room Code: {this.state.roomCode}</small> */}
+                <small> Room Code: {roomCode}</small>
               </Col>
             </Row>
             </PageHeader>
@@ -87,7 +92,7 @@ class App extends Component {
                 </thead>
                 <tbody>
                   {/* Song list */}
-                  {this.state.songs.map( (song, index) =>
+                  {/* {this.state.songs.map( (song, index) =>
                   <Song 
                   title = {song.title}
                   artist = {song.artist}
@@ -98,7 +103,22 @@ class App extends Component {
                   key={song.id.toString()} 
                   index = {index}
                   />
-                  )}
+                  )} */}
+                  {
+                    songs.map((song, index) => 
+                      // console.log(`Song: ${song}`)
+                      <Song
+                        title = {song.name}
+                        artist = {song.artist.name}
+                        album = {song.album.name}
+                        songLength = {"0"}
+                        votes = {song.votes}
+                        id = {song.id}
+                        key = {song.id}
+                        index = {index}
+                      />
+                    )
+                  }
                 </tbody>
               </Table>
             
