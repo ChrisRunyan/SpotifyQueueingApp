@@ -53,6 +53,9 @@ class App extends Component {
   componentDidMount() {
     const wrapper = new FirebaseWrapper(socket)
     wrapper.joinRoom("test_room_id")
+    .then(room => {
+      console.log(room)
+    })
   }
 
   render() {

@@ -40,11 +40,11 @@ export class Song extends SpotifyData {
 
 export class Room {
   constructor(room) {
-    this.roomOwner = room.roomOwner;
-    this.roomCode = room.roomCode;
-    this.roomName = room.roomName;
-    this.access_token = room.access_token;
-    this.songs = room.songs.map(s => new Song(s))
+    this.roomOwner = room.roomOwner ? room.roomOwner : ''
+    this.roomCode = room.roomCode ? room.roomCode : ''
+    this.roomName = room.roomName ? room.roomName : ''
+    this.access_token = room.access_token ? room.access_token : ''
+    this.songs = room.songs ? room.songs.map(s => new Song(s)) : []
   }
 
 }
@@ -55,10 +55,11 @@ export class FirebaseWrapper {
   }
 
   joinRoom = roomId => {
-    fetch(`/api/fire/join/${roomId}`)
-    // .then(
-
-    // )
+    return fetch(`/api/fire/join/${roomId}`)
+    .then(res => res.json())
+    .then(room => {
+      return room
+    })
   }
 
 }
