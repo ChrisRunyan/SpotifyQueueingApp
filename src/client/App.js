@@ -17,7 +17,12 @@ import SongSearch from './components/SongSearch'
 
 import io from 'socket.io-client'
 import { FirebaseWrapper } from './firebase'
-const socket = io({ path: '/ws' })
+import { Room } from './classes/FirebaseData';
+// const socket = io({ path: '/ws' })
+
+// socket.on("firebase-join-success", room => {
+//   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
+// })
 
 class App extends Component {
   state = {
@@ -51,12 +56,15 @@ class App extends Component {
   };
 
   componentDidMount() {
+
+    const socket = io({ path: '/ws' })
+    socket.on("firebase-join-success", room => {
+      console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
+      this.setState({ room: new Room(room) })
+    })
+
     const wrapper = new FirebaseWrapper(socket)
     wrapper.joinRoom("test_room_id")
-    .then(room => {
-      console.log(room)
-      this.setState({ room: room })
-    })
   }
 
   render() {
