@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
 import logo from './apollo_icon_white.png';
-import './App.css';
 
-//import PropTypes from 'prop-types'
-//import { connect } from 'react-redux'
-//import { loginSuccess } from './actions/loginAction'
 import RoomView from './RoomView'
-//import HomeView from './HomePage'
+import './styles/App.css';
 
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { loginSuccess } from './actions/loginAction'
+import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+
+import SongList from './components/SongList'
+import SongControls from './components/SongControls'
+import SongListItem from './components/SongListItem'
+import { getCurrentPlaybackState } from './actions/spotifyAction';
+
+import io from 'socket.io-client'
+
+const socket = io({ path: '/ws' })
 
 class App extends Component {
 
@@ -40,6 +49,7 @@ class App extends Component {
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
       window.location.href = '/api/login'
+      //socket.emit('login')
     } else {
       this.props.login(hashParams)
     }
@@ -47,10 +57,8 @@ class App extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    //getting token from spotify?
-    
-    if (nextProps.access_token) {
-      console.log(`nextProps: ${nextProps.access_token}`)
+    if(nextProps.auth.access_token) {
+      this.props.readPlayback({ access_token: nextProps.auth.access_token })
     }
   }
   */
@@ -63,6 +71,12 @@ class App extends Component {
       ()=>{console.log('state page_title = ', this.state.page_title)
     });
     
+  }
+
+  componentDidMount() {
+    console.log("DidMount: Going to emit")
+    socket.emit("ping")
+    socket.emit('firebase-join', "test_room")
   }
 
   render() {
@@ -99,17 +113,22 @@ class HomeView extends React.Component {
 
     return (
       <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1 className="App-title">Welcome to Apollo</h1>
-      </header>
-    
-      <p className="App-intro">
-        { this.props.title }
-      </p>
-      <button onClick={this.props.handleClick }>Create Room</button>
-      <button >Join Room</button>
-    </div>
+
+      
+  
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">Apollo Queue for Spotify</h1>
+        </header>
+        <p className="App-intro">
+          { this.props.title }
+        </p>
+        <button onClick={this.props.handleClick }>Create Room</button>
+        <button onClick={() => socket.emit("firebase-join", "test_room")} >Join</button>
+        {/* <SongListItem>
+          <SongControls />
+        </SongListItem> */}
+      </div>
     );
   }
 
@@ -118,27 +137,31 @@ class HomeView extends React.Component {
 /*
 
 App.propTypes = {
-  access_token: PropTypes.string,
-  refresh_token: PropTypes.string,
-  scope: PropTypes.string,
-  expires_in: PropTypes.string,
-  token_type: PropTypes.string,
+  auth: PropTypes.objectOf(PropTypes.string),
+  room: PropTypes.objectOf(PropTypes.string),
+  songs: PropTypes.objectOf(PropTypes.string),
   login: PropTypes.func,
+  joinRoom: PropTypes.func,
+  addSong: PropTypes.func,
+  readPlayback: PropTypes.func,
 }
 
 const mapStateToProps = state => {
   return {
-    access_token: state.login.access_token,
-    refresh_token: state.login.refresh_token,
-    scope: state.login.scope,
-    expires_in: state.login.expires_in,
-    token_type: state.login.token_type
+    auth: state.login,
+    room: state.firebase.room,
+    songs: state.firebase.songs,
+    isPlaying: state.spotify.isPlaying,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
+    joinRoom: (roomId) => { dispatch(joinRoom(roomId)) },
+    getSong: (songId) => { dispatch(fetchSong(songId)) },
+    addSong: (roomId, songId) => { dispatch(pushSong(roomId, songId)) },
+    readPlayback: tokens => dispatch(getCurrentPlaybackState(tokens)),
   }
 }
 */

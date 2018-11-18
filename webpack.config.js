@@ -17,6 +17,11 @@ module.exports = {
             "/api/*": {
                 target: 'http://[::1]:8080',
                 secure: false
+            },
+            // WebSocket proxy
+            '/ws/*' : {
+                target: 'ws://localhost:8080',
+                ws: true
             }
         }
     },
@@ -42,7 +47,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin([outputDirectory]),
+        new CleanWebpackPlugin([`${outputDirectory}`]),
         new HtmlWebpackPlugin({
             template: "./public/index.html",
             favicon: "./public/favicon.ico"
