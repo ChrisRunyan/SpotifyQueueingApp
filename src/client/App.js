@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from './apollo_icon_white.png';
 import './App.css';
 
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { loginSuccess } from './actions/loginAction'
+//import PropTypes from 'prop-types'
+//import { connect } from 'react-redux'
+//import { loginSuccess } from './actions/loginAction'
 import RoomView from './RoomView'
 //import HomeView from './HomePage'
 
 
 class App extends Component {
-y
+
   state = {
     page: "home",
     page_title: "Good Shit"
@@ -21,7 +21,7 @@ y
     super(props);
     this.handleCreateRoomClick = this.handleCreateRoomClick.bind(this);
   }
-  
+  /*
   getHashParams = () => {
     let hashParams = {};
     let e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -53,6 +53,7 @@ y
       console.log(`nextProps: ${nextProps.access_token}`)
     }
   }
+  */
 
   handleCreateRoomClick() {
     
@@ -114,7 +115,7 @@ class HomeView extends React.Component {
 
 }
 
-
+/*
 
 App.propTypes = {
   access_token: PropTypes.string,
@@ -140,5 +141,5 @@ const mapDispatchToProps = dispatch => {
     login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+*/
+export default /*connect(mapStateToProps, mapDispatchToProps)*/(App)
