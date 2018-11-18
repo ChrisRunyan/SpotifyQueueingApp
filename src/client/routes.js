@@ -3,6 +3,9 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import App from './App'
 import JoinPage from './JoinPage'
 import { FirebaseWrapper } from './firebase'
+import io from 'socket.io-client'
+
+const socket = io({ path: '/ws' })
 
 class MainRoutes extends React.Component {
     constructor(props) {
@@ -12,7 +15,7 @@ class MainRoutes extends React.Component {
         }
     }
 
-    onRoomJoined = (roomCode, username) => {
+    joinRoom = (roomCode, username) => {
 
     }
 
@@ -20,7 +23,10 @@ class MainRoutes extends React.Component {
         return(
             <BrowserRouter>
                 <div>
-                    <Route path='/' component={App} />
+                    <Route path='/' 
+                        render={props => 
+                            <App socket={socket} />
+                        } />
                     <Route 
                         path='/join' 
                         render={ props => 

@@ -1,9 +1,25 @@
 import React, { Component } from 'react'
-import { Table, Grid, Row, Col } from 'react-bootstrap';
+import { Table, Grid, Row, Col, FormGroup, FormControl } from 'react-bootstrap';
 
 
 class JoinPage extends Component {
-    
+    constructor(props) {
+        this.state = {
+            roomCode: '',
+            username: ''
+        }
+    }
+
+    getValidationState = () => {
+
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            [e.target.id]: e.target.value
+        })
+    }
+
     render() {
         return(
             <Grid>
@@ -16,7 +32,25 @@ class JoinPage extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <form onSubmit={this.props.onSubmit}>
+                                <FormGroup
+                                    controlId='formBasicText'
+                                    validationState={this.getValidationState}
+                                >
+                                    <FormControl
+                                        id='roomCode'
+                                        type='text'
+                                        value={this.state.roomCode}
+                                        placeholder="Room Code"
+                                        onChange={this.handleChange} />
+                                    <FormControl
+                                        id='username'
+                                        type='text'
+                                        value={this.state.username}
+                                        placeholder="Room Code"
+                                        onChange={this.handleChange} />
+                                </FormGroup>
+                            </form>
                         </tbody>
                     </Table>
                 </Row>

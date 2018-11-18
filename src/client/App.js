@@ -57,13 +57,13 @@ class App extends Component {
 
   componentDidMount() {
 
-    const socket = io({ path: '/ws' })
-    socket.on("firebase-join-success", room => {
+    // const socket = io({ path: '/ws' })
+    this.props.socket.on("firebase-join-success", room => {
       console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
       this.setState({ room: new Room(room) })
     })
 
-    const wrapper = new FirebaseWrapper(socket)
+    const wrapper = new FirebaseWrapper(this.props.socket)
     wrapper.joinRoom("test_room_id")
   }
 
