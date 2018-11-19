@@ -73,7 +73,7 @@ class App extends Component {
   }
 
   debugJoin = () => {
-    this.props.firebaseWrapper.joinRoom("test_room_id")
+    this.props.firebaseWrapper.joinRoom("abcd", "default2")
   }
 
   debugCreate = () => {
