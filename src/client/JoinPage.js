@@ -32,23 +32,27 @@ class JoinPage extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            <form onSubmit={this.props.onSubmit}>
+                            <form onSubmit={() => this.props.onSubmit(this.state.roomCode, this.state.username)}>
                                 <FormGroup
                                     controlId='formBasicText'
                                     validationState={this.getValidationState}
                                 >
-                                    <FormControl
-                                        id='roomCode'
-                                        type='text'
-                                        value={this.state.roomCode}
-                                        placeholder="Room Code"
-                                        onChange={this.handleChange} />
-                                    <FormControl
-                                        id='username'
-                                        type='text'
-                                        value={this.state.username}
-                                        placeholder="Room Code"
-                                        onChange={this.handleChange} />
+                                    <td>
+                                        <FormControl
+                                            id='roomCode'
+                                            type='text'
+                                            value={this.state.roomCode}
+                                            placeholder="Room Code"
+                                            onChange={this.handleChange} />
+                                    </td>
+                                    <td>
+                                        <FormControl
+                                            id='username'
+                                            type='text'
+                                            value={this.state.username}
+                                            placeholder="Room Code"
+                                            onChange={this.handleChange} />
+                                    </td>
                                 </FormGroup>
                             </form>
                         </tbody>

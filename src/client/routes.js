@@ -11,12 +11,22 @@ class MainRoutes extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            firebaseWrapper: new FirebaseWrapper(socket),
             room: null
         }
     }
 
-    joinRoom = (roomCode, username) => {
+    componentDidMount() {
+        // socket.on("firebase-join-success", room => {
+        //     console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
+        //     this.setState({ room: new Room(room) })
+        // })
 
+    }
+
+    joinRoom = (roomCode, username) => {
+        // socket.emit('firebase-join', roomCode, username)
+        firebaseWrapper.joinRoom(roomCode, username)
     }
 
     render() {
@@ -25,12 +35,12 @@ class MainRoutes extends React.Component {
                 <div>
                     <Route path='/' 
                         render={props => 
-                            <App socket={socket} />
+                            <App firebaseWrapper={this.state.firebaseWrapper} />
                         } />
                     <Route 
                         path='/join' 
                         render={ props => 
-                            <JoinPage onSubmit={this.onRoomJoined} />
+                            <JoinPage onSubmit={this.joinRoom} />
                         } 
                     />
                 </div>

@@ -2,6 +2,7 @@ import { Song } from './SpotifyData'
 
 export class Room {
   constructor(room) {
+    this.id = room.roomId ? room.roomId : ''
     this.roomOwner = room.roomOwner ? room.roomOwner : ''
     this.roomCode = room.roomCode ? room.roomCode : ''
     this.roomName = room.roomName ? room.roomName : ''

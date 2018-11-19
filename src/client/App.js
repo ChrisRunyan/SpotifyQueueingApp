@@ -58,13 +58,26 @@ class App extends Component {
   componentDidMount() {
 
     // const socket = io({ path: '/ws' })
-    this.props.socket.on("firebase-join-success", room => {
+    this.props.firebaseWrapper.socket.on("firebase-join-success", room => {
       console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
       this.setState({ room: new Room(room) })
     })
 
-    const wrapper = new FirebaseWrapper(this.props.socket)
-    wrapper.joinRoom("test_room_id")
+    this.props.firebaseWrapper.socket.on("firebase-create-success", room => {
+      console.log(`Firebase Create Success!! Room=${JSON.stringify(room)}`)
+      this.setState({ room: new Room(room) })
+    })
+
+    // const wrapper = new FirebaseWrapper(this.props.socket)
+    // this.props.firebaseWrapper.joinRoom("test_room_id")
+  }
+
+  debugJoin = () => {
+    this.props.firebaseWrapper.joinRoom("test_room_id")
+  }
+
+  debugCreate = () => {
+    this.props.firebaseWrapper.createRoom("JKLM", "Test Create Room", "Mitch", "fakeToken")
   }
 
   render() {
@@ -75,12 +88,18 @@ class App extends Component {
       <Grid>
           <PageHeader>
             <Row>
-              <Col md={9}>
+              <Col md={3}>
                 Apollo
               </Col>
               <Col md= {3}>
                 {/* <small> Room Code: {this.state.roomCode}</small> */}
                 <small> Room Code: {roomCode}</small>
+              </Col>
+              <Col md={3}>
+                <button onClick={this.debugJoin}>Join Room</button>
+              </Col>
+              <Col md={3}>
+                <button onClick={this.debugCreate}>Create Room</button>
               </Col>
             </Row>
             </PageHeader>
@@ -99,19 +118,6 @@ class App extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Song list */}
-                  {/* {this.state.songs.map( (song, index) =>
-                  <Song 
-                  title = {song.title}
-                  artist = {song.artist}
-                  album = {song.album}
-                  songLength = {song.songLength}
-                  votes = {song.votes}
-                  id = {song.id}
-                  key={song.id.toString()} 
-                  index = {index}
-                  />
-                  )} */}
                   {
                     songs.map((song, index) => 
                       // console.log(`Song: ${song}`)
