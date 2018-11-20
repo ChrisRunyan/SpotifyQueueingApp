@@ -65,21 +65,24 @@ io.on("connection", socket => {
       console.error(`Error: ${error.code}`);
   }
 
+  console.log("do i ever get here");
+  socket.on("addSong", () => {
+    try{
+      console.log("heeeeelllo?")
+      socket.emit("song", this.newSong )
+      console.log("sent", this.newSong)
+    } catch(error) {
+      console.log("here?")
+      console.error(`Error: ${error.code}`);
+    }
+  })
 
-    console.log(this.newSong)
-      socket.emit("addSong", this.newSong )
-
-      
-  // socket.on("addSong", () => {
-  //   try{
-  //     console.log("heeeeelllo?")
-  //     socket.emit("addSong", this.newSong )
-  //     console.log("sent", this.newSong)
-  //   } catch(error) {
-  //     console.log("here?")
-  //     console.error(`Error: ${error.code}`);
-  //   }
-  // })
+  socket.on("changeVote", (index, delta) => {
+    console.log("what is index", index, "what is delta", delta)
+    console.log("changing votes of", this.songs[index].title);
+    this.songs[index].votes+= delta;
+    console.log(this.songs)
+  })
   
 
 

@@ -29,20 +29,11 @@ class SongSearch extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // this.setState({ value: e.target.value });
     console.log(this.getValidationState())
-    console.log(this.props.socket)
-    this.props.socket.on("addSong", data => console.log(data));
-    // this.props.socket.on("addSong", data => this.setState( prevState => {
-    //   return {
-    //     songs: [
-    //       ...prevState.songs,
-    //       {
-    //         data
-    //       }
-    //     ]
-    //   }
-    // } ));
+    // console.log(this.props.socket)
+    this.props.socket.emit("addSong");
+    this.props.socket.on("song", data => 
+      this.props.addSong(data.title, data.artist, data.album, data.songLength))
   }
 
   render() {

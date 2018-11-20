@@ -23,37 +23,12 @@ class App extends Component {
     endpoint: "http://127.0.0.1:4001",
     roomCode: "HJRA",
     songs: null
-      // {
-      //   title: "null",
-      //   artist: "null",
-      //   album: "null",
-      //   songLength: "0:00",
-      //   votes: 0,
-      //   id: 0
-      // },
-      // {
-      //   title: "null",
-      //   artist: "null",
-      //   album: "null",
-      //   songLength: "0:00",
-      //   votes: 0,
-      //   id: 0
-      // },
-      // {
-      //   title: "null",
-      //   artist: "null",
-      //   album: "null",
-      //   songLength: "0:00",
-      //   votes: 0,
-      //   id: 0
-      // },
-    
   };
 
   socket = socketIOClient("http://127.0.0.1:4001");
 
 
-  
+
   yo = "hi";
 
   componentDidMount() {
@@ -64,9 +39,34 @@ class App extends Component {
   }
 
   handleVoteChange = (index, delta) => {
+    console.log(delta);
+    this.socket.emit("changeVote", index, delta);
+    // this.socket.on("vote", data => )
     this.setState( prevState => ({
       votes: prevState.songs[index].votes += delta
     }));
+  }
+
+  prevSongId = 2;
+
+  handleAddSong = (title, artist, album, songLength) => {
+    // console.log(title);
+    this.setState( prevState => {
+      return {
+        songs: [
+          ...prevState.songs,
+            {
+              title,
+              artist,
+              album,
+              songLength,
+              votes: 0,
+              id: this.prevSongId += 1
+            }
+        ]
+      }
+    })
+    console.log(this.state);
   }
 
   render() {
@@ -85,7 +85,11 @@ class App extends Component {
             </PageHeader>
             <Row>
             <SocketContext.Consumer>
-              {socket => <SongSearch socket={socket} />}
+              {socket =>
+                <SongSearch
+                  socket={socket}
+                  addSong = {this.handleAddSong} 
+                />}
             </SocketContext.Consumer>
             </Row>
             <Row>
