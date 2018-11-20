@@ -10,7 +10,6 @@
 /build
 
 # server-side
-/src/server
 *.env
 
 # misc

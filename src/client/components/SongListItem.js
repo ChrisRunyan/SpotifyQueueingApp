@@ -36,9 +36,9 @@ SongListItem.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        song: state.spotify.currently_playing.song,
-        artist: state.spotify.currently_playing.artists[0],
-        album: state.spotify.currently_playing.album,
+        // song: state.spotify.currently_playing.song,
+        // artist: state.spotify.currently_playing.artists[0],
+        // album: state.spotify.currently_playing.album,
     };
 }
 
