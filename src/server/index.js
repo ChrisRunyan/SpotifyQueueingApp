@@ -23,10 +23,10 @@ const base64EncodedAuthString =
     new Buffer(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64');
 
 let roomRef = null
+let saveSocket = null
 
 io.on('connection', socket => {
-    const refreshInterval = null
-
+    saveSocket = socket
     socket.on('ping', () => {
         socket.emit('pong', 'pong')     // first param is the message 'code', second is the data
         // io.sockets.emit(/* */)          // emit to every client
@@ -46,23 +46,24 @@ io.on('connection', socket => {
                 client_id: process.env.CLIENT_ID,
                 scope: 'user-read-private user-read-playback-state user-modify-playback-state'
             })
+        console.log(`Will login to ${url}`)
         request.get(url)
     })
 
 })
 
 
-app.get("/ping", (req, res) => {
-    return res.send(JSON.stringify({
-        "pong": "pong"
-    }))
-})
+// app.get("/ping", (req, res) => {
+//     return res.send(JSON.stringify({
+//         "pong": "pong"
+//     }))
+// })
 
-app.get("/api/credentials", (req, res) => {
-    return res.send(JSON.stringify({
-        "client_id": process.env.CLIENT_ID
-    }))
-})
+// app.get("/api/credentials", (req, res) => {
+//     return res.send(JSON.stringify({
+//         "client_id": process.env.CLIENT_ID
+//     }))
+// })
 
 app.get("/api/login", (req, res) => {
     if (req.method === 'OPTIONS') {
@@ -114,8 +115,16 @@ app.get("/api/callback/", (req, res) => {
         },
         json: true
     }
-
-    request.post(authOptions, (error, response, body) => handler(error, response, body))
+    console.log(`Callback with options ${authOptions}`)
+    request.post(authOptions, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+            // if(saveSocket) {
+            //     console.log("will emit")
+            //     saveSocket.emit('spotify-login-success', body)
+            // }
+            res.redirect(`http://localhost:3000/#/login/${body.access_token}/${body.refresh_token}`)
+        }
+    })
 
 })
 
@@ -137,16 +146,7 @@ const joinRoom = (socket, roomCode, username) => {
 
 const createRoom = (socket, roomCode, roomId, username, access_token) => {
     const room = firebase.createRoom(roomCode, roomId, username, access_token)
-
-    room.once("value", room => socket.emit('firebase-create-success', {
-        roomId: room.key,
-        roomCode: room.child("room_code").val(),
-        roomName: room.child("room_name").val(),
-        roomOwner: room.child("room_owner").val(),
-        access_token: room.child("spotify_access_token").val(),
-        songs: room.child("songs").val(),
-        users: room.child("users").val()
-    }))
+    room.once('value', val => socket.emit('firebase-create-success', val.key, val))
 }
 
 const addSong = (socket, roomKey, song) => {

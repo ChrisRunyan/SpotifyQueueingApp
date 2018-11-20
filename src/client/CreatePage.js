@@ -7,6 +7,7 @@ class CreatePage extends Component {
         super(props)
         this.state = {
             roomCode: '',
+            roomName: '',
             username: ''
         }
     }
@@ -23,7 +24,12 @@ class CreatePage extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
-        this.props.onSubmit(this.state.roomCode, this.state.username)
+        this.props.onSubmit(
+            this.state.roomCode, 
+            this.state.roomName, 
+            this.state.username, 
+            this.props.accessToken
+        )
     }
 
     render() {
@@ -70,12 +76,7 @@ class CreatePage extends Component {
                 </FormGroup>
                 <FormGroup>
                     <Col smOffset={2} sm={10}>
-                        <Button onClick={this.login}>Login with Spotify</Button>
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col smOffset={2} sm={10}>
-                        <Button type='submit'>Join Room</Button>
+                        <Button type='submit'>Create Room</Button>
                     </Col>
                 </FormGroup>
             </Form>

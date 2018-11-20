@@ -3,6 +3,7 @@ import { Router, Route, Link, Switch } from 'react-router-dom';
 import App from './App';
 import JoinPage from './JoinPage';
 import CreatePage from './CreatePage';
+import Home from './Home'
 import { FirebaseWrapper } from './firebase';
 import io from 'socket.io-client';
 import { Room } from './classes/FirebaseData';
@@ -25,9 +26,15 @@ class MainRoutes extends React.Component {
 		socket.on('firebase-join-success', (key, room) => {
 			console.log('Firebase Join Success');
 			this.setState({ room: new Room(key, room) }, () => {
-				history.push(`/${this.state.room.id}`);
+				history.push(`/room/${this.state.room.id}`);
 			});
 		});
+		socket.on('firebase-create-success', (key, room) => {
+			console.log('Firebase Create Success');
+			this.setState({ room: new Room(key, room) }, () => {
+				history.push(`/room/${this.state.room.id}`)
+			})
+		})
 		socket.on('firebase-refresh', songs => {
 			this.setState({
 				room: new Room(this.state.room.id, {
@@ -36,28 +43,46 @@ class MainRoutes extends React.Component {
 				}),
 			});
 		});
+		if(window.location.hash) {
+			history.push(window.location.hash.substring(1))
+		}
 	}
 
 	joinRoom = (roomCode, username) => {
-		console.log(
-			`Submit complete\nRoom Code = ${roomCode}\nUsername = ${username}`
-		);
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
+
+	createRoom = (roomCode, roomName, username, access_token) => {
+		this.state.firebaseWrapper.createRoom(roomCode, roomName, username, access_token)
+	}
+
+	login = () => {
+		history.push('/api/login')
+	}
 
 	render() {
 		return (
 			<Router history={history}>
 				<Switch>
-					<Route exact path="/">
-						<Link to="/join">Join Room</Link>
-					</Route>
+					<Route 
+						exact path='/'
+						render={(props) => <Home login={this.login}/>}
+					/>
 					<Route
 						path="/join"
 						render={props => <JoinPage onSubmit={this.joinRoom} />}
 					/>
 					<Route
-						path={this.state.room ? `/${this.state.room.id}` : null}
+						exact path="/login/:accessToken/:redirectToken"
+						render={({ match }) => 
+							<CreatePage 
+								accessToken={match.params.accessToken} 
+								onSubmit={this.createRoom} 
+							/>
+						}
+					/>
+					<Route
+						path={this.state.room ? `/room/${this.state.room.id}` : null}
 						render={props => (
 							<App
 								room={this.state.room}

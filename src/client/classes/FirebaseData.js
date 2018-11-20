@@ -9,9 +9,11 @@ export class Room {
     this.access_token = room.access_token ? room.access_token : ''
     
     this.songs = []
-    Object.keys(room.songs).forEach(key => 
-      this.songs.push(new Song(room.songs[key]))
-    )
+    if(room.songs) {
+      Object.keys(room.songs).forEach(key => 
+        this.songs.push(new Song(room.songs[key]))
+      )
+    }
     
     this.users = []
     Object.keys(room.users).forEach(key => 

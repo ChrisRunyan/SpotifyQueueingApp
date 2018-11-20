@@ -35,20 +35,19 @@ const joinRoom = (roomCode, username) => {
 }
     
 
-const createRoom = (roomCode, roomName, userId, access_token) => 
-    roomsRef.push({
-        songs: [],
-        users: [
-            {
-                username: userId,
-                time_joined: new Date()
-            }
-        ],
+const createRoom = (roomCode, roomName, userId, access_token) => {
+    return roomsRef.push({
+        songs: {},
+        users: {
+            username: userId,
+            time_joined: new Date()
+        },
         room_code: roomCode,
         room_name: roomName,
         room_owner: userId,
         spotify_access_token: access_token
     })
+}
 
 const addSong = (roomKey, song) => {
     const roomRef = roomsRef.child(roomKey)
