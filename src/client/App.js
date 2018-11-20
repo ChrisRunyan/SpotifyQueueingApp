@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import SocketContext from './socket-context'
 import './styles/App.css';
 
 import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
+
+import socketIOClient from "socket.io-client";
 
 
 // import PropTypes from 'prop-types'
@@ -17,37 +20,58 @@ import SongSearch from './components/SongSearch'
 
 class App extends Component {
   state = {
+    endpoint: "http://127.0.0.1:4001",
     roomCode: "HJRA",
-    songs: [
-      {
-        title: "Chicago",
-        artist: "Sufjan Stevens",
-        album: "Illinois",
-        songLength: "6:05",
-        votes: 5,
-        id: 0
-      },
-      {
-        title: "Dean Town",
-        artist: "Vulfpeck",
-        album: "The Beautiful Game",
-        songLength: "3:33",
-        votes: 3,
-        id: 1
-      },
-      {
-        title: "What I Got",
-        artist: "Sublime",
-        album: "Sublime",
-        songLength: "2:51",
-        votes: 0,
-        id: 2
-      },
-    ]
+    songs: null
+      // {
+      //   title: "null",
+      //   artist: "null",
+      //   album: "null",
+      //   songLength: "0:00",
+      //   votes: 0,
+      //   id: 0
+      // },
+      // {
+      //   title: "null",
+      //   artist: "null",
+      //   album: "null",
+      //   songLength: "0:00",
+      //   votes: 0,
+      //   id: 0
+      // },
+      // {
+      //   title: "null",
+      //   artist: "null",
+      //   album: "null",
+      //   songLength: "0:00",
+      //   votes: 0,
+      //   id: 0
+      // },
+    
   };
+
+  socket = socketIOClient("http://127.0.0.1:4001");
+
+
+  
+  yo = "hi";
+
+  componentDidMount() {
+    const {endpoint} = this.state;
+    console.log("foo")
+    this.socket.on("initialLoad", data => this.setState({ songs: data }));
+    console.log("ff")
+  }
+
+  handleVoteChange = (index, delta) => {
+    this.setState( prevState => ({
+      votes: prevState.songs[index].votes += delta
+    }));
+  }
 
   render() {
     return(
+      <SocketContext.Provider value={this.socket}>
       <Grid>
           <PageHeader>
             <Row>
@@ -60,10 +84,13 @@ class App extends Component {
             </Row>
             </PageHeader>
             <Row>
-              <SongSearch />
+            <SocketContext.Consumer>
+              {socket => <SongSearch socket={socket} />}
+            </SocketContext.Consumer>
             </Row>
             <Row>
-              <Table striped bordered condensed hover>
+            {this.state.songs
+              ? <Table striped bordered condensed hover>
                 <thead>
                   <tr>
                     <th>Song</th>
@@ -85,13 +112,16 @@ class App extends Component {
                   id = {song.id}
                   key={song.id.toString()} 
                   index = {index}
+                  changeVote={this.handleVoteChange}
                   />
                   )}
                 </tbody>
               </Table>
+              : <h1 style={{textAlign: "center"}}>Loading...</h1>}
             
             </Row>
       </Grid>
+      </SocketContext.Provider>
       
     )
   }

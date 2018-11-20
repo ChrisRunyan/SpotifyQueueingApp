@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import Counter from './Counter';
 
 class Song extends React.Component {
     render() {
@@ -9,7 +10,8 @@ class Song extends React.Component {
             album,
             songLength,
             votes,
-            id
+            id,
+            changeVote
         } = this.props;
 
         return (
@@ -18,7 +20,11 @@ class Song extends React.Component {
                 <td>{artist}</td>
                 <td>{album}</td>
                 <td>{songLength}</td>
-                <td>{votes}</td>
+                <td><Counter
+                    votes = {votes}
+                    id = {id}
+                    changeVote={changeVote}
+                /></td>
             </tr>
         )
     }
