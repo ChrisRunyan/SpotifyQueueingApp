@@ -1,52 +1,100 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom'
-import App from './App'
-import JoinPage from './JoinPage'
-import { FirebaseWrapper } from './firebase'
-import io from 'socket.io-client'
+import { Router, Route, Link, Switch } from 'react-router-dom';
+import App from './App';
+import JoinPage from './JoinPage';
+import { FirebaseWrapper } from './firebase';
+import io from 'socket.io-client';
+import { Room } from './classes/FirebaseData';
+import { createBrowserHistory } from 'history'
 
-const socket = io({ path: '/ws' })
-
+const socket = io({ path: '/ws' });
+const history = createBrowserHistory()
+const NotFound = () => <h1>404 - Page Not Found</h1>
 class MainRoutes extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            firebaseWrapper: new FirebaseWrapper(socket),
-            room: null
-        }
-    }
+	constructor(props) {
+		super(props);
+		this.state = {
+			firebaseWrapper: new FirebaseWrapper(socket),
+			room: null,
+		};
+	}
 
-    componentDidMount() {
-        // socket.on("firebase-join-success", room => {
-        //     console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
-        //     this.setState({ room: new Room(room) })
-        // })
+	componentDidMount() {
+		socket.on('firebase-join-success', (key, room) => {
+            console.log("Firebase Join Success")
+			this.setState({ room: new Room(key, room) }, () => {
+				history.push(`/${this.state.room.id}`);
+			});
+		});
+		socket.on('firebase-refresh', songs => {
+			this.setState({
+				room: new Room(this.state.room.id, {
+					...this.state.room,
+					songs,
+				}),
+			});
+		});
+	}
 
-    }
+	joinRoom = (roomCode, username) => {
+		console.log(
+			`Submit complete\nRoom Code = ${roomCode}\nUsername = ${username}`
+		);
+		this.state.firebaseWrapper.joinRoom(roomCode, username);
+	};
 
-    joinRoom = (roomCode, username) => {
-        // socket.emit('firebase-join', roomCode, username)
-        firebaseWrapper.joinRoom(roomCode, username)
-    }
-
-    render() {
-        return(
-            <BrowserRouter>
-                <div>
-                    <Route path='/' 
-                        render={props => 
-                            <App firebaseWrapper={this.state.firebaseWrapper} />
-                        } />
-                    <Route 
-                        path='/join' 
-                        render={ props => 
-                            <JoinPage onSubmit={this.joinRoom} />
-                        } 
-                    />
-                </div>
-            </BrowserRouter>
-        )
-    }
+	render() {
+		return (
+			<Router history={history}>
+				<div>
+                    <Switch>
+                        <Route exact path='/'>
+                            <Link to='/join'>Join Room</Link>
+                        </Route>
+                        <Route 
+                            path='/join'
+                            render={ props => <JoinPage onSubmit={this.joinRoom}/>}
+                        />
+                        <Route 
+                            path={this.state.room ? `/${this.state.room.id}` : null}
+                            render={ props => (
+                                <App
+                                    room={this.state.room}
+                                    firebaseWrapper={this.state.firebaseWrapper}
+                                />
+                            )}
+                        />
+                    </Switch>
+					{/* <Route exact path='/'>
+                        <Link to='/join'>Join room</Link>
+                    </Route>
+                    {this.state.room ? 
+                        <Switch>
+                            <Route
+                                path={`/room/${this.state.room.id}`}
+                                render={props => (
+                                    <App
+                                        room={this.state.room}
+                                        firebaseWrapper={this.state.firebaseWrapper}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path="/join"
+                                render={props => <JoinPage onSubmit={this.joinRoom} />}
+                            />
+                            <Route component={NotFound} />
+                        </Switch>
+                    : 
+                        <Route
+                            path="/join"
+                            render={props => <JoinPage onSubmit={this.joinRoom} />}
+                        />
+                    } */}
+				</div>
+			</Router>
+		);
+	}
 }
 
-export default MainRoutes
+export default MainRoutes;

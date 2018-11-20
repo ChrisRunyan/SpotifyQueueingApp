@@ -20,7 +20,6 @@ const getRoomByCode = roomCode => {
     .once('value')
     .then(result => {
         const key = Object.keys(result.val())[0]
-        // console.log(key)
         return roomsRef.child(key)
     })
 }

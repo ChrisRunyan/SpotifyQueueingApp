@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Table, Grid, Row, Col, FormGroup, FormControl } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
 
 
 class JoinPage extends Component {
     constructor(props) {
+        super(props)
         this.state = {
             roomCode: '',
             username: ''
@@ -11,7 +12,7 @@ class JoinPage extends Component {
     }
 
     getValidationState = () => {
-
+        return 'success'
     }
 
     handleChange = (e) => {
@@ -20,45 +21,46 @@ class JoinPage extends Component {
         })
     }
 
+    handleSubmit = (e) => {
+        e.preventDefault()
+        this.props.onSubmit(this.state.roomCode, this.state.username)
+    }
+
     render() {
         return(
-            <Grid>
-                <Row>
-                    <Table striped bordered condensed hover>
-                        <thead>
-                            <tr>
-                                <th>Room Code</th>
-                                <th>Username</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <form onSubmit={() => this.props.onSubmit(this.state.roomCode, this.state.username)}>
-                                <FormGroup
-                                    controlId='formBasicText'
-                                    validationState={this.getValidationState}
-                                >
-                                    <td>
-                                        <FormControl
-                                            id='roomCode'
-                                            type='text'
-                                            value={this.state.roomCode}
-                                            placeholder="Room Code"
-                                            onChange={this.handleChange} />
-                                    </td>
-                                    <td>
-                                        <FormControl
-                                            id='username'
-                                            type='text'
-                                            value={this.state.username}
-                                            placeholder="Room Code"
-                                            onChange={this.handleChange} />
-                                    </td>
-                                </FormGroup>
-                            </form>
-                        </tbody>
-                    </Table>
-                </Row>
-            </Grid>
+            <Form horizontal onSubmit={this.handleSubmit}>
+                <FormGroup controlId='roomCode'>
+                    <Col componentClass={ControlLabel} sm={2}>
+                        Enter Room Code
+                    </Col> 
+                    <Col sm={10}>
+                        <FormControl
+                            id='roomCode'
+                            type='text'
+                            value={this.state.roomCode}
+                            placeholder="Room Code"
+                            onChange={this.handleChange} />
+                    </Col>
+                </FormGroup>
+                <FormGroup>
+                    <Col componentClass={ControlLabel} sm={2}>
+                        Enter Username
+                    </Col>
+                    <Col sm={10}>
+                        <FormControl
+                            id='username'
+                            type='text'
+                            value={this.state.username}
+                            placeholder="Username"
+                            onChange={this.handleChange} />
+                    </Col>
+                </FormGroup>
+                <FormGroup>
+                    <Col smOffset={2} sm={10}>
+                        <Button type='submit'>Join Room</Button>
+                    </Col>
+                </FormGroup>
+            </Form>
         )
     }
 }

@@ -125,7 +125,7 @@ const joinRoom = (socket, roomCode, username) => {
         // socket.emit('firebase-room-found', room)
         roomRef = room
         roomRef.on('child_changed', snapshot => {
-            console.log(`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`)
+            // console.log(`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`)
             socket.emit('firebase-refresh', snapshot)
         })
         roomRef.once('value', val => {
@@ -152,7 +152,7 @@ const createRoom = (socket, roomCode, roomId, username, access_token) => {
 const addSong = (socket, roomKey, song) => {
     const newSongRef = firebase.addSong(roomKey, song)
     newSongRef.once('value', newSong => {
-        console.log(JSON.stringify(newSong))
+        // console.log(JSON.stringify(newSong))
         socket.emit('firebase-add-song-success', newSong)
     })
 }
