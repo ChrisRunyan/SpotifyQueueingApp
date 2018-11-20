@@ -21,7 +21,8 @@ class SpotifyData {
   
   export class Song extends SpotifyData {
     constructor(song) {
-      super(song.song_id, song.song_name, song.song_query)
+      console.log(`Song constructor -- Song: ${JSON.stringify(song)}`)
+      super(song.id, song.name, song.query)
   
       this.addedBy = song.addedBy ? song.addedBy : ''
       this.votes = song.votes ? song.votes : 0
@@ -29,9 +30,9 @@ class SpotifyData {
       // this.progress = song.progress ? song.progress : 0
   
       this.album = new Album(
-        song.album_id, song.album_name, song.album_query)
+        song.album.id, song.album.name, song.album.query)
       this.artist = new Artist(
-        song.artist_id, song.artist_name, song.artist_query)
+        song.artist.id, song.artist.name, song.artist.query)
     }
   
   }

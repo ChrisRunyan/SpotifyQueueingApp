@@ -51,15 +51,10 @@ const createRoom = (roomCode, roomName, userId, access_token) =>
         spotify_access_token: access_token
     })
 
-const addSong = (roomKey, song, userId = 'default') => 
-    roomsRef
-    .child(roomKey)
-        .child(songs)
-            .push(
-                Object.assign({ 
-                    votes: 0,
-                    added_by: userId
-                }, song))
+const addSong = (roomKey, song) => {
+    const roomRef = roomsRef.child(roomKey)
+    return roomRef.child("songs").push(song)
+}
 
 
 const voteOnSong = (roomKey, songKey, currentVotes) => {
@@ -76,4 +71,5 @@ module.exports = {
     joinRoom,
     createRoom,
     getRoomByCode,
+    addSong,
 }

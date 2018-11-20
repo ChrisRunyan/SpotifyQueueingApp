@@ -18,6 +18,7 @@ import SongSearch from './components/SongSearch'
 import io from 'socket.io-client'
 import { FirebaseWrapper } from './firebase'
 import { Room } from './classes/FirebaseData';
+import { Song as SongData } from './classes/SpotifyData'
 // const socket = io({ path: '/ws' })
 
 // socket.on("firebase-join-success", room => {
@@ -57,10 +58,20 @@ class App extends Component {
 
   componentDidMount() {
 
-    // const socket = io({ path: '/ws' })
-    this.props.firebaseWrapper.socket.on("firebase-join-success", room => {
-      console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
-      this.setState({ room: new Room(room) })
+    this.props.firebaseWrapper.socket.on('firebase-refresh', songs => {
+      console.log(songs)
+      this.setState({ room: new Room(
+        this.state.room.id,
+        {
+          ...this.state.room,
+          songs
+        }
+      )})
+    })
+
+    this.props.firebaseWrapper.socket.on("firebase-join-success", (key, room) => {
+      console.log(room)
+      this.setState({ room: new Room(key, room) })
     })
 
     this.props.firebaseWrapper.socket.on("firebase-create-success", room => {
@@ -68,8 +79,19 @@ class App extends Component {
       this.setState({ room: new Room(room) })
     })
 
-    // const wrapper = new FirebaseWrapper(this.props.socket)
-    // this.props.firebaseWrapper.joinRoom("test_room_id")
+    this.props.firebaseWrapper.socket.on('firebase-add-song-success', newSong => {
+      console.log(`Firebase Add Song Success!! Song=${JSON.stringify(newSong)}`)
+      // this.setState({
+      //   room: {
+      //     ...this.state.room,
+      //     songs: [
+      //       ...this.state.room.songs,
+      //       ...newSong
+      //     ]
+      //   }
+      // })
+    })
+
   }
 
   debugJoin = () => {
@@ -78,6 +100,29 @@ class App extends Component {
 
   debugCreate = () => {
     this.props.firebaseWrapper.createRoom("JKLM", "Test Create Room", "Mitch", "fakeToken")
+  }
+
+  debugAdd = () => {
+    const song = new SongData({
+      id: '1jZhF1p0fLaVZHAyfjkumE',
+      name: 'Social',
+      query: 'https://api.spotify.com/v1/tracks/1jZhF1p0fLaVZHAyfjkumE',
+      artist: {
+        name: 'Smallpools',
+        id: '4iiQabGKtS2RtTKpVkrVTw',
+        query: 'https://api.spotify.com/v1/artists/4iiQabGKtS2RtTKpVkrVTw'
+      },
+      album: {
+        name: 'Social',
+        id: '0lOMCvOnoPQ5s8HAPrXlKv',
+        query: 'https://api.spotify.com/v1/albums/0lOMCvOnoPQ5s8HAPrXlKv'
+      },
+      votes: 0,
+      addedBy: 'default'
+    })
+    if (this.state.room != null) {
+      this.props.firebaseWrapper.addSong(this.state.room.id, song)
+    }
   }
 
   render() {
@@ -95,11 +140,14 @@ class App extends Component {
                 {/* <small> Room Code: {this.state.roomCode}</small> */}
                 <small> Room Code: {roomCode}</small>
               </Col>
-              <Col md={3}>
+              <Col md={2}>
                 <button onClick={this.debugJoin}>Join Room</button>
               </Col>
-              <Col md={3}>
+              <Col md={2}>
                 <button onClick={this.debugCreate}>Create Room</button>
+              </Col>
+              <Col md={2}>
+                <button onClick={this.debugAdd}>Add Song</button>
               </Col>
             </Row>
             </PageHeader>

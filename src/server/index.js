@@ -22,17 +22,21 @@ const HOMEPAGE_HASH = 'http://localhost:3000/#'
 const base64EncodedAuthString = 
     new Buffer(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64');
 
-let room_code = ''
+let roomRef = null
 
 io.on('connection', socket => {
+    const refreshInterval = null
+
     socket.on('ping', () => {
         socket.emit('pong', 'pong')     // first param is the message 'code', second is the data
-        io.sockets.emit(/* */)          // emit to every client
+        // io.sockets.emit(/* */)          // emit to every client
     })
 
-    socket.on('firebase-join', (roomId, username) => joinRoom(socket, roomId, username))
+    socket.on('firebase-join', (roomCode, username) => joinRoom(socket, roomCode, username))
 
-    socket.on('firebase-create', (roomId, roomName, username, access_token) => createRoom(socket, roomId, roomName, username, access_token))
+    socket.on('firebase-create', (roomCode, roomName, username, access_token) => createRoom(socket, roomCode, roomName, username, access_token))
+
+    socket.on('firebase-add-song', (roomKey, song) => addSong(socket, roomKey, song))
 
     socket.on('login', () => {
         const url = SPOTIFY_AUTH_ENDPOINT + 
@@ -117,28 +121,18 @@ app.get("/api/callback/", (req, res) => {
 
 const joinRoom = (socket, roomCode, username) => {
     firebase.joinRoom(roomCode, username)
-    .then(ref => {
-        console.log(ref.toString())
+    .then(room => {
+        // socket.emit('firebase-room-found', room)
+        roomRef = room
+        roomRef.on('child_changed', snapshot => {
+            console.log(`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`)
+            socket.emit('firebase-refresh', snapshot)
+        })
+        roomRef.once('value', val => {
+            console.log(val.toString())
+            socket.emit('firebase-join-success', val.key, val)
+        })
     })
-    
-    // console.log(`Found room key ${key} for code ${roomId}`)
-    // .then(result => {
-    //     const key = Object.keys(result.val())[0]
-    //     console.log(key)
-    // })
-    // firebase.joinRoom(roomId, username)
-    // .then(room => {
-    //     // console.log(room)
-    //     socket.emit('firebase-join-success', {
-    //         roomKey: room.key,
-    //         roomCode: room.child("room_code").val(),
-    //         roomName: room.child("room_name").val(),
-    //         roomOwner: room.child("room_owner").val(),
-    //         access_token: room.child("spotify_access_token").val(),
-    //         songs: room.child("songs").val(),
-    //         users: room.child("users").val()
-    //     })
-    // })
 }
 
 const createRoom = (socket, roomCode, roomId, username, access_token) => {
@@ -153,6 +147,14 @@ const createRoom = (socket, roomCode, roomId, username, access_token) => {
         songs: room.child("songs").val(),
         users: room.child("users").val()
     }))
+}
+
+const addSong = (socket, roomKey, song) => {
+    const newSongRef = firebase.addSong(roomKey, song)
+    newSongRef.once('value', newSong => {
+        console.log(JSON.stringify(newSong))
+        socket.emit('firebase-add-song-success', newSong)
+    })
 }
 
 const handleTokenResponse = res => (error, response, body) => {

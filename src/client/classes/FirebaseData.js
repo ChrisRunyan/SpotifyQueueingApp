@@ -1,21 +1,31 @@
 import { Song } from './SpotifyData'
 
 export class Room {
-  constructor(room) {
-    this.id = room.roomId ? room.roomId : ''
+  constructor(key, room) {
+    this.id = key ? key : ''
     this.roomOwner = room.roomOwner ? room.roomOwner : ''
-    this.roomCode = room.roomCode ? room.roomCode : ''
+    this.roomCode = room.room_code ? room.room_code : ''
     this.roomName = room.roomName ? room.roomName : ''
     this.access_token = room.access_token ? room.access_token : ''
-    this.songs = room.songs ? room.songs.map(s => new Song(s)) : []
-    this.users = room.users ? room.users.map(u => new User(u.username, u.time_joined)) : []
+    
+    this.songs = []
+    Object.keys(room.songs).forEach(key => 
+      this.songs.push(new Song(room.songs[key]))
+    )
+    
+    this.users = []
+    Object.keys(room.users).forEach(key => 
+      this.users.push(new User(room.users[key]))
+    )
+
+    // this.users = room.users ? room.users.map(u => new User(u.username, u.time_joined)) : []
   }
   
 }
 
 export class User {
-  constructor(username, time_joined = null) {
-    this.username = username
-    this.time_joined = time_joined ? time_joined : new Date()
+  constructor(user) {
+    this.username = user.username
+    this.time_joined = user.time_joined ? user.time_joined : new Date()
   }
 }
