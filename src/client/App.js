@@ -12,14 +12,18 @@ import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 import SongList from './components/SongList'
 import SongControls from './components/SongControls'
 import SongListItem from './components/SongListItem'
-import { getCurrentPlaybackState } from './actions/spotifyAction';
+//import { getCurrentPlaybackState } from './actions/spotifyAction';
+import spotify from './components/spotify-web-api.js';
 
 import io from 'socket.io-client'
 
 const socket = io({ path: '/ws' })
 
+var Spotify = new spotify();
+
 class App extends Component {
 
+  
   state = {
     page: "home",
     page_title: "Good Shit"
@@ -30,7 +34,7 @@ class App extends Component {
     super(props);
     this.handleCreateRoomClick = this.handleCreateRoomClick.bind(this);
   }
-  /*
+  
   getHashParams = () => {
     let hashParams = {};
     let e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -39,34 +43,36 @@ class App extends Component {
     while ( e = r.exec(q)) {
         hashParams[e[1]] = decodeURIComponent(e[2]);
     }
-
     return hashParams
   }
 
   componentWillMount() {
     
     //calling spotify (could be in spotify wrapper and have a button on click call it from the wrapper?) login etc
+    
     const hashParams = this.getHashParams()
     if (!hashParams.access_token) {
       window.location.href = '/api/login'
-      //socket.emit('login')
+      socket.emit('login')
     } else {
       this.props.login(hashParams)
     }
     
+    //Spotify.setAccessToken('https://accounts.spotify.com/api/token?');
   }
 
+/*
   componentWillReceiveProps(nextProps) {
     if(nextProps.auth.access_token) {
       this.props.readPlayback({ access_token: nextProps.auth.access_token })
     }
-  }
-  */
+  }*/
+
 
   handleCreateRoomClick() {
     
     //Will change the state information which in turn will change what is rendering.. 
-    this.setState({      
+    this.setState({
       page: 'sendHelp', page_title: 'Please Send Help'},
       ()=>{console.log('state page_title = ', this.state.page_title)
     });
@@ -98,6 +104,7 @@ class App extends Component {
       
       <div>
         {view}
+        
         <p>More Coming Soon....</p>
       </div>
       
@@ -113,9 +120,6 @@ class HomeView extends React.Component {
 
     return (
       <div className="App">
-
-      
-  
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Apollo Queue for Spotify</h1>
@@ -125,16 +129,15 @@ class HomeView extends React.Component {
         </p>
         <button onClick={this.props.handleClick }>Create Room</button>
         <button onClick={() => socket.emit("firebase-join", "test_room")} >Join</button>
-        {/* <SongListItem>
+        { /*<SongListItem>
           <SongControls />
-        </SongListItem> */}
+        </SongListItem>*/ }
       </div>
     );
   }
 
 }
 
-/*
 
 App.propTypes = {
   auth: PropTypes.objectOf(PropTypes.string),
@@ -164,5 +167,6 @@ const mapDispatchToProps = dispatch => {
     readPlayback: tokens => dispatch(getCurrentPlaybackState(tokens)),
   }
 }
-*/
-export default /*connect(mapStateToProps, mapDispatchToProps)*/(App)
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
