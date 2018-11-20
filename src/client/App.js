@@ -25,71 +25,37 @@ import { Song as SongData } from './classes/SpotifyData';
 // })
 
 class App extends Component {
-	state = {
-		roomCode: 'HJRA',
-		songs: [
-			{
-				title: 'Chicago',
-				artist: 'Sufjan Stevens',
-				album: 'Illinois',
-				songLength: '6:05',
-				votes: 5,
-				id: 0,
-			},
-			{
-				title: 'Dean Town',
-				artist: 'Vulfpeck',
-				album: 'The Beautiful Game',
-				songLength: '3:33',
-				votes: 3,
-				id: 1,
-			},
-			{
-				title: 'What I Got',
-				artist: 'Sublime',
-				album: 'Sublime',
-				songLength: '2:51',
-				votes: 0,
-				id: 2,
-			},
-		],
-	};
+	// state = {
+	// 	roomCode: 'HJRA',
+	// 	songs: [
+	// 		{
+	// 			title: 'Chicago',
+	// 			artist: 'Sufjan Stevens',
+	// 			album: 'Illinois',
+	// 			songLength: '6:05',
+	// 			votes: 5,
+	// 			id: 0,
+	// 		},
+	// 		{
+	// 			title: 'Dean Town',
+	// 			artist: 'Vulfpeck',
+	// 			album: 'The Beautiful Game',
+	// 			songLength: '3:33',
+	// 			votes: 3,
+	// 			id: 1,
+	// 		},
+	// 		{
+	// 			title: 'What I Got',
+	// 			artist: 'Sublime',
+	// 			album: 'Sublime',
+	// 			songLength: '2:51',
+	// 			votes: 0,
+	// 			id: 2,
+	// 		},
+	// 	],
+	// };
 
 	componentDidMount() {
-		// this.props.firebaseWrapper.socket.on('firebase-refresh', songs => {
-		// 	this.setState({
-		// 		room: new Room(this.state.room.id, {
-		// 			...this.state.room,
-		// 			songs,
-		// 		}),
-		// 	});
-		// });
-
-		// this.props.firebaseWrapper.socket.on("firebase-join-success", (key, room) => {
-		//   console.log(room)
-		//   this.setState({ room: new Room(key, room) })
-		// })
-
-		// this.props.firebaseWrapper.socket.on(
-		// 	'firebase-create-success',
-		// 	room => {
-		// 		console.log(
-		// 			`Firebase Create Success!! Room=${JSON.stringify(room)}`
-		// 		);
-		// 		this.setState({ room: new Room(room) });
-		// 	}
-		// );
-
-		// this.props.firebaseWrapper.socket.on(
-		// 	'firebase-add-song-success',
-		// 	newSong => {
-		// 		console.log(
-		// 			`Firebase Add Song Success!! Song=${JSON.stringify(
-		// 				newSong
-		// 			)}`
-		// 		);
-		// 	}
-		// );
 		console.log("App mounted")
 	}
 
@@ -126,16 +92,12 @@ class App extends Component {
 			votes: 0,
 			addedBy: 'default',
 		});
-		if (this.state.room != null) {
-			this.props.firebaseWrapper.addSong(this.state.room.id, song);
-		}
+		this.props.firebaseWrapper.addSong(this.props.room.id, song);
 	};
 
 	render() {
-		let roomCode = this.props.room
-			? this.props.room.roomCode
-			: this.state.roomCode;
-		let songs = this.props.room ? this.props.room.songs : this.state.songs;
+		let roomCode = this.props.room.roomCode
+		let songs = this.props.room.songs
 		console.log(songs);
 		return (
 			<Grid>

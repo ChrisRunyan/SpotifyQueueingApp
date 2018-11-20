@@ -2,14 +2,16 @@ import React from 'react';
 import { Router, Route, Link, Switch } from 'react-router-dom';
 import App from './App';
 import JoinPage from './JoinPage';
+import CreatePage from './CreatePage';
 import { FirebaseWrapper } from './firebase';
 import io from 'socket.io-client';
 import { Room } from './classes/FirebaseData';
-import { createBrowserHistory } from 'history'
+import { createBrowserHistory } from 'history';
 
 const socket = io({ path: '/ws' });
-const history = createBrowserHistory()
-const NotFound = () => <h1>404 - Page Not Found</h1>
+const history = createBrowserHistory();
+const NotFound = () => <h1>404 - Page Not Found</h1>;
+
 class MainRoutes extends React.Component {
 	constructor(props) {
 		super(props);
@@ -21,7 +23,7 @@ class MainRoutes extends React.Component {
 
 	componentDidMount() {
 		socket.on('firebase-join-success', (key, room) => {
-            console.log("Firebase Join Success")
+			console.log('Firebase Join Success');
 			this.setState({ room: new Room(key, room) }, () => {
 				history.push(`/${this.state.room.id}`);
 			});
@@ -46,24 +48,25 @@ class MainRoutes extends React.Component {
 	render() {
 		return (
 			<Router history={history}>
-                <Switch>
-                    <Route exact path='/'>
-                        <Link to='/join'>Join Room</Link>
-                    </Route>
-                    <Route 
-                        path='/join'
-                        render={ props => <JoinPage onSubmit={this.joinRoom}/>}
-                    />
-                    <Route 
-                        path={this.state.room ? `/${this.state.room.id}` : null}
-                        render={ props => (
-                            <App
-                                room={this.state.room}
-                                firebaseWrapper={this.state.firebaseWrapper}
-                            />
-                        )}
-                    />
-                </Switch>
+				<Switch>
+					<Route exact path="/">
+						<Link to="/join">Join Room</Link>
+					</Route>
+					<Route
+						path="/join"
+						render={props => <JoinPage onSubmit={this.joinRoom} />}
+					/>
+					<Route
+						path={this.state.room ? `/${this.state.room.id}` : null}
+						render={props => (
+							<App
+								room={this.state.room}
+								firebaseWrapper={this.state.firebaseWrapper}
+							/>
+						)}
+					/>
+                    <Route component={NotFound} />
+				</Switch>
 			</Router>
 		);
 	}
