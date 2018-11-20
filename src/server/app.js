@@ -98,11 +98,10 @@ io.on("connection", socket => {
 const resortAndLoad = async socket => { // Gonna change this to work for me
     try {
       console.log("new songs loaded")
+      this.songs.sort( (a,b) => {
+        return b.votes - a.votes;
+      })
       socket.emit("initialLoad", this.songs)
-    //   const res = await axios.get(
-    //     "https://api.darksky.net/forecast/PUT_YOUR_API_KEY_HERE/43.7695,11.2558"
-    //   ); // Getting the data from DarkSky
-    //   socket.emit("FromAPI", res.data.currently.temperature); // Emitting a new message. It will be consumed by the client
     } catch (error) {
       console.error(`Error: ${error.code}`);
     }
