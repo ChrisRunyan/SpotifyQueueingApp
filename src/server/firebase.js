@@ -36,7 +36,7 @@ const joinRoom = (roomCode, username) => {
     
 
 const createRoom = (roomCode, roomName, userId, access_token) => {
-    return roomsRef.push({
+    const newRoomRef = roomsRef.push({
         songs: {},
         users: {
             username: userId,
@@ -47,6 +47,7 @@ const createRoom = (roomCode, roomName, userId, access_token) => {
         room_owner: userId,
         spotify_access_token: access_token
     })
+    return newRoomRef.ref
 }
 
 const addSong = (roomKey, song) => {
