@@ -53,9 +53,9 @@ this.newSong = {
 
 io.on("connection", socket => {
   console.log("New client connected");
-//   if (interval) {
-//     clearInterval(interval);
-//   }
+  if (interval) {
+    clearInterval(interval);
+  }
   console.log("how bout here")
   try {
       // console.log(this.songs);
@@ -64,6 +64,8 @@ io.on("connection", socket => {
       console.log("here?")
       console.error(`Error: ${error.code}`);
   }
+
+  interval = setInterval(() => resortAndLoad(socket), 10000);
 
   console.log("do i ever get here");
   socket.on("addSong", () => {
@@ -93,8 +95,10 @@ io.on("connection", socket => {
 });
 
 
-const getApiAndEmit = async socket => { // Gonna change this to work for me
+const resortAndLoad = async socket => { // Gonna change this to work for me
     try {
+      console.log("new songs loaded")
+      socket.emit("initialLoad", this.songs)
     //   const res = await axios.get(
     //     "https://api.darksky.net/forecast/PUT_YOUR_API_KEY_HERE/43.7695,11.2558"
     //   ); // Getting the data from DarkSky
