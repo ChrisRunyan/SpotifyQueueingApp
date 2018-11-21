@@ -40,7 +40,7 @@ class App extends Component {
 
   handleVoteChange = (index, delta) => {
     console.log(delta);
-    console.log(this.state);
+    // console.log(this.state);
     var songIndex = this.state.songs.findIndex( song => song.id == index);
     this.socket.emit("changeVote", index, delta);
     // this.socket.on("vote", data => )
