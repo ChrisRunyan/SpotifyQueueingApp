@@ -40,10 +40,13 @@ class App extends Component {
 
   handleVoteChange = (index, delta) => {
     console.log(delta);
+    console.log(this.state);
+    var songIndex = this.state.songs.findIndex( song => song.id == index);
     this.socket.emit("changeVote", index, delta);
     // this.socket.on("vote", data => )
     this.setState( prevState => ({
-      votes: prevState.songs[index].votes += delta
+      votes: prevState.songs[songIndex].votes += delta
+      //Problem is song is being identified by index instead of object property's index
     }));
   }
 
