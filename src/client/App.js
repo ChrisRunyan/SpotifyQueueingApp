@@ -95,6 +95,8 @@ class App extends Component {
 		this.props.firebaseWrapper.addSong(song);
 	};
 
+	vote = (songKey, currentVotes) => this.props.firebaseWrapper.voteOnSong(songKey, currentVotes)
+
 	render() {
 		let roomCode = this.props.room.roomCode
 		let songs = this.props.room.songs
@@ -134,14 +136,16 @@ class App extends Component {
 							{songs.map((song, index) => (
 								// console.log(`Song: ${song}`)
 								<Song
-									title={song.name}
-									artist={song.artist.name}
-									album={song.album.name}
+									title={song.data.name}
+									artist={song.data.artist.name}
+									album={song.data.album.name}
 									songLength={'0'}
-									votes={song.votes}
-									id={song.id}
-									key={song.id}
+									votes={song.data.votes}
+									id={song.data.id}
+									key={song.key}
+									songKey={song.key}
 									index={index}
+									vote={this.vote}
 								/>
 							))}
 						</tbody>

@@ -53,7 +53,7 @@ module.exports = class Firebase {
 	}
 
 	createRoom(roomCode, roomName, userId, access_token) {
-        console.log(`createRoom(): roomName=${roomName}`)
+		console.log(`createRoom(): roomName=${roomName}`);
 		const newRoomRef = this.roomsRef.push({
 			songs: {},
 			users: {
@@ -94,16 +94,16 @@ module.exports = class Firebase {
 				return this.roomsRef.child(key); // Return a Ref to the first room in 'result'
 			});
 		this.listenForChanges(this.currentRoomRef);
-    }
-    
-    voteOnSong(songKey, currentVotes) {
-        const votesRefKey = `songs/${songKey}/votes`
-        if (this.currentRoomRef) {
-            this.currentRoomRef.update({
-                [votesRefKey]: currentVotes + 1
-            })
-        }
-    }
+	}
+
+	voteOnSong(songKey, currentVotes) {
+		const votesRefKey = `songs/${songKey}/votes`;
+		if (this.currentRoomRef) {
+			this.currentRoomRef.update({
+				[votesRefKey]: currentVotes + 1,
+			});
+		}
+	}
 
 	listenForChanges(ref) {
 		if (ref) {
@@ -114,18 +114,18 @@ module.exports = class Firebase {
 				this.socket.emit('firebase-refresh', snapshot);
 			});
 		}
-    }
-}
-
-const voteOnSong = (roomKey, songKey, currentVotes) => {
-	const refKey = `${songKey}/votes`;
-	roomsRef
-		.child(roomKey)
-		.child('songs')
-		.update({
-			[refKey]: currentVotes + 1,
-		});
+	}
 };
+
+// const voteOnSong = (roomKey, songKey, currentVotes) => {
+// 	const refKey = `${songKey}/votes`;
+// 	roomsRef
+// 		.child(roomKey)
+// 		.child('songs')
+// 		.update({
+// 			[refKey]: currentVotes + 1,
+// 		});
+// };
 
 // module.exports = {
 //     Firebase,

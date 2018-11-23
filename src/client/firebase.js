@@ -22,4 +22,8 @@ export class FirebaseWrapper {
 	addSong = song => {
 		this.socket.emit('firebase-add-song', song);
 	};
+
+	voteOnSong = (songKey, currentVotes) => {
+		this.socket.emit('firebase-vote', songKey, currentVotes) 
+	}
 }

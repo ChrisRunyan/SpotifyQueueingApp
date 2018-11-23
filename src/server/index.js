@@ -44,6 +44,8 @@ io.on('connection', socket => {
 
 	socket.on('firebase-add-song', song => fb.addSong(song));
 
+    socket.on('firebase-vote', (songKey, currentVotes) => fb.voteOnSong(songKey, currentVotes))
+
 	socket.on('login', () => {
 		const url =
 			SPOTIFY_AUTH_ENDPOINT +
@@ -54,7 +56,6 @@ io.on('connection', socket => {
 				scope:
 					'user-read-private user-read-playback-state user-modify-playback-state',
 			});
-		// console.log(`Will login to ${url}`)
 		request.get(url);
 	});
 });

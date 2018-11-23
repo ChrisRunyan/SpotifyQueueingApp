@@ -11,10 +11,13 @@ export class Room {
 		this.songs = [];
 		if (room.songs) {
 			Object.keys(room.songs).forEach(key =>
-				this.songs.push(new Song(room.songs[key]))
+				this.songs.push({
+          key: key,
+          data: new Song(room.songs[key])
+        })
 			);
-		}
-
+    }
+    
 		this.users = [];
 		Object.keys(room.users).forEach(key =>
 			this.users.push(new User(room.users[key]))
