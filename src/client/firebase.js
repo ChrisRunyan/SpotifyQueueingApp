@@ -19,7 +19,7 @@ export class FirebaseWrapper {
 		);
 	};
 
-	addSong = (roomId, song) => {
-		this.socket.emit('firebase-add-song', roomId, song);
+	addSong = song => {
+		this.socket.emit('firebase-add-song', song);
 	};
 }

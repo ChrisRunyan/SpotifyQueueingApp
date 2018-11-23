@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './styles/App.css';
 
-import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Table, Grid, Row, Col, PageHeader, Button } from 'react-bootstrap';
 
 // import PropTypes from 'prop-types'
 // import { connect } from 'react-redux'
@@ -92,7 +92,7 @@ class App extends Component {
 			votes: 0,
 			addedBy: 'default',
 		});
-		this.props.firebaseWrapper.addSong(this.props.room.id, song);
+		this.props.firebaseWrapper.addSong(song);
 	};
 
 	render() {
@@ -108,16 +108,11 @@ class App extends Component {
 							{/* <small> Room Code: {this.state.roomCode}</small> */}
 							<small> Room Code: {roomCode}</small>
 						</Col>
-						<Col md={2}>
-							<button onClick={this.debugJoin}>Join Room</button>
+						<Col md={3}>
+							<small>{this.props.room.roomName}</small>
 						</Col>
-						<Col md={2}>
-							<button onClick={this.debugCreate}>
-								Create Room
-							</button>
-						</Col>
-						<Col md={2}>
-							<button onClick={this.debugAdd}>Add Song</button>
+						<Col md={3}>
+							<Button onClick={this.debugAdd}>Add song</Button>
 						</Col>
 					</Row>
 				</PageHeader>
