@@ -33,7 +33,11 @@ class MainRoutes extends React.Component {
 		socket.on('firebase-refresh', songs => {
 			let sList = []
 			Object.keys(songs).forEach(key =>
-				sList.push(new Song(songs[key]))
+				// sList.push(new Song(songs[key]))
+				sList.push({
+					key: key,
+					data: new Song(songs[key])
+				})
 			);
 			this.setState({
 				room: {

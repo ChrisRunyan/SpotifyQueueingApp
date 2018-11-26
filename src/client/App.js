@@ -95,7 +95,10 @@ class App extends Component {
 		this.props.firebaseWrapper.addSong(song);
 	};
 
-	vote = (songKey, currentVotes) => this.props.firebaseWrapper.voteOnSong(songKey, currentVotes)
+	vote = (songKey, currentVotes) => {
+		console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`)
+		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes)
+	}
 
 	render() {
 		let roomCode = this.props.room.roomCode

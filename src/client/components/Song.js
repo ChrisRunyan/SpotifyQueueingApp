@@ -19,7 +19,7 @@ class Song extends React.Component {
                 <td>{artist}</td>
                 <td>{album}</td>
                 <td>{songLength}</td>
-                <td onClick={(songKey, votes) => this.props.vote(songKey, votes)}>{votes}</td>
+                <td onClick={() => this.props.vote(songKey, votes)}>{votes}</td>
             </tr>
         )
     }

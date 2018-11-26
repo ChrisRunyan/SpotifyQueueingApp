@@ -75,9 +75,9 @@ module.exports = class Firebase {
 	addSong(song) {
 		// const roomRef = roomsRef.child(roomKey)
 		// return roomRef.child("songs").push(song)
-		console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
+		// console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
 		if (this.currentRoomRef) {
-			console.log(`Adding Song: ${song.toString()}`);
+			// console.log(`Adding Song: ${song.toString()}`);
 			this.currentRoomRef.child('songs').push(song);
 		}
 	}
@@ -108,9 +108,9 @@ module.exports = class Firebase {
 	listenForChanges(ref) {
 		if (ref) {
 			ref.on('child_changed', snapshot => {
-				console.log(
-					`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`
-				);
+				// console.log(
+				// 	`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`
+				// );
 				this.socket.emit('firebase-refresh', snapshot);
 			});
 		}
