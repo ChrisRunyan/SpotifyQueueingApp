@@ -13,8 +13,8 @@ import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
 
 import spotify from './components/spotify-web-api.js';
 
-import Song from './components/Song';
-import SongSearch from './components/SongSearch';
+//import Song from './components/Song';
+//import SongSearch from './components/SongSearch';
 // import SongControls from './components/SongControls'
 // import SongListItem from './components/SongListItem'
 // import { getCurrentPlaybackState } from './actions/spotifyAction';
@@ -27,7 +27,7 @@ import { Song as SongData } from './classes/SpotifyData';
 
 
 var Spotify = new spotify();
-
+/*
 class App extends Component {
 
   
@@ -73,7 +73,7 @@ class App extends Component {
     if(nextProps.auth.access_token) {
       this.props.readPlayback({ access_token: nextProps.auth.access_token })
     }
-  }*/
+  }
 
 
   handleCreateRoomClick() {
@@ -138,14 +138,14 @@ class HomeView extends React.Component {
         <button onClick={() => socket.emit("firebase-join", "test_room")} >Join</button>
         { /*<SongListItem>
           <SongControls />
-        </SongListItem>*/ }
+        </SongListItem> }
       </div>
     );
   }
 
 }
 
-
+/*
 App.propTypes = {
   auth: PropTypes.objectOf(PropTypes.string),
   room: PropTypes.objectOf(PropTypes.string),
@@ -176,8 +176,8 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
-/*
+export default /*connect(mapStateToProps, mapDispatchToProps)(App)
+*/
 // socket.on("firebase-join-success", room => {
 //   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
 // })
@@ -263,7 +263,7 @@ class App extends Component {
 					<Row>
 						<Col md={3}>Apollo</Col>
 						<Col md={3}>
-							{/* <small> Room Code: {this.state.roomCode}</small> */}
+							{ <small> Room Code: {this.state.roomCode}</small> }
 							<small> Room Code: {roomCode}</small>
 						</Col>
 						<Col md={2}>
@@ -316,4 +316,3 @@ class App extends Component {
 }
 
 export default App;
-*/

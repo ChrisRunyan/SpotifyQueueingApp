@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+//import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import '../styles/SongControls.css'
 import { pausePlayback, resumePlayback, nextSong } from '../actions/spotifyAction'
@@ -52,12 +52,9 @@ const mapDispatchToProps = dispatch => {
     return {
         resume: tokens => dispatch(resumePlayback(tokens)),
         pause: tokens => dispatch(pausePlayback(tokens)),
-<<<<<<< HEAD
         push: (song, roomId) => dispatch(pushSong(song, roomId)),
 
-=======
         next: tokens => dispatch(nextSong(tokens)),
->>>>>>> b6dd6591896b741b64ca9bddd8cddb84455c318d
     };
 }
 
