@@ -4,14 +4,15 @@ import logo from './apollo_icon_white.png';
 import RoomView from './RoomView'
 import './styles/App.css';
 
+import * as spotifyapi from './components/spotify-web-api'
+
 import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
 
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 // import { connect } from 'react-redux'
-// import { loginSuccess } from './actions/loginAction'
-// import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+//import { loginSuccess } from './actions/loginAction'
+//import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 
-import spotify from './components/spotify-web-api.js';
 
 //import Song from './components/Song';
 //import SongSearch from './components/SongSearch';
@@ -26,7 +27,10 @@ import { Song as SongData } from './classes/SpotifyData';
 // const socket = io({ path: '/ws' })
 
 
-var Spotify = new spotify();
+var Spotify = new spotifyapi();
+//spotifyApi.setPromiseImplementation(Q);
+var access_token;
+
 /*
 class App extends Component {
 
@@ -145,7 +149,7 @@ class HomeView extends React.Component {
 
 }
 
-/*
+
 App.propTypes = {
   auth: PropTypes.objectOf(PropTypes.string),
   room: PropTypes.objectOf(PropTypes.string),
@@ -215,6 +219,22 @@ class App extends Component {
 
 	componentDidMount() {
 		console.log("App mounted")
+
+		Spotify.setAccessToken(hashParams.access_token);
+		access_token = Spotify.getAccessToken();
+		
+		Spotify.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x')
+      .then(function(data) {
+        console.log('User playlist', data);
+        console.log('more specific?', data.tracks.items);
+        tracks = data.tracks.items;
+        console.log('tracks', tracks);
+  
+      }, function(err) {
+        console.error(err);
+  
+			});
+			console.log(tracks);
 	}
 
 	debugJoin = () => {
@@ -254,10 +274,12 @@ class App extends Component {
 	};
 
 	render() {
-		let roomCode = this.props.room.roomCode
-		let songs = this.props.room.songs
+		
+		let roomCode = this.props.room.roomCode;
+		let songs = this.props.room.songs;
 		console.log(songs);
 		return (
+			
 			<Grid>
 				<PageHeader>
 					<Row>
@@ -313,6 +335,26 @@ class App extends Component {
 			</Grid>
 		);
 	}
+
+	
+}
+App.propTypes = {
+  auth: PropTypes.objectOf(PropTypes.string),
+  room: PropTypes.objectOf(PropTypes.string),
+  songs: PropTypes.objectOf(PropTypes.string),
+  login: PropTypes.func,
+  joinRoom: PropTypes.func,
+  addSong: PropTypes.func,
+  readPlayback: PropTypes.func,
+}
+
+const mapStateToProps = state => {
+  return {
+    auth: state.login,
+    room: state.firebase.room,
+    songs: state.firebase.songs,
+    isPlaying: state.spotify.isPlaying,
+  }
 }
 
 export default App;

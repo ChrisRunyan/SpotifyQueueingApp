@@ -16,14 +16,11 @@ var tracks;
 var firstItem;
 
 
-
 class RoomView extends Component {
 
   state = {
     user:'owner'
   }
-  
-
   
   componentWillMount() {
     
