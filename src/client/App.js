@@ -10,6 +10,7 @@ import { Table, Grid, Row, Col, PageHeader, Button } from 'react-bootstrap';
 
 import Song from './components/Song';
 import SongSearch from './components/SongSearch';
+import SongList from './components/SongList';
 // import SongControls from './components/SongControls'
 // import SongListItem from './components/SongListItem'
 // import { getCurrentPlaybackState } from './actions/spotifyAction';
@@ -135,7 +136,8 @@ class App extends Component {
 								<th>Votes</th>
 							</tr>
 						</thead>
-						<tbody>
+						<SongList songs={songs} vote={this.vote} />
+						{/* <tbody>
 							{songs.map((song, index) => (
 								// console.log(`Song: ${song}`)
 								<Song
@@ -151,7 +153,7 @@ class App extends Component {
 									vote={this.vote}
 								/>
 							))}
-						</tbody>
+						</tbody> */}
 					</Table>
 				</Row>
 			</Grid>

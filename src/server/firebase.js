@@ -40,7 +40,6 @@ module.exports = class Firebase {
 				const newUser = ref.child('users').push(); // Add a new user to the room
 				this.currentRoomRef = ref;
 				this.listenForChanges(this.currentRoomRef);
-				// console.log(`joinRoom(): currentRoomRef=${this.currentRoomRef}`);
 				newUser.set({
 					username,
 					time_joined: time_joined.toISOString(),
@@ -48,7 +47,6 @@ module.exports = class Firebase {
 				ref.once('value', val => {
 					this.socket.emit('firebase-join-success', val.key, val);
 				});
-				// return ref; // Return the Ref to the room
 			});
 	}
 
@@ -75,9 +73,9 @@ module.exports = class Firebase {
 	addSong(song) {
 		// const roomRef = roomsRef.child(roomKey)
 		// return roomRef.child("songs").push(song)
-		// console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
+		console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
 		if (this.currentRoomRef) {
-			// console.log(`Adding Song: ${song.toString()}`);
+			console.log(`Adding Song: ${JSON.stringify(song)}`);
 			this.currentRoomRef.child('songs').push(song);
 		}
 	}
@@ -107,33 +105,14 @@ module.exports = class Firebase {
 
 	listenForChanges(ref) {
 		if (ref) {
+			console.log('Listening for Changes');
 			ref.on('child_changed', snapshot => {
-				// console.log(
-				// 	`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`
-				// );
+				console.log(
+					`Child Changed: snapshot=${JSON.stringify(snapshot.val())}`
+				);
+
 				this.socket.emit('firebase-refresh', snapshot);
 			});
 		}
 	}
 };
-
-// const voteOnSong = (roomKey, songKey, currentVotes) => {
-// 	const refKey = `${songKey}/votes`;
-// 	roomsRef
-// 		.child(roomKey)
-// 		.child('songs')
-// 		.update({
-// 			[refKey]: currentVotes + 1,
-// 		});
-// };
-
-// module.exports = {
-//     Firebase,
-//     // app,
-//     // databaseRef,
-//     // roomsRef,
-//     // joinRoom,
-//     // createRoom,
-//     // getRoomByCode,
-//     // addSong,
-// }
