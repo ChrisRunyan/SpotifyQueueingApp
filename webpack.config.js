@@ -15,8 +15,13 @@ module.exports = {
         open: true,
         proxy: {
             "/api/*": {
-                target: 'http://[::1]:8080',
+                target: 'http://localhost:8080',
                 secure: false
+            },
+            // WebSocket proxy
+            '/ws/*' : {
+                target: 'ws://localhost:8080',
+                ws: true
             }
         }
     },
