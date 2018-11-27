@@ -50,6 +50,7 @@ class RoomView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
     if(nextProps.auth.access_token) {
       this.props.readPlayback({ access_token: nextProps.auth.access_token })
     }
@@ -141,7 +142,7 @@ class MyPlaylist extends Component{
       }, function(err) {
         console.error(err);
   
-      }, function(data){
+      }/*, function(data){
         return( <div className="song-list-item">
               <div className="album-art">
                   <img src={data.tracks.items[0].track.album.images[0].url} alt="Art"></img>
@@ -154,7 +155,7 @@ class MyPlaylist extends Component{
               </div>
 
           </div>)
-      })
+      }*/)
     );
   }
   

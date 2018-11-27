@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap'
 
 class Home extends Component {
@@ -9,8 +9,9 @@ class Home extends Component {
 	render() {
 		return (
 			<div>
-				<Link to="/join">Join a Room</Link>
-				<Button href='/api/login'>Login with Spotify</Button>
+				<NavLink to='/join'>Join A Room</NavLink>
+                <br />
+				<Button href='/api/login'>Create a Room</Button>
 			</div>
 		);
 	}

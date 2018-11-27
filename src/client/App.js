@@ -6,7 +6,8 @@ import './styles/App.css';
 
 import * as spotifyapi from './components/spotify-web-api'
 
-import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
+//import { Table, Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Table, Grid, Row, Col, PageHeader, Button } from 'react-bootstrap';
 
 import PropTypes from 'prop-types'
 // import { connect } from 'react-redux'
@@ -28,8 +29,6 @@ import { Song as SongData } from './classes/SpotifyData';
 
 
 var Spotify = new spotifyapi();
-//spotifyApi.setPromiseImplementation(Q);
-var access_token;
 
 /*
 class App extends Component {
@@ -237,6 +236,7 @@ class App extends Component {
 			console.log(tracks);
 	}
 
+	/*
 	debugJoin = () => {
 		this.props.firebaseWrapper.joinRoom('abcd', 'default2');
 	};
@@ -245,7 +245,7 @@ class App extends Component {
 		this.props.firebaseWrapper.createRoom(
 			'JKLM',
 			'Test Create Room',
-			'Mitch',
+			'Bronwyn',
 			'fakeToken'
 		);
 	};
@@ -270,14 +270,15 @@ class App extends Component {
 			votes: 0,
 			addedBy: 'default',
 		});
-		this.props.firebaseWrapper.addSong(this.props.room.id, song);
+		this.props.firebaseWrapper.addSong(song);
 	};
-
+	*/
 	render() {
 		
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
 		console.log(songs);
+		
 		return (
 			
 			<Grid>
@@ -288,16 +289,11 @@ class App extends Component {
 							{ <small> Room Code: {this.state.roomCode}</small> }
 							<small> Room Code: {roomCode}</small>
 						</Col>
-						<Col md={2}>
-							<button onClick={this.debugJoin}>Join Room</button>
+						<Col md={3}>
+							<small>{this.props.room.roomName}</small>
 						</Col>
-						<Col md={2}>
-							<button onClick={this.debugCreate}>
-								Create Room
-							</button>
-						</Col>
-						<Col md={2}>
-							<button onClick={this.debugAdd}>Add Song</button>
+						<Col md={3}>
+							<Button onClick={this.debugAdd}>Add song</Button>
 						</Col>
 					</Row>
 				</PageHeader>
@@ -337,24 +333,6 @@ class App extends Component {
 	}
 
 	
-}
-App.propTypes = {
-  auth: PropTypes.objectOf(PropTypes.string),
-  room: PropTypes.objectOf(PropTypes.string),
-  songs: PropTypes.objectOf(PropTypes.string),
-  login: PropTypes.func,
-  joinRoom: PropTypes.func,
-  addSong: PropTypes.func,
-  readPlayback: PropTypes.func,
-}
-
-const mapStateToProps = state => {
-  return {
-    auth: state.login,
-    room: state.firebase.room,
-    songs: state.firebase.songs,
-    isPlaying: state.spotify.isPlaying,
-  }
-}
+};
 
 export default App;

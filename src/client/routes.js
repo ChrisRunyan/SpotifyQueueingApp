@@ -3,6 +3,7 @@ import { Router, Route, Link, Switch } from 'react-router-dom';
 import App from './App';
 import JoinPage from './JoinPage';
 import CreatePage from './CreatePage';
+import { Song } from './classes/SpotifyData'
 import Home from './Home';
 import { FirebaseWrapper } from './firebase';
 import io from 'socket.io-client';
@@ -29,13 +30,19 @@ class MainRoutes extends React.Component {
 		socket.on('firebase-create-success', (key, room) =>
 			this.displayRoom(new Room(key, room))
 		);
-		socket.on('firebase-refresh', songs =>
-			this.displayRoom(
-				new Room(this.state.room.id, {
+		socket.on('firebase-refresh', songs => {
+			let sList = []
+			Object.keys(songs).forEach(key =>
+				sList.push(new Song(songs[key]))
+			);
+			this.setState({
+				room: {
 					...this.state.room,
-					songs,
-				})
-			)
+					songs: sList
+				}
+			})
+			history.push(`/room/${this.state.room.id}`)
+		}
 		);
 		if (window.location.hash) {
 			history.push(window.location.hash.substring(1));
