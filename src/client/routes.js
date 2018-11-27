@@ -5,7 +5,7 @@ import JoinPage from './JoinPage';
 import CreatePage from './CreatePage';
 import { Song } from './classes/SpotifyData'
 import Home from './Home';
-import { FirebaseWrapper } from './firebase';
+import FirebaseWrapper from './classes/FirebaseWrapper';
 import io from 'socket.io-client';
 import { Room } from './classes/FirebaseData';
 import { createBrowserHistory } from 'history';
