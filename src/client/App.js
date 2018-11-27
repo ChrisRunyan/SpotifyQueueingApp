@@ -27,6 +27,7 @@ import { Song as SongData } from './classes/SpotifyData';
 //   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
 // })
 
+
 class App extends Component {
 // <<<<<<< HEAD
   // state = {
@@ -163,9 +164,14 @@ class App extends Component {
       
   //   )
   // }
+
+
 	componentDidMount() {
-		console.log("App mounted")
-	}
+    console.log("App mounted")
+    
+  }
+  
+
 
 	debugJoin = () => {
 		this.props.firebaseWrapper.joinRoom('abcd', 'default2');
@@ -266,7 +272,6 @@ class App extends Component {
 			</Grid>
 		);
 	}
-// >>>>>>> 11fc4fab0b8d775f8ea7013478d68d246611f38b
 }
 
 export default App;

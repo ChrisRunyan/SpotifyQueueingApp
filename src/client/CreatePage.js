@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
 
+var spotifyapi = require('spotify-web-api-js');
+var Spotify = new spotifyapi();
 
 class CreatePage extends Component {
     constructor(props) {
@@ -8,7 +10,8 @@ class CreatePage extends Component {
         this.state = {
             roomCode: '',
             roomName: '',
-            username: ''
+            username: '',
+            songList:''
         }
     }
 
@@ -30,9 +33,28 @@ class CreatePage extends Component {
             this.state.username, 
             this.props.accessToken
         )
+        
+        Spotify.setAccessToken(this.props.accessToken);
     }
-
+    
+    getSpotifyPlaylist(){
+        
+        Spotify.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x')
+            .then(function (data){
+                console.log("Playlist", data);
+                this.setState({
+                    songList: data.tracks.items              
+                })
+            }), then(function (err){
+              console.error("CreatePage.js getSpotifyPlaylist: ", err);
+        })
+    
+    }
+    
     render() {
+        
+        console.log(this.state.songList);
+
         return(
             <Form horizontal onSubmit={this.handleSubmit}>
                 <FormGroup controlId='roomCode'>
@@ -83,5 +105,7 @@ class CreatePage extends Component {
         )
     }
 }
+
+
 
 export default CreatePage
