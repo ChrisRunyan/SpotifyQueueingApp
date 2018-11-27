@@ -4,7 +4,8 @@ const dotenv = require('dotenv').config(); // Not explicitly used, but must be r
 const express = require('express');
 const querystring = require('querystring');
 const request = require('request');
-const port = process.env.PORT || 8080;
+// const port = process.env.PORT || 8080;
+const port = 8080;
 
 // Setting up the server
 const app = express();

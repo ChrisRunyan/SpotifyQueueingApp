@@ -1,4 +1,5 @@
 import React from 'react';
+import SocketContext from '../socket-context'
 import { FormControl, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 
@@ -7,6 +8,7 @@ class SongSearch extends React.Component {
     super(props, context);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
       value: ''
@@ -25,9 +27,18 @@ class SongSearch extends React.Component {
     this.setState({ value: e.target.value });
   }
 
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log(this.getValidationState())
+    // console.log(this.props.socket)
+    this.props.socket.emit("addSong");
+    this.props.socket.on("song", data => 
+      this.props.addSong(data.title, data.artist, data.album, data.songLength))
+  }
+
   render() {
     return (
-      <form>
+      <form onSubmit={this.handleSubmit}>
         <FormGroup
           controlId="formBasicText"
           validationState={this.getValidationState()}

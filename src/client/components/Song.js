@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import Counter from './Counter';
 
 class Song extends React.Component {
     render() {
