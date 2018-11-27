@@ -27,7 +27,6 @@ import { Song as SongData } from './classes/SpotifyData';
 //   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
 // })
 
-<<<<<<< HEAD
 class App extends Component {
 // <<<<<<< HEAD
   // state = {
@@ -60,7 +59,6 @@ class App extends Component {
   //     //Problem is song is being identified by index instead of object property's index
   //   }));
   // }
-=======
 
   yo = "hi";
 
@@ -82,7 +80,6 @@ class App extends Component {
       //Problem is song is being identified by index instead of object property's index
     }));
   }
->>>>>>> f95bb1b3f1f17e076298ce1069438c0853c24c68
 
   prevSongId = 2;
 
