@@ -27,6 +27,7 @@ import { Song as SongData } from './classes/SpotifyData';
 //   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
 // })
 
+<<<<<<< HEAD
 class App extends Component {
 // <<<<<<< HEAD
   // state = {
@@ -59,6 +60,29 @@ class App extends Component {
   //     //Problem is song is being identified by index instead of object property's index
   //   }));
   // }
+=======
+
+  yo = "hi";
+
+  componentDidMount() {
+    const {endpoint} = this.state;
+    console.log("foo")
+    this.socket.on("initialLoad", data => this.setState({ songs: data }));
+    console.log("ff")
+  }
+
+  handleVoteChange = (index, delta) => {
+    console.log(delta);
+    // console.log(this.state);
+    var songIndex = this.state.songs.findIndex( song => song.id == index);
+    this.socket.emit("changeVote", index, delta);
+    // this.socket.on("vote", data => )
+    this.setState( prevState => ({
+      votes: prevState.songs[songIndex].votes += delta
+      //Problem is song is being identified by index instead of object property's index
+    }));
+  }
+>>>>>>> f95bb1b3f1f17e076298ce1069438c0853c24c68
 
   prevSongId = 2;
 
