@@ -1,20 +1,29 @@
-import firebase from 'firebase'
+import { Song } from './classes/SpotifyData';
 
-const config = {
-    apiKey: "AIzaSyDqOLOBFwnUPqRAVRZY2HjDKNAZ3ZqlzKU",
-    authDomain: "apollo-queue-app.firebaseapp.com",
-    databaseURL: "https://apollo-queue-app.firebaseio.com",
-    projectId: "apollo-queue-app",
-    storageBucket: "apollo-queue-app.appspot.com",
-    messagingSenderId: "873661626171"
-  }
+export class FirebaseWrapper {
+	constructor(socket) {
+		this.socket = socket;
+	}
 
-const app = firebase.initializeApp(config)
+	joinRoom = (roomCode, username = 'default') => {
+		this.socket.emit('firebase-join', roomCode, username);
+	};
 
-export default app
-export const databaseRef = app.database().ref()
-export const roomRef = databaseRef.child("rooms");
-export const songRef = databaseRef.child("songs");
+	createRoom = (roomCode, roomName, username, access_token) => {
+		this.socket.emit(
+			'firebase-create',
+			roomCode,
+			roomName,
+			username,
+			access_token
+		);
+	};
 
-//TODO get rooms ref && export
-//TODO get songs ref && export
+	addSong = song => {
+		this.socket.emit('firebase-add-song', song);
+	};
+
+	voteOnSong = (songKey, currentVotes) => {
+		this.socket.emit('firebase-vote', songKey, currentVotes) 
+	}
+}

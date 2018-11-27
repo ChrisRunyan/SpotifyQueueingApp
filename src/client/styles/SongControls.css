@@ -23,3 +23,17 @@ div.container {
 .play-button:hover {
     padding: 8px 18px;
 }
+
+.traversal-button {
+    border-radius: 18px;
+    padding: 5px 15px;
+    background-color: black;
+    border: 2px solid white;
+    color: white;
+    text-size-adjust: inherit;
+    -webkit-transition: all .15s linear;
+    -moz-transition: all .15s linear;
+    -o-transition: all .15s linear;
+    transition: all .15s linear;
+    transition-timing-function: ease-out;
+}

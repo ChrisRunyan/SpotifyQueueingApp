@@ -1,100 +1,164 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './styles/App.css';
 
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { loginSuccess } from './actions/loginAction'
-import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
+import { Table, Grid, Row, Col, PageHeader, Button } from 'react-bootstrap';
 
-import SongList from './components/SongList'
-import SongControls from './components/SongControls'
-import SongListItem from './components/SongListItem'
-import { getCurrentPlaybackState } from './actions/spotifyAction';
+// import PropTypes from 'prop-types'
+// import { connect } from 'react-redux'
+// import { loginSuccess } from './actions/loginAction'
+// import { joinRoom, fetchSong, pushSong } from './actions/firebaseAction'
 
-import io from 'socket.io-client'
+import Song from './components/Song';
+import SongSearch from './components/SongSearch';
+import SongList from './components/SongList';
+// import SongControls from './components/SongControls'
+// import SongListItem from './components/SongListItem'
+// import { getCurrentPlaybackState } from './actions/spotifyAction';
 
-const socket = io({ path: '/ws' })
+import io from 'socket.io-client';
+import { FirebaseWrapper } from './firebase';
+import { Room } from './classes/FirebaseData';
+import { Song as SongData } from './classes/SpotifyData';
+// const socket = io({ path: '/ws' })
+
+// socket.on("firebase-join-success", room => {
+//   console.log(`Firebase Join Success!! Room=${JSON.stringify(room)}`)
+// })
 
 class App extends Component {
+	// state = {
+	// 	roomCode: 'HJRA',
+	// 	songs: [
+	// 		{
+	// 			title: 'Chicago',
+	// 			artist: 'Sufjan Stevens',
+	// 			album: 'Illinois',
+	// 			songLength: '6:05',
+	// 			votes: 5,
+	// 			id: 0,
+	// 		},
+	// 		{
+	// 			title: 'Dean Town',
+	// 			artist: 'Vulfpeck',
+	// 			album: 'The Beautiful Game',
+	// 			songLength: '3:33',
+	// 			votes: 3,
+	// 			id: 1,
+	// 		},
+	// 		{
+	// 			title: 'What I Got',
+	// 			artist: 'Sublime',
+	// 			album: 'Sublime',
+	// 			songLength: '2:51',
+	// 			votes: 0,
+	// 			id: 2,
+	// 		},
+	// 	],
+	// };
 
-  getHashParams = () => {
-    let hashParams = {};
-    let e, r = /([^&;=]+)=?([^&;]*)/g,
-    q = window.location.hash.substring(1);
+	componentDidMount() {
+		console.log("App mounted")
+	}
 
-    while ( e = r.exec(q)) {
-        hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
+	debugJoin = () => {
+		this.props.firebaseWrapper.joinRoom('abcd', 'default2');
+	};
 
-    return hashParams
-  }
+	debugCreate = () => {
+		this.props.firebaseWrapper.createRoom(
+			'JKLM',
+			'Test Create Room',
+			'Mitch',
+			'fakeToken'
+		);
+	};
 
-  componentWillMount() {
-    const hashParams = this.getHashParams()
-    if (!hashParams.access_token) {
-      window.location.href = '/api/login'
-      //socket.emit('login')
-    } else {
-      this.props.login(hashParams)
-    }
-  }
+	debugAdd = () => {
+		const song = new SongData({
+			id: '1jZhF1p0fLaVZHAyfjkumE',
+			name: 'Social',
+			query: 'https://api.spotify.com/v1/tracks/1jZhF1p0fLaVZHAyfjkumE',
+			artist: {
+				name: 'Smallpools',
+				id: '4iiQabGKtS2RtTKpVkrVTw',
+				query:
+					'https://api.spotify.com/v1/artists/4iiQabGKtS2RtTKpVkrVTw',
+			},
+			album: {
+				name: 'Social',
+				id: '0lOMCvOnoPQ5s8HAPrXlKv',
+				query:
+					'https://api.spotify.com/v1/albums/0lOMCvOnoPQ5s8HAPrXlKv',
+			},
+			votes: 0,
+			addedBy: 'default',
+		});
+		this.props.firebaseWrapper.addSong(song);
+	};
 
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.auth.access_token) {
-      this.props.readPlayback({ access_token: nextProps.auth.access_token })
-    }
-  }
+	vote = (songKey, currentVotes) => {
+		console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`)
+		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes)
+	}
 
-  componentDidMount() {
-    console.log("DidMount: Going to emit")
-    socket.emit("ping")
-    socket.emit('firebase-join', "test_room")
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Apollo Queue for Spotify</h1>
-        </header>
-        <button onClick={() => socket.emit("firebase-join", "test_room")} >Join</button>
-        {/* <SongListItem>
-          <SongControls />
-        </SongListItem> */}
-      </div>
-    );
-  }
+	render() {
+		let roomCode = this.props.room.roomCode
+		let songs = this.props.room.songs
+		console.log(songs);
+		return (
+			<Grid>
+				<PageHeader>
+					<Row>
+						<Col md={3}>Apollo</Col>
+						<Col md={3}>
+							{/* <small> Room Code: {this.state.roomCode}</small> */}
+							<small> Room Code: {roomCode}</small>
+						</Col>
+						<Col md={3}>
+							<small>{this.props.room.roomName}</small>
+						</Col>
+						<Col md={3}>
+							<Button onClick={this.debugAdd}>Add song</Button>
+						</Col>
+					</Row>
+				</PageHeader>
+				<Row>
+					<SongSearch />
+				</Row>
+				<Row>
+					<Table striped bordered condensed hover>
+						<thead>
+							<tr>
+								<th>Song</th>
+								<th>Artist</th>
+								<th>Album</th>
+								<th>Length</th>
+								<th>Votes</th>
+							</tr>
+						</thead>
+						<SongList songs={songs} vote={this.vote} />
+						{/* <tbody>
+							{songs.map((song, index) => (
+								// console.log(`Song: ${song}`)
+								<Song
+									title={song.data.name}
+									artist={song.data.artist.name}
+									album={song.data.album.name}
+									songLength={'0'}
+									votes={song.data.votes}
+									id={song.data.id}
+									key={song.key}
+									songKey={song.key}
+									index={index}
+									vote={this.vote}
+								/>
+							))}
+						</tbody> */}
+					</Table>
+				</Row>
+			</Grid>
+		);
+	}
 }
 
-App.propTypes = {
-  auth: PropTypes.objectOf(PropTypes.string),
-  room: PropTypes.objectOf(PropTypes.string),
-  songs: PropTypes.objectOf(PropTypes.string),
-  login: PropTypes.func,
-  joinRoom: PropTypes.func,
-  addSong: PropTypes.func,
-  readPlayback: PropTypes.func,
-}
-
-const mapStateToProps = state => {
-  return {
-    auth: state.login,
-    room: state.firebase.room,
-    songs: state.firebase.songs,
-    isPlaying: state.spotify.isPlaying,
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    login: (authParams = null) => { dispatch(loginSuccess(authParams)) },
-    joinRoom: (roomId) => { dispatch(joinRoom(roomId)) },
-    getSong: (songId) => { dispatch(fetchSong(songId)) },
-    addSong: (roomId, songId) => { dispatch(pushSong(roomId, songId)) },
-    readPlayback: tokens => dispatch(getCurrentPlaybackState(tokens)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App;
