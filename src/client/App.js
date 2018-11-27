@@ -108,7 +108,7 @@ class App extends Component {
 					</Row>
 				</PageHeader>
 				<Row>
-					<SongSearch />
+					<SongSearch access_token={this.props.room.access_token} />
 				</Row>
 				<Row>
 					<Table striped bordered condensed hover>
