@@ -16,20 +16,22 @@ class SpotifyWrapper {
      * @param {String} query The search query
      * @param {Function} callback A callback function that takes one parameter - A list
      *  Song objects
+     * @return {Promise} A Promise object containing the search results
      */
 	searchSong = (query, callback) => {
         console.log(`Access Token: ${this.spotify.getAccessToken()}`)
-		this.spotify.search(query, ['track'], {}, (err, res) => {
-			if (err) {
-				console.log(`Error Searching: ${JSON.stringify(err)}`);
-			} else {
-                console.log(res);
-				res.tracks.items.forEach(item => {
-                    const song = new SpotifyData.Song(item);
-                    console.log(song);
-                })
-			}
-		});
+        return this.spotify.searchTracks(query);
+		// this.spotify.search(query, ['track'], {}, (err, res) => {
+		// 	if (err) {
+		// 		console.log(`Error Searching: ${JSON.stringify(err)}`);
+		// 	} else {
+        //         console.log(res);
+		// 		res.tracks.items.forEach(item => {
+        //             const song = new SpotifyData.Song(item);
+        //             console.log(song);
+        //         })
+		// 	}
+		// });
 	};
 }
 
