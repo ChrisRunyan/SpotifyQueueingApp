@@ -6,7 +6,7 @@ import {
 	ControlLabel,
 	HelpBlock,
 } from 'react-bootstrap';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, TypeaheadMenu, MenuItem } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import SpotifyWrapper from '../classes/SpotifyWrapper';
 
@@ -43,36 +43,20 @@ class SongSearch extends React.Component {
 		e.preventDefault();
 		console.log(this.getValidationState());
 		this.state.spotify.searchSong(this.state.value);
-		// console.log(this.props.socket)
-		// this.props.socket.emit('addSong');
-		// this.props.socket.on('song', data =>
-		// 	this.props.addSong(
-		// 		data.title,
-		// 		data.artist,
-		// 		data.album,
-		// 		data.songLength
-		// 	)
-		// );
 	};
+
+	// renderMenu = (results, menuProps) => {
+	// 	return (
+	// 		<TypeaheadMenu {...menuProps}>
+	// 			{results.map((result, index) => {
+	// 				<MenuItem option={}
+	// 			})}
+	// 		</TypeaheadMenu>
+	// 	)
+	// }
 
 	render() {
 		return (
-			// <form onSubmit={this.handleSubmit}>
-			// 	<FormGroup
-			// 		controlId="formBasicText"
-			// 		validationState={this.getValidationState()}
-			// 	>
-			// 		{/* <ControlLabel>Working example with validation</ControlLabel> */}
-			// 		<FormControl
-			// 			type="text"
-			// 			value={this.state.value}
-			// 			placeholder="Search..."
-			// 			onChange={this.handleChange}
-			// 		/>
-			// 		<FormControl.Feedback />
-			// 		{/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
-			// 	</FormGroup>
-			// </form>
 			<AsyncTypeahead
 				isLoading={this.state.isLoading}
 				onSearch={query => {
@@ -87,7 +71,17 @@ class SongSearch extends React.Component {
 					});
 				}}
 				options={this.state.options}
-				labelKey={"name"}
+				labelKey={(option) => `${option.name} - ${option.artists[0].name}`}
+				// renderMenu={(results, menuProps) => {
+				// 	<TypeaheadMenu {...menuProps}>
+				// 		{results.map((result, index) => {
+				// 			<MenuItem option={result} position={index}>
+				// 				{/* {result.name} - {result.artists[0].name} */}
+				// 				{result.label}
+				// 			</MenuItem>;
+				// 		})}
+				// 	</TypeaheadMenu>;
+				// }}
 			/>
 		);
 	}
