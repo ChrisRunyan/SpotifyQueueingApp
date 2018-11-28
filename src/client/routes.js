@@ -20,6 +20,7 @@ class MainRoutes extends React.Component {
 		this.state = {
 			firebaseWrapper: new FirebaseWrapper(socket),
 			room: null,
+			user: null,
 		};
 	}
 
@@ -59,6 +60,9 @@ class MainRoutes extends React.Component {
 		});
 
 	joinRoom = (roomCode, username) => {
+		this.setState({
+			user: { username }
+		});
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
 
@@ -107,6 +111,7 @@ class MainRoutes extends React.Component {
 						render={props => (
 							<App
 								room={this.state.room}
+								user={this.state.user}
 								firebaseWrapper={this.state.firebaseWrapper}
 							/>
 						)}

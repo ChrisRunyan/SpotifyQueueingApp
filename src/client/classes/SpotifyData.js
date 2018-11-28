@@ -26,8 +26,9 @@ export class Song extends SpotifyData {
 
 		this.addedBy = song.addedBy ? song.addedBy : '';
 		this.votes = song.votes ? song.votes : 0;
-		// this.duration = song.duration ? song.duration : 0
-		// this.progress = song.progress ? song.progress : 0
+
+		this.duration = song.duration ? song.duration : 0
+		this.progress = song.progress ? song.progress : 0
 
 		const primaryArtist = song.artists ? song.artists[0] : song.artist;
 

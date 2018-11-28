@@ -1,14 +1,15 @@
 import React from 'react';
-import SocketContext from '../socket-context';
-import {
-	FormControl,
-	FormGroup,
-	ControlLabel,
-	HelpBlock,
-} from 'react-bootstrap';
+// import SocketContext from '../socket-context';
+// import {
+// 	FormControl,
+// 	FormGroup,
+// 	ControlLabel,
+// 	HelpBlock,
+// } from 'react-bootstrap';
 import { AsyncTypeahead, TypeaheadMenu, MenuItem } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import SpotifyWrapper from '../classes/SpotifyWrapper';
+import { Song } from '../classes/SpotifyData';
 
 class SongSearch extends React.Component {
 	constructor(props, context) {
@@ -35,29 +36,25 @@ class SongSearch extends React.Component {
 		return null;
 	};
 
-	handleChange = e => {
-		this.setState({ value: e.target.value });
-	};
+	// handleChange = e => {
+	// 	this.setState({ value: e.target.value });
+	// };
 
-	handleSubmit = e => {
-		e.preventDefault();
-		console.log(this.getValidationState());
-		this.state.spotify.searchSong(this.state.value);
-	};
+	// handleSubmit = e => {
+	// 	e.preventDefault();
+	// 	console.log(this.getValidationState());
+	// 	this.state.spotify.searchSong(this.state.value);
+	// };
 
-	// renderMenu = (results, menuProps) => {
-	// 	return (
-	// 		<TypeaheadMenu {...menuProps}>
-	// 			{results.map((result, index) => {
-	// 				<MenuItem option={}
-	// 			})}
-	// 		</TypeaheadMenu>
-	// 	)
+	// selectSong = (data) => {
+	// 	this.props.submit(data);
 	// }
 
 	render() {
 		return (
 			<AsyncTypeahead
+				searchText={'...'}
+				useCache
 				isLoading={this.state.isLoading}
 				onSearch={query => {
 					this.setState({
@@ -72,16 +69,12 @@ class SongSearch extends React.Component {
 				}}
 				options={this.state.options}
 				labelKey={(option) => `${option.name} - ${option.artists[0].name}`}
-				// renderMenu={(results, menuProps) => {
-				// 	<TypeaheadMenu {...menuProps}>
-				// 		{results.map((result, index) => {
-				// 			<MenuItem option={result} position={index}>
-				// 				{/* {result.name} - {result.artists[0].name} */}
-				// 				{result.label}
-				// 			</MenuItem>;
-				// 		})}
-				// 	</TypeaheadMenu>;
-				// }}
+				onChange={(option) => {
+					console.log(option);
+					if(option[0]) {
+						this.props.submit(option[0]);
+					}
+				}}
 			/>
 		);
 	}

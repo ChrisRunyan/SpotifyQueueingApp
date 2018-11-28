@@ -59,28 +59,50 @@ class App extends Component {
 		console.log('App mounted');
 	}
 
-	debugAdd = () => {
+	// debugAdd = () => {
+	// 	const song = new SongData({
+	// 		id: '1jZhF1p0fLaVZHAyfjkumE',
+	// 		name: 'Social',
+	// 		query: 'https://api.spotify.com/v1/tracks/1jZhF1p0fLaVZHAyfjkumE',
+	// 		artist: {
+	// 			name: 'Smallpools',
+	// 			id: '4iiQabGKtS2RtTKpVkrVTw',
+	// 			query:
+	// 				'https://api.spotify.com/v1/artists/4iiQabGKtS2RtTKpVkrVTw',
+	// 		},
+	// 		album: {
+	// 			name: 'Social',
+	// 			id: '0lOMCvOnoPQ5s8HAPrXlKv',
+	// 			query:
+	// 				'https://api.spotify.com/v1/albums/0lOMCvOnoPQ5s8HAPrXlKv',
+	// 		},
+	// 		votes: 0,
+	// 		addedBy: 'default',
+	// 	});
+	// 	this.props.firebaseWrapper.addSong(song);
+	// };
+
+	addSong = (songData) => {
+		console.log(songData);
 		const song = new SongData({
-			id: '1jZhF1p0fLaVZHAyfjkumE',
-			name: 'Social',
-			query: 'https://api.spotify.com/v1/tracks/1jZhF1p0fLaVZHAyfjkumE',
+			name: songData.name,
+			id: songData.id,
+			query: songData.href,
 			artist: {
-				name: 'Smallpools',
-				id: '4iiQabGKtS2RtTKpVkrVTw',
-				query:
-					'https://api.spotify.com/v1/artists/4iiQabGKtS2RtTKpVkrVTw',
+				name: songData.artists[0].name,
+				id: songData.artists[0].id,
+				query: songData.artists[0].href
 			},
 			album: {
-				name: 'Social',
-				id: '0lOMCvOnoPQ5s8HAPrXlKv',
-				query:
-					'https://api.spotify.com/v1/albums/0lOMCvOnoPQ5s8HAPrXlKv',
+				name: songData.album.name,
+				id: songData.album.id,
+				query: songData.album.href
 			},
-			votes: 0,
-			addedBy: 'default',
+			duration: songData.duration_ms,
+
 		});
 		this.props.firebaseWrapper.addSong(song);
-	};
+	}
 
 	vote = (songKey, currentVotes) => {
 		console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`);
@@ -108,7 +130,10 @@ class App extends Component {
 					</Row>
 				</PageHeader>
 				<Row>
-					<SongSearch access_token={this.props.room.access_token} />
+					<SongSearch 
+						access_token={this.props.room.access_token} 
+						submit={this.addSong}
+					/>
 				</Row>
 				<Row>
 					<Table striped bordered condensed hover>
