@@ -67,6 +67,9 @@ class MainRoutes extends React.Component {
 	};
 
 	createRoom = (roomCode, roomName, username, access_token) => {
+		this.setState({
+			user: { username }
+		})
 		this.state.firebaseWrapper.createRoom(
 			roomCode,
 			roomName,

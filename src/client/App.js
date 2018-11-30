@@ -3,6 +3,7 @@ import SocketContext from './socket-context';
 import './styles/App.css';
 import { Table, Grid, Row, Col, PageHeader, Button } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
+import SongControls from './components/SongControls';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
 
@@ -16,10 +17,10 @@ class App extends Component {
 	// socket = socketIOClient("http://127.0.0.1:4001");
 
 	componentDidMount() {
-		const { endpoint } = this.state;
-		console.log('foo');
-		this.socket.on('initialLoad', data => this.setState({ songs: data }));
-		console.log('ff');
+		// const { endpoint } = this.state;
+		// console.log('foo');
+		// this.socket.on('initialLoad', data => this.setState({ songs: data }));
+		// console.log('ff');
 	}
 
 	// handleVoteChange = (index, delta) => {
@@ -59,29 +60,6 @@ class App extends Component {
 		console.log('App mounted');
 	}
 
-	// debugAdd = () => {
-	// 	const song = new SongData({
-	// 		id: '1jZhF1p0fLaVZHAyfjkumE',
-	// 		name: 'Social',
-	// 		query: 'https://api.spotify.com/v1/tracks/1jZhF1p0fLaVZHAyfjkumE',
-	// 		artist: {
-	// 			name: 'Smallpools',
-	// 			id: '4iiQabGKtS2RtTKpVkrVTw',
-	// 			query:
-	// 				'https://api.spotify.com/v1/artists/4iiQabGKtS2RtTKpVkrVTw',
-	// 		},
-	// 		album: {
-	// 			name: 'Social',
-	// 			id: '0lOMCvOnoPQ5s8HAPrXlKv',
-	// 			query:
-	// 				'https://api.spotify.com/v1/albums/0lOMCvOnoPQ5s8HAPrXlKv',
-	// 		},
-	// 		votes: 0,
-	// 		addedBy: 'default',
-	// 	});
-	// 	this.props.firebaseWrapper.addSong(song);
-	// };
-
 	addSong = (songData) => {
 		console.log(songData);
 		const song = new SongData({
@@ -101,18 +79,18 @@ class App extends Component {
 			duration: songData.duration_ms,
 
 		});
-		this.props.firebaseWrapper.addSong(song);
+		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	}
 
 	vote = (songKey, currentVotes) => {
-		console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`);
+		// console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`);
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
 
 	render() {
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
-		console.log(songs);
+		// console.log(this.props.user);
 		return (
 			<Grid>
 				<PageHeader>
@@ -124,9 +102,6 @@ class App extends Component {
 						<Col md={3}>
 							<small>{this.props.room.roomName}</small>
 						</Col>
-						<Col md={3}>
-							<Button onClick={this.debugAdd}>Add song</Button>
-						</Col>
 					</Row>
 				</PageHeader>
 				<Row>
@@ -136,18 +111,12 @@ class App extends Component {
 					/>
 				</Row>
 				<Row>
-					<Table striped bordered condensed hover>
-						<thead>
-							<tr>
-								<th>Song</th>
-								<th>Artist</th>
-								<th>Album</th>
-								<th>Length</th>
-								<th>Votes</th>
-							</tr>
-						</thead>
-						<SongList songs={songs} vote={this.vote} />
-					</Table>
+					<SongList songs={songs} vote={this.vote} />
+				</Row>
+				<Row>
+					<SongControls 
+						access_token={this.props.room.access_token}
+					/>
 				</Row>
 			</Grid>
 		);

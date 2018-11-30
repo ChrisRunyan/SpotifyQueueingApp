@@ -70,13 +70,18 @@ module.exports = class Firebase {
 		});
 	}
 
-	addSong(song) {
+	addSong(song, username) {
 		// const roomRef = roomsRef.child(roomKey)
 		// return roomRef.child("songs").push(song)
-		console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
+		// console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
 		if (this.currentRoomRef) {
-			console.log(`Adding Song: ${JSON.stringify(song)}`);
-			this.currentRoomRef.child('songs').push(song);
+			console.log(`Adding Song: username=${username}`)
+			// console.log(`Adding Song: ${JSON.stringify(song)}`);
+			this.currentRoomRef.child('songs').push(
+				Object.assign({
+					addedBy: username,
+				}, song)
+			);
 		}
 	}
 

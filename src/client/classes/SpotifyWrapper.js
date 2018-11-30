@@ -8,31 +8,41 @@ class SpotifyWrapper {
 	 */
 	constructor(access_token) {
 		this.spotify = new SpotifyWebApi();
-		this.spotify.setAccessToken(access_token);
+        this.spotify.setAccessToken(access_token);
 	}
 
     /**
      * Search for a song on Spotify
      * @param {String} query The search query
-     * @param {Function} callback A callback function that takes one parameter - A list
-     *  Song objects
      * @return {Promise} A Promise object containing the search results
      */
-	searchSong = (query, callback) => {
-        console.log(`Access Token: ${this.spotify.getAccessToken()}`)
+	searchSong = (query) => {
         return this.spotify.searchTracks(query);
-		// this.spotify.search(query, ['track'], {}, (err, res) => {
-		// 	if (err) {
-		// 		console.log(`Error Searching: ${JSON.stringify(err)}`);
-		// 	} else {
-        //         console.log(res);
-		// 		res.tracks.items.forEach(item => {
-        //             const song = new SpotifyData.Song(item);
-        //             console.log(song);
-        //         })
-		// 	}
-		// });
-	};
+    };
+    
+    searchAll = (query) => {
+        return this.spotify.search(query, ['album', 'artist', 'playlist', 'track']);
+    }
+
+    getIsPlaying = () => {
+        return this.spotify.getMyCurrentPlaybackState()
+            .then((err, res) => {
+                if(err) {
+                    console.log(err);
+                } else {
+                    return res.is_playing;
+                }
+            })
+    }
+
+    play = () => {
+        return this.spotify.play();
+    }
+
+    pause = () => {
+        return this.spotify.pause();
+    }
+
 }
 
 export default SpotifyWrapper;

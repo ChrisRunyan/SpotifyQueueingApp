@@ -1,5 +1,6 @@
 import React from 'react';
 import Song from './Song';
+import { Table } from 'react-bootstrap';
 class SongList extends React.Component {
 	sortSongs(songA, songB) {
 		if (songA.votes < songB.votes) {
@@ -18,22 +19,33 @@ class SongList extends React.Component {
             return b.data.votes - a.data.votes;
         });
 		return (
-			<tbody>
-				{sortableSongs.map((song, index) => (
-					<Song
-						title={song.data.name}
-						artist={song.data.artist.name}
-						album={song.data.album.name}
-						songLength={'0'}
-						votes={song.data.votes}
-						id={song.data.id}
-						key={song.key}
-						songKey={song.key}
-						index={index}
-						vote={this.props.vote}
-					/>
-				))}
-			</tbody>
+			<Table striped bordered condensed hover>
+				<thead>
+					<tr>
+						<th>Song</th>
+						<th>Artist</th>
+						<th>Album</th>
+						<th>Length</th>
+						<th>Votes</th>
+					</tr>
+				</thead>
+				<tbody>
+					{sortableSongs.map((song, index) => (
+						<Song
+							title={song.data.name}
+							artist={song.data.artist.name}
+							album={song.data.album.name}
+							songLength={'0'}
+							votes={song.data.votes}
+							id={song.data.id}
+							key={song.key}
+							songKey={song.key}
+							index={index}
+							vote={this.props.vote}
+						/>
+					))}
+				</tbody>
+			</Table>
 		);
 	}
 }

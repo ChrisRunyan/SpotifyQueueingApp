@@ -34,8 +34,9 @@ class FirebaseWrapper {
 	/**
 	 * Add a song to the user's room, if they are in a valid room
 	 * @param {SpotifyData.Song} song The song to add to the room (firebase: rooms.<room_id>.songs) 
+	 * @param {String} username The username of the user that submitted the song
 	 */
-	addSong = song => {
+	addSong = (song, username) => {
 		this.socket.emit('firebase-add-song', song);
 	};
 
