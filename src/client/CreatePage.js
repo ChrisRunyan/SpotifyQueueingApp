@@ -6,7 +6,6 @@ const divStyle = {
 	verticalAlign: "middle",
 	textAlign: "center"
 }
-
 class CreatePage extends Component {
     constructor(props) {
         super(props)

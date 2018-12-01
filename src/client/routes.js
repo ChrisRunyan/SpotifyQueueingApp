@@ -1,11 +1,12 @@
 import React from 'react';
-import { Router, Route, Link, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import App from './App';
 import JoinPage from './JoinPage';
 import CreatePage from './CreatePage';
 import { Song } from './classes/SpotifyData'
 import Home from './Home';
 import FirebaseWrapper from './classes/FirebaseWrapper';
+import SpotifyWrapper from './classes/SpotifyWrapper';
 import io from 'socket.io-client';
 import { Room } from './classes/FirebaseData';
 import { createBrowserHistory } from 'history';
@@ -20,6 +21,7 @@ class MainRoutes extends React.Component {
 		super(props);
 		this.state = {
 			firebaseWrapper: new FirebaseWrapper(socket),
+			spotifyWrapper: null,
 			room: null,
 			user: null,
 		};
@@ -29,13 +31,12 @@ class MainRoutes extends React.Component {
 		socket.on('firebase-join-success', (key, room) =>
 			this.displayRoom(new Room(key, room))
 		);
-		socket.on('firebase-create-success', (key, room) =>
+		socket.on('firebase-create-success', (key, room) => {
 			this.displayRoom(new Room(key, room))
-		);
+		});
 		socket.on('firebase-refresh', songs => {
 			let sList = []
 			Object.keys(songs).forEach(key =>
-				// sList.push(new Song(songs[key]))
 				sList.push({
 					key: key,
 					data: new Song(songs[key])
@@ -67,17 +68,24 @@ class MainRoutes extends React.Component {
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
 
-	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken, playlistId) => {
 		this.setState({
-			user: { username }
-		})
-		this.state.firebaseWrapper.createRoom(
-			roomCode,
-			roomName,
-			username,
-			access_token,
-			refreshToken
-		);
+			user: { username },
+			spotifyWrapper: new SpotifyWrapper(access_token, refreshToken),
+		}, () => {
+			this.state.spotifyWrapper.createPlaylist(roomName, res => {
+				console.log(res);
+				this.state.firebaseWrapper.createRoom(
+					roomCode,
+					roomName,
+					username,
+					access_token,
+					refreshToken,
+					res.id
+				);
+			})
+		});
+		
 	};
 
 	login = () => {

@@ -15,7 +15,6 @@ class SongList extends React.Component {
 	render() {
         const sortableSongs = this.props.songs;
         sortableSongs.sort((a, b) => {
-            console.log(typeof(a.votes));
             return b.data.votes - a.data.votes;
         });
 		return (

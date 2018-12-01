@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import SocketContext from './socket-context';
 import './styles/App.css';
 import { Table, Grid, Row, Col, PageHeader, Button, Image } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
@@ -16,14 +15,13 @@ class App extends Component {
       spotify: new SpotifyWrapper(this.props.room.access_token, 
         this.props.room.refresh_token),
 		};
+
   }
-  
 	componentDidMount() {
 		console.log('App mounted');
 	}
 
 	addSong = (songData) => {
-		// console.log(songData);
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -41,12 +39,22 @@ class App extends Component {
 			duration: songData.duration_ms,
 
 		});
+		this.state.spotify.addSongToPlaylist(this.props.room.playlistId, song.id, res => res);
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	}
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
+
+	getTopSong = () => {
+		if(!this.props.room.songs) {
+			return null;
+		}
+		const songs = this.props.room.songs;
+		songs.sort((a, b) => b.data.votes - a.data.votes);
+		return songs[0];
+	}
 
 	render() {
 		let roomCode = this.props.room.roomCode;
@@ -82,6 +90,7 @@ class App extends Component {
 				<Row>
 					<SongControls 
 						spotify={this.state.spotify}
+						getNext={this.getTopSong}
 					/>
 				</Row>
 			</Grid>

@@ -1,11 +1,4 @@
 import React from 'react';
-// import SocketContext from '../socket-context';
-import // FormControl,
-// FormGroup,
-// ControlLabel,
-// HelpBlock,
-// MenuItem
-'react-bootstrap';
 import {
 	AsyncTypeahead,
 	// Menu,
@@ -13,20 +6,14 @@ import {
 	// Highlighter,
 } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-// import SpotifyWrapper from '../classes/SpotifyWrapper';
-// import { Song } from '../classes/SpotifyData';
 
 class SongSearch extends React.Component {
 	constructor(props, context) {
 		super(props, context);
-		// console.log(
-		// 	`Access Token in SongSearch constructor: ${this.props.access_token}`
-		// );
 		this.state = {
 			isLoading: false,
 			value: '',
 			options: [],
-			// spotify: new SpotifyWrapper(this.props.access_token),
 		};
 	}
 
@@ -74,13 +61,6 @@ class SongSearch extends React.Component {
 							options: res.tracks.items,
 						})
 					})
-					// .then(res => {
-					// 	console.log(res);
-					// 	this.setState({
-					// 		isLoading: false,
-					// 		options: res.tracks.items
-					// 	});
-					// });
 				}}
 				options={this.state.options}
 				labelKey={option =>
