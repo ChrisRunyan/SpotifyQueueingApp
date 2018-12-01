@@ -38,18 +38,8 @@ class JoinPage extends Component {
             <div style={divStyle}>
                 <Grid>
                     <PageHeader>
-                        {/* <Row>
-                            <Col md={3}>Apollo</Col> */}
-                            Apollo
-                            {/* <Col md={3}>
-                                <small> Room Code: {roomCode}</small>
-                            </Col>
-                            <Col md={3}>
-                                <small>{this.props.room.roomName}</small>
-                            </Col> */}
-                        {/* </Row> */}
+                        Apollo
                     </PageHeader>
-                    {/* C:\Users\rpput\Documents\SpotifyQueuingApp\SpotifyQueueingApp\src\client\images\apollo_icon_black.png */}
                     <Row><Image src={apollo} style={{width: "200px"}} rounded /></Row>
                     <br/>
                 <Form horizontal onSubmit={this.handleSubmit}>
