@@ -66,7 +66,7 @@ class MainRoutes extends React.Component {
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
 
-	createRoom = (roomCode, roomName, username, access_token) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
 		this.setState({
 			user: { username }
 		})
@@ -74,7 +74,8 @@ class MainRoutes extends React.Component {
 			roomCode,
 			roomName,
 			username,
-			access_token
+			access_token,
+			refreshToken
 		);
 	};
 
@@ -97,10 +98,11 @@ class MainRoutes extends React.Component {
 					/>
 					<Route
 						exact
-						path="/login/:accessToken/:redirectToken"
+						path="/login/:accessToken/:refreshToken"
 						render={({ match }) => (
 							<CreatePage
 								accessToken={match.params.accessToken}
+								refreshToken={match.params.refreshToken}
 								onSubmit={this.createRoom}
 							/>
 						)}

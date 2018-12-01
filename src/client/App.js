@@ -6,6 +6,7 @@ import SongSearch from './components/SongSearch';
 import SongControls from './components/SongControls';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
+import SpotifyWrapper from './classes/SpotifyWrapper';
 
 class App extends Component {
 	// state = {
@@ -15,7 +16,12 @@ class App extends Component {
 	// };
 
 	// socket = socketIOClient("http://127.0.0.1:4001");
-
+	constructor(props) {
+		super(props);
+		this.state = {
+			spotify: new SpotifyWrapper(this.props.room.access_token, this.props.room.refresh_token),
+		};
+	}
 	componentDidMount() {
 		// const { endpoint } = this.state;
 		// console.log('foo');
@@ -61,7 +67,7 @@ class App extends Component {
 	}
 
 	addSong = (songData) => {
-		console.log(songData);
+		// console.log(songData);
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -83,14 +89,12 @@ class App extends Component {
 	}
 
 	vote = (songKey, currentVotes) => {
-		// console.log(`Vote: \nsongKey=${songKey}\ncurrentVotes=${currentVotes}`);
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
 
 	render() {
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
-		// console.log(this.props.user);
 		return (
 			<Grid>
 				<PageHeader>
@@ -106,7 +110,7 @@ class App extends Component {
 				</PageHeader>
 				<Row>
 					<SongSearch 
-						access_token={this.props.room.access_token} 
+						spotify={this.state.spotify}
 						submit={this.addSong}
 					/>
 				</Row>
@@ -115,7 +119,7 @@ class App extends Component {
 				</Row>
 				<Row>
 					<SongControls 
-						access_token={this.props.room.access_token}
+						spotify={this.state.spotify}
 					/>
 				</Row>
 			</Grid>

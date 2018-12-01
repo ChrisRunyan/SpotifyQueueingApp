@@ -21,13 +21,14 @@ class FirebaseWrapper {
 	 * @param {String} username The username for the host
 	 * @param {String} access_token The Spotify access_token obtained from the Spotify Auth flow
 	 */
-	createRoom = (roomCode, roomName, username, access_token) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
 		this.socket.emit(
 			'firebase-create',
 			roomCode,
 			roomName,
 			username,
-			access_token
+			access_token,
+			refreshToken
 		);
 	};
 

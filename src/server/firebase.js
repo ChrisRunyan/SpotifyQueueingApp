@@ -50,7 +50,7 @@ module.exports = class Firebase {
 			});
 	}
 
-	createRoom(roomCode, roomName, userId, access_token) {
+	createRoom(roomCode, roomName, userId, access_token, refresh_token) {
 		console.log(`createRoom(): roomName=${roomName}`);
 		const newRoomRef = this.roomsRef.push({
 			songs: {},
@@ -62,6 +62,7 @@ module.exports = class Firebase {
 			room_name: roomName,
 			room_owner: userId,
 			spotify_access_token: access_token,
+			spotify_refresh_token: refresh_token
 		});
 		this.currentRoomRef = newRoomRef.ref;
 		this.listenForChanges(this.currentRoomRef);

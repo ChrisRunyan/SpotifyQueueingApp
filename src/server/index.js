@@ -39,8 +39,8 @@ io.on('connection', socket => {
 		fb.joinRoom(roomCode, username)
 	);
 
-	socket.on('firebase-create', (roomCode, roomName, username, access_token) =>
-		fb.createRoom(roomCode, roomName, username, access_token)
+	socket.on('firebase-create', (roomCode, roomName, username, access_token, refresh_token) =>
+		fb.createRoom(roomCode, roomName, username, access_token, refresh_token)
 	);
 
 	socket.on('firebase-add-song', (song, username) => fb.addSong(song, username));
@@ -55,7 +55,7 @@ io.on('connection', socket => {
 				redirect_uri: CALLBACK_ENDPOINT,
 				client_id: process.env.CLIENT_ID,
 				scope:
-					'user-read-private user-read-playback-state user-modify-playback-state',
+					'user-read-private user-read-playback-state user-modify-playback-state playlist-modify-private',
 			});
 		request.get(url);
 	});
@@ -94,9 +94,15 @@ app.get('/api/refresh', (req, res) => {
 		json: true,
 	};
 
-	request.post(auth_options, (error, response, body) =>
-		handler(error, response, body)
-	);
+	request.post(auth_options, (error, response, body) => {
+		if (!error && response.statusCode === 200) {
+			res.redirect(
+				`http://localhost:3000/#/login/${body.access_token}/${
+					body.refresh_token
+				}`
+			);
+		}
+	});
 });
 
 app.get('/api/callback/', (req, res) => {

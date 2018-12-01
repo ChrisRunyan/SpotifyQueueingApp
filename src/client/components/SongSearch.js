@@ -13,7 +13,7 @@ import {
 	// Highlighter,
 } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import SpotifyWrapper from '../classes/SpotifyWrapper';
+// import SpotifyWrapper from '../classes/SpotifyWrapper';
 // import { Song } from '../classes/SpotifyData';
 
 class SongSearch extends React.Component {
@@ -26,7 +26,7 @@ class SongSearch extends React.Component {
 			isLoading: false,
 			value: '',
 			options: [],
-			spotify: new SpotifyWrapper(this.props.access_token),
+			// spotify: new SpotifyWrapper(this.props.access_token),
 		};
 	}
 
@@ -67,13 +67,20 @@ class SongSearch extends React.Component {
 					this.setState({
 						isLoading: true,
 					});
-					this.state.spotify.searchSong(query).then(res => {
+					this.props.spotify.searchSong(query, res => {
 						console.log(res);
 						this.setState({
 							isLoading: false,
-							options: res.tracks.items
-						});
-					});
+							options: res.tracks.items,
+						})
+					})
+					// .then(res => {
+					// 	console.log(res);
+					// 	this.setState({
+					// 		isLoading: false,
+					// 		options: res.tracks.items
+					// 	});
+					// });
 				}}
 				options={this.state.options}
 				labelKey={option =>
