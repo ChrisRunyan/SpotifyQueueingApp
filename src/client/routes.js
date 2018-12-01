@@ -20,6 +20,7 @@ class MainRoutes extends React.Component {
 		this.state = {
 			firebaseWrapper: new FirebaseWrapper(socket),
 			room: null,
+			user: null,
 		};
 	}
 
@@ -59,15 +60,22 @@ class MainRoutes extends React.Component {
 		});
 
 	joinRoom = (roomCode, username) => {
+		this.setState({
+			user: { username }
+		});
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
 
-	createRoom = (roomCode, roomName, username, access_token) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
+		this.setState({
+			user: { username }
+		})
 		this.state.firebaseWrapper.createRoom(
 			roomCode,
 			roomName,
 			username,
-			access_token
+			access_token,
+			refreshToken
 		);
 	};
 
@@ -90,10 +98,11 @@ class MainRoutes extends React.Component {
 					/>
 					<Route
 						exact
-						path="/login/:accessToken/:redirectToken"
+						path="/login/:accessToken/:refreshToken"
 						render={({ match }) => (
 							<CreatePage
 								accessToken={match.params.accessToken}
+								refreshToken={match.params.refreshToken}
 								onSubmit={this.createRoom}
 							/>
 						)}
@@ -107,6 +116,7 @@ class MainRoutes extends React.Component {
 						render={props => (
 							<App
 								room={this.state.room}
+								user={this.state.user}
 								firebaseWrapper={this.state.firebaseWrapper}
 							/>
 						)}

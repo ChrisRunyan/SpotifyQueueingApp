@@ -24,26 +24,26 @@ const base64EncodedAuthString = new Buffer(
 	process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET
 ).toString('base64');
 
-let roomRef = null;
+// let roomRef = null;
 let fb = new firebase();
 
 io.on('connection', socket => {
 	console.log('socket connection');
 	fb.socket = socket;
-	socket.on('ping', () => {
-		socket.emit('pong', 'pong'); // first param is the message 'code', second is the data
-		// io.sockets.emit(/* */)          // emit to every client
-	});
+	// socket.on('ping', () => {
+	// 	socket.emit('pong', 'pong'); // first param is the message 'code', second is the data
+	// 	// io.sockets.emit(/* */)          // emit to every client
+	// });
 
 	socket.on('firebase-join', (roomCode, username) =>
 		fb.joinRoom(roomCode, username)
 	);
 
-	socket.on('firebase-create', (roomCode, roomName, username, access_token) =>
-		fb.createRoom(roomCode, roomName, username, access_token)
+	socket.on('firebase-create', (roomCode, roomName, username, access_token, refresh_token) =>
+		fb.createRoom(roomCode, roomName, username, access_token, refresh_token)
 	);
 
-	socket.on('firebase-add-song', song => fb.addSong(song));
+	socket.on('firebase-add-song', (song, username) => fb.addSong(song, username));
 
     socket.on('firebase-vote', (songKey, currentVotes) => fb.voteOnSong(songKey, currentVotes))
 
@@ -55,7 +55,7 @@ io.on('connection', socket => {
 				redirect_uri: CALLBACK_ENDPOINT,
 				client_id: process.env.CLIENT_ID,
 				scope:
-					'user-read-private user-read-playback-state user-modify-playback-state',
+					'user-read-private user-read-playback-state user-modify-playback-state playlist-modify-private',
 			});
 		request.get(url);
 	});
@@ -94,9 +94,15 @@ app.get('/api/refresh', (req, res) => {
 		json: true,
 	};
 
-	request.post(auth_options, (error, response, body) =>
-		handler(error, response, body)
-	);
+	request.post(auth_options, (error, response, body) => {
+		if (!error && response.statusCode === 200) {
+			res.redirect(
+				`http://localhost:3000/#/login/${body.access_token}/${
+					body.refresh_token
+				}`
+			);
+		}
+	});
 });
 
 app.get('/api/callback/', (req, res) => {

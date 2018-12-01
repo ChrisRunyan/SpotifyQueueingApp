@@ -28,7 +28,8 @@ class CreatePage extends Component {
             this.state.roomCode, 
             this.state.roomName, 
             this.state.username, 
-            this.props.accessToken
+            this.props.accessToken,
+            this.props.refreshToken,
         )
     }
 

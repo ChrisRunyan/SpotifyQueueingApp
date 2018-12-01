@@ -50,7 +50,7 @@ module.exports = class Firebase {
 			});
 	}
 
-	createRoom(roomCode, roomName, userId, access_token) {
+	createRoom(roomCode, roomName, userId, access_token, refresh_token) {
 		console.log(`createRoom(): roomName=${roomName}`);
 		const newRoomRef = this.roomsRef.push({
 			songs: {},
@@ -62,6 +62,7 @@ module.exports = class Firebase {
 			room_name: roomName,
 			room_owner: userId,
 			spotify_access_token: access_token,
+			spotify_refresh_token: refresh_token
 		});
 		this.currentRoomRef = newRoomRef.ref;
 		this.listenForChanges(this.currentRoomRef);
@@ -70,13 +71,18 @@ module.exports = class Firebase {
 		});
 	}
 
-	addSong(song) {
+	addSong(song, username) {
 		// const roomRef = roomsRef.child(roomKey)
 		// return roomRef.child("songs").push(song)
-		console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
+		// console.log(`addSong(): currentRoomRef=${this.currentRoomRef}`);
 		if (this.currentRoomRef) {
-			console.log(`Adding Song: ${JSON.stringify(song)}`);
-			this.currentRoomRef.child('songs').push(song);
+			console.log(`Adding Song: username=${username}`)
+			// console.log(`Adding Song: ${JSON.stringify(song)}`);
+			this.currentRoomRef.child('songs').push(
+				Object.assign({
+					addedBy: username,
+				}, song)
+			);
 		}
 	}
 

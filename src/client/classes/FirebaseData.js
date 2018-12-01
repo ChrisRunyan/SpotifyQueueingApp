@@ -6,7 +6,8 @@ export class Room {
 		this.roomOwner = room.roomOwner ? room.roomOwner : '';
 		this.roomCode = room.room_code ? room.room_code : '';
 		this.roomName = room.room_name ? room.room_name : '';
-		this.access_token = room.access_token ? room.access_token : '';
+		this.access_token = room.spotify_access_token ? room.spotify_access_token : '';
+		this.refresh_token = room.spotify_refresh_token ? room.spotify_refresh_token : '';
 
 		this.songs = [];
 		if (room.songs) {
