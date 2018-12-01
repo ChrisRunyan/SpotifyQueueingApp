@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
 import './styles/App.css';
-import {  Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Table, Grid, Row, Col, PageHeader, Button, Image } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
 import SongControls from './components/SongControls';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
+import apollo from './images/apollo_icon_black.png'
 
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			spotify: new SpotifyWrapper(this.props.room.access_token, this.props.room.refresh_token),
+      spotify: new SpotifyWrapper(this.props.room.access_token, 
+        this.props.room.refresh_token),
 		};
+
+  }
+	componentDidMount() {
+		console.log('App mounted');
 	}
 
 	addSong = (songData) => {
@@ -55,6 +61,12 @@ class App extends Component {
 		let songs = this.props.room.songs;
 		return (
 			<Grid>
+        <Row>
+        <br/>
+          <Col mdOffset={11}>
+            <Image src={apollo} style={{width: "50px"}} rounded />
+          </Col>
+        </Row>
 				<PageHeader>
 					<Row>
 						<Col md={3}>Apollo</Col>
