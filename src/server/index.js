@@ -30,49 +30,45 @@ let fb = new firebase();
 io.on('connection', socket => {
 	console.log('socket connection');
 	fb.socket = socket;
-	// socket.on('ping', () => {
-	// 	socket.emit('pong', 'pong'); // first param is the message 'code', second is the data
-	// 	// io.sockets.emit(/* */)          // emit to every client
-	// });
 
 	socket.on('firebase-join', (roomCode, username) =>
 		fb.joinRoom(roomCode, username)
 	);
 
-	socket.on('firebase-create', (roomCode, roomName, username, access_token, refresh_token) =>
-		fb.createRoom(roomCode, roomName, username, access_token, refresh_token)
+	socket.on('firebase-create', (roomCode, roomName, username, access_token, refresh_token, playlistId) =>
+		fb.createRoom(roomCode, roomName, username, access_token, refresh_token, playlistId)
 	);
 
 	socket.on('firebase-add-song', (song, username) => fb.addSong(song, username));
 
-    socket.on('firebase-vote', (songKey, currentVotes) => fb.voteOnSong(songKey, currentVotes))
+	socket.on('firebase-vote', (songKey, currentVotes) => fb.voteOnSong(songKey, currentVotes));
+	
+	socket.on('firebase-update-playlist', (roomKey, playlistId) => fb.updatePlaylistId(playlistId));
 
-	socket.on('login', () => {
-		const url =
-			SPOTIFY_AUTH_ENDPOINT +
-			querystring.stringify({
-				response_type: 'code',
-				redirect_uri: CALLBACK_ENDPOINT,
-				client_id: process.env.CLIENT_ID,
-				scope:
-					'user-read-private user-read-playback-state user-modify-playback-state playlist-modify-private',
-			});
-		request.get(url);
-	});
 });
 
 app.get('/api/login', (req, res) => {
 	if (req.method === 'OPTIONS') {
 		res.status(200).send();
 	} else {
+		// List of scopes for easier reading
+		const scopesList = [
+			'user-read-private',
+			'user-read-playback-state',
+			'user-modify-playback-state',
+			'playlist-modify-private',
+			'playlist-modify-public'
+		];
+		// Combine scopes into one string
+		const scopes = scopesList.reduce((a, b) => a + ' ' + b);
+		console.log(scopes);
 		const url =
 			SPOTIFY_AUTH_ENDPOINT +
 			querystring.stringify({
 				response_type: 'code',
 				redirect_uri: CALLBACK_ENDPOINT,
 				client_id: process.env.CLIENT_ID,
-				scope:
-					'user-read-private user-read-playback-state user-modify-playback-state',
+				scope: scopes,
 			});
 		res.redirect(url);
 	}
@@ -80,7 +76,6 @@ app.get('/api/login', (req, res) => {
 
 app.get('/api/refresh', (req, res) => {
 	const refresh_token = req.query.refresh_token;
-	const handler = handleTokenResponse(res);
 	const auth_options = {
 		url: SPOTIFY_TOKEN_ENDPOINT,
 		form: {

@@ -26,6 +26,12 @@ export class Timer {
 }
 
 export class TimeoutInterval {
+    /**
+     * Create an interval timer which is set to expire after a given amount of time.
+     * @param {Function} callback The function to be run on a given interval
+     * @param {Int} interval The interval to run (in ms)
+     * @param {Int} duration The amount of time that the interval will run for
+     */
     constructor(callback, interval, duration) {
         this.callback = callback;
         this.duration = duration;
@@ -35,6 +41,7 @@ export class TimeoutInterval {
     }
 
     resume() {
+        console.log('play');
         this.start = new Date();
         clearInterval(this.intervalId);
         this.intervalId = setInterval(this.callback, this.interval);
@@ -42,6 +49,7 @@ export class TimeoutInterval {
     }
 
     pause() {
+        console.log('pause');
         clearInterval(this.intervalId);
         clearTimeout(this.timerId);
         this.remaining = new Date() - this.start;

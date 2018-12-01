@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
 
-
 class CreatePage extends Component {
     constructor(props) {
         super(props)

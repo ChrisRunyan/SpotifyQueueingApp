@@ -21,14 +21,15 @@ class FirebaseWrapper {
 	 * @param {String} username The username for the host
 	 * @param {String} access_token The Spotify access_token obtained from the Spotify Auth flow
 	 */
-	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken, playlistId) => {
 		this.socket.emit(
 			'firebase-create',
 			roomCode,
 			roomName,
 			username,
 			access_token,
-			refreshToken
+			refreshToken,
+			playlistId,
 		);
 	};
 
@@ -38,8 +39,12 @@ class FirebaseWrapper {
 	 * @param {String} username The username of the user that submitted the song
 	 */
 	addSong = (song, username) => {
-		this.socket.emit('firebase-add-song', song);
+		this.socket.emit('firebase-add-song', song, username);
 	};
+
+	updatePlaylistId = (roomKey, newPlaylistId) => {
+		this.socket.emit('firebase-update-playlist', roomKey, newPlaylistId);
+	}
 
 	/**
 	 * Vote on a song in the Room
