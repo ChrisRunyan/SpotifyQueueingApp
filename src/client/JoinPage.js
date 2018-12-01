@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, ControlLabel, Button, Grid, Image, Row, Col, PageHeader,} from 'react-bootstrap';
+import apollo from './images/apollo_icon_black.png'
+import './styles/index.css'
 
+
+const divStyle = {
+	verticalAlign: "middle",
+	textAlign: "center"
+}
 
 class JoinPage extends Component {
     constructor(props) {
@@ -28,39 +35,58 @@ class JoinPage extends Component {
 
     render() {
         return(
-            <Form horizontal onSubmit={this.handleSubmit}>
-                <FormGroup controlId='roomCode'>
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Enter Room Code
-                    </Col> 
-                    <Col sm={10}>
-                        <FormControl
-                            id='roomCode'
-                            type='text'
-                            value={this.state.roomCode}
-                            placeholder="Room Code"
-                            onChange={this.handleChange} />
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Enter Username
-                    </Col>
-                    <Col sm={10}>
-                        <FormControl
-                            id='username'
-                            type='text'
-                            value={this.state.username}
-                            placeholder="Username"
-                            onChange={this.handleChange} />
-                    </Col>
-                </FormGroup>
-                <FormGroup>
-                    <Col smOffset={2} sm={10}>
-                        <Button type='submit'>Join Room</Button>
-                    </Col>
-                </FormGroup>
-            </Form>
+            <div style={divStyle}>
+                <Grid>
+                    <PageHeader>
+                        {/* <Row>
+                            <Col md={3}>Apollo</Col> */}
+                            Apollo
+                            {/* <Col md={3}>
+                                <small> Room Code: {roomCode}</small>
+                            </Col>
+                            <Col md={3}>
+                                <small>{this.props.room.roomName}</small>
+                            </Col> */}
+                        {/* </Row> */}
+                    </PageHeader>
+                    {/* C:\Users\rpput\Documents\SpotifyQueuingApp\SpotifyQueueingApp\src\client\images\apollo_icon_black.png */}
+                    <Row><Image src={apollo} style={{width: "200px"}} rounded /></Row>
+                    <br/>
+                <Form horizontal onSubmit={this.handleSubmit}>
+                    <FormGroup controlId='roomCode'>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            Enter Room Code
+                        </Col> 
+                        <Col sm={10}>
+                            <FormControl
+                                id='roomCode'
+                                type='text'
+                                value={this.state.roomCode}
+                                placeholder="Room Code"
+                                onChange={this.handleChange} />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            Enter Alias
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl
+                                id='username'
+                                type='text'
+                                value={this.state.username}
+                                placeholder="Username"
+                                onChange={this.handleChange} />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col smOffset={2} sm={10}>
+                            <Button type='submit'>Join Room</Button>
+                        </Col>
+                    </FormGroup>
+                </Form>
+            </Grid>
+        </div>
         )
     }
 }
