@@ -33,9 +33,7 @@ class App extends Component {
 			duration: songData.duration_ms,
 
 		});
-		this.state.spotify.addSongToPlaylist(this.props.room.playlistId, song.id, res => {
-			this.props.firebaseWrapper.updatePlaylistId(this.props.room.id, res.snapshot_id);
-		});
+		this.state.spotify.addSongToPlaylist(this.props.room.playlistId, song.id, res => res);
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	}
 

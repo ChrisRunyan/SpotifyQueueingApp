@@ -80,7 +80,7 @@ class MainRoutes extends React.Component {
 					username,
 					access_token,
 					refreshToken,
-					res.snapshot_id
+					res.id
 				);
 			})
 		});

@@ -11,7 +11,9 @@ const refreshMiddleware = (refresh_token, callback) => (err, res) => {
 		if (err.status === 401) {
 			console.log('access_token expired');
 			// history.pushState(null, null, `/api/refresh?${refresh_token}`)
-		} else if (err.status === 429) {
+		} else if (err.status === 404) {
+            console.log(err);
+        } else if (err.status === 429) {
 			console.log('rate limiting applied');
 		} else if (err.status === 403) {
             console.log('Forbidden request');
