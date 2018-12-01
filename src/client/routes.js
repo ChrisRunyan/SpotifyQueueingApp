@@ -9,6 +9,7 @@ import FirebaseWrapper from './classes/FirebaseWrapper';
 import io from 'socket.io-client';
 import { Room } from './classes/FirebaseData';
 import { createBrowserHistory } from 'history';
+import './styles/index.css';
 
 const socket = io({ path: '/ws' });
 const history = createBrowserHistory();
@@ -87,15 +88,18 @@ class MainRoutes extends React.Component {
 		return (
 			<Router history={history}>
 				<Switch>
+					{/* Home page */}
 					<Route
 						exact
 						path="/"
 						render={props => <Home login={this.login} />}
 					/>
+					{/* Join page */}
 					<Route
 						path="/join"
 						render={props => <JoinPage onSubmit={this.joinRoom} />}
 					/>
+					{/* Login route */}
 					<Route
 						exact
 						path="/login/:accessToken/:refreshToken"
@@ -107,6 +111,7 @@ class MainRoutes extends React.Component {
 							/>
 						)}
 					/>
+					{/* Room page */}
 					<Route
 						path={
 							this.state.room
@@ -121,6 +126,7 @@ class MainRoutes extends React.Component {
 							/>
 						)}
 					/>
+					{/* Page not found */}
 					<Route component={NotFound} />
 				</Switch>
 			</Router>

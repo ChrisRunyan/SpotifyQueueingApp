@@ -9,59 +9,14 @@ import { Song as SongData } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
 
 class App extends Component {
-	// state = {
-	//   endpoint: "http://127.0.0.1:4001",
-	//   roomCode: "HJRA",
-	//   songs: null
-	// };
-
-	// socket = socketIOClient("http://127.0.0.1:4001");
 	constructor(props) {
 		super(props);
 		this.state = {
-			spotify: new SpotifyWrapper(this.props.room.access_token, this.props.room.refresh_token),
+      spotify: new SpotifyWrapper(this.props.room.access_token, 
+        this.props.room.refresh_token),
 		};
-	}
-	componentDidMount() {
-		// const { endpoint } = this.state;
-		// console.log('foo');
-		// this.socket.on('initialLoad', data => this.setState({ songs: data }));
-		// console.log('ff');
-	}
-
-	// handleVoteChange = (index, delta) => {
-	// 	console.log(delta);
-	// 	// console.log(this.state);
-	// 	var songIndex = this.state.songs.findIndex(song => song.id == index);
-	// 	this.socket.emit('changeVote', index, delta);
-	// 	// this.socket.on("vote", data => )
-	// 	this.setState(prevState => ({
-	// 		votes: (prevState.songs[songIndex].votes += delta),
-	// 		//Problem is song is being identified by index instead of object property's index
-	// 	}));
-	// };
-
-	// prevSongId = 2;
-
-	// handleAddSong = (title, artist, album, songLength) => {
-	// 	// console.log(title);
-	// 	this.setState(prevState => {
-	// 		return {
-	// 			songs: [
-	// 				...prevState.songs,
-	// 				{
-	// 					title,
-	// 					artist,
-	// 					album,
-	// 					songLength,
-	// 					votes: 0,
-	// 					id: (this.prevSongId += 1),
-	// 				},
-	// 			],
-	// 		};
-	// 	});
-	// 	console.log(this.state);
-	// };
+  }
+  
 	componentDidMount() {
 		console.log('App mounted');
 	}
