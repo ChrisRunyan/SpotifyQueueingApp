@@ -3,3 +3,8 @@ body {
   font-family: arial;
   text-transform: uppercase;
 }
+
+.home {
+  text-align: center;
+  font-family: sans-serif;
+}
