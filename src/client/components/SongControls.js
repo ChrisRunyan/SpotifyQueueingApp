@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, NavItem, Glyphicon, ProgressBar } from 'react-bootstrap';
+import { Image, Navbar, NavItem, Glyphicon, ProgressBar } from 'react-bootstrap';
 import { TimeoutInterval } from '../classes/Timer';
 
 const progressInterval = 500;
@@ -13,6 +13,7 @@ class SongControls extends React.Component {
 			progress: 0,
 			duration: 0,
 			timer: null,
+			albumArt: ''
 		};
 	}
 
@@ -23,6 +24,7 @@ class SongControls extends React.Component {
 					isPlaying: res.is_playing,
 					progress: res.progress_ms,
 					duration: res.item.duration_ms,
+					albumArt: res.item.album.images[2].url,
 					timer: new TimeoutInterval(
 						() => {
 							// for some reason this only runs for ~6.7 seconds (sometimes less)
@@ -30,7 +32,9 @@ class SongControls extends React.Component {
 							// too many state changes?
 							// Runs again after pausing + resuming
 							console.log(`progress: ${this.state.progress}`);
+							console.log(`art: ${this.state.albumArt}`);
 							this.setState({
+								
 								progress:
 									this.state.progress + progressInterval,
 							});
@@ -38,6 +42,7 @@ class SongControls extends React.Component {
 						progressInterval,
 						res.item.duration_ms - res.progress_ms
 					),
+					
 				},
 				() => {
 					if (this.state.isPlaying) {
@@ -77,6 +82,7 @@ class SongControls extends React.Component {
 		);
 		return (
 			<Navbar inverse fixedBottom>
+				<Image src= {this.state.albumArt}/>
 				<Navbar.Brand>Controls</Navbar.Brand>
 				<NavItem onClick={this.togglePlayback}>
 					{this.state.isPlaying ? pauseIcon : playIcon}

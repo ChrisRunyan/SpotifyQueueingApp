@@ -14,6 +14,11 @@ import { Song as SongData } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
 import apollo from './images/apollo_icon_black.png';
 
+const pStyle = {
+  fontSize: "15px",
+  color: "#777"
+}
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -53,6 +58,10 @@ class App extends Component {
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	};
 
+	removeSong = (song) => {
+		
+	}
+
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
@@ -90,22 +99,30 @@ class App extends Component {
 		let songs = this.props.room.songs;
 		return (
 			<Grid>
-				<Row>
-					<br />
-					<Col mdOffset={11}>
-						<Image src={apollo} style={{ width: '50px' }} rounded />
-					</Col>
-				</Row>
+        {/* <Row>
+        <br/>
+          
+        </Row> */}
 				<PageHeader>
 					<Row>
-						<Col md={3}>Apollo</Col>
-						<Col md={3}>
-							<small> Room Code: {roomCode}</small>
-						</Col>
-						<Col md={3}>
-							<small>{this.props.room.roomName}</small>
-						</Col>
-					</Row>
+            <Col md={3}>Apollo</Col>
+            <Row>
+              <Col mdOffset={11}>
+                <Image src={apollo} style={{width: "50px", float: "right"}} rounded />
+              </Col>
+            </Row>
+            <Row style={{textAlign: "end"}}>
+              <Col mdOffset={9}>
+              <br/>
+                  <p style={pStyle}>Room Code: {roomCode}</p>
+              </Col>
+            </Row>
+            <Row style={{textAlign: "end"}}>
+              <Col mdOffset={9}>
+                <p style={pStyle}>{this.props.room.roomName}</p>
+              </Col>
+            </Row>
+          </Row>
 				</PageHeader>
 				<Row>
 					<SongSearch
