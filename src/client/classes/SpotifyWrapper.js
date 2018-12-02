@@ -76,7 +76,19 @@ class SpotifyWrapper {
 	pause = () => {
 		const middleware = refreshMiddleware(this.refresh_token, res => res);
 		this.spotify.pause(null, middleware);
-	};
+    };
+    
+    playNextFromPlaylist = (playlistId, songId) => {
+        const middleware = refreshMiddleware(this.refresh_token, res => res);
+        const playlistURI = `spotify:playlist:${playlistId}`;
+        const songURI = `spotify:track:${songId}`;
+        this.spotify.play({
+            context_uri: playlistURI,
+            offset: {
+                uri: songURI
+            }
+        }, middleware);
+    }
 
 	createPlaylist = (name, callback, options = null) => {
 		const middleware = refreshMiddleware(this.refresh_token, callback);
@@ -112,21 +124,45 @@ class SpotifyWrapper {
 	/**
 	 * Moves the song at {@link songIndex}
 	 * @param {String} playlistId The ID of the playlist to be changed
-	 * @param {Int} songIndex The index of the song to be moved
+	 * @param {Int} nextSongIndex The index of the song to be moved
+     * @param {Int} currentSongIndex The index of the currently playing song
 	 * @param {Function} callback A function to be applied to the result object of this call
 	 * @param {Object} options An optional options object to be passed along with the call to
 	 * the SpotifyAPI
 	 */
-	makeSongNextPlayed = (playlistId, songIndex, callback, options = null) => {
+	makeSongNextPlayed = (playlistId, nextSongIndex, currentSongIndex, callback, options = null) => {
 		const middleware = refreshMiddleware(this.refresh_token, callback);
 		this.spotify.reorderTracksInPlaylist(
 			playlistId,
-			songIndex,
-			1,
+			nextSongIndex,
+			currentSongIndex + 1,
 			options,
 			middleware
 		);
-	};
+    };
+    
+    /**
+     * Finds the index of the given songId in the given playlist
+     * @param {String} playlistId The id of the playlist to search
+     * @param {String} songId The id of the song to search for
+     * @param {Function} callback The function to run on the index of the song
+     * @param {Object} options An options object to be passed along with the call to
+     * the SpotifyAPI
+     */
+    getIndexOfSongInPlaylist = (playlistId, songId, callback, options = null) => {
+        const middleware = refreshMiddleware(this.refresh_token, (res) => {
+            let index = 0;
+            res.items.forEach(item => {
+                if (item.track.id === songId) {
+                    return index;
+                } 
+                index++;
+            })
+            callback(index);
+        })
+        this.spotify.getPlaylistTracks(playlistId, options, middleware);
+    }
+
 }
 
 export default SpotifyWrapper;
