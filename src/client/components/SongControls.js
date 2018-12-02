@@ -36,7 +36,7 @@ class SongControls extends React.Component {
 							});
 						},
 						progressInterval,
-						this.state.duration - this.state.progress
+						res.item.duration_ms - res.progress_ms
 					),
 				},
 				() => {
@@ -50,10 +50,6 @@ class SongControls extends React.Component {
 			);
 		});
 	}
-
-	queueNextSong() {
-        
-    }
 
 	togglePlayback = () => {
 		if (this.state.isPlaying) {
@@ -86,13 +82,11 @@ class SongControls extends React.Component {
 					{this.state.isPlaying ? pauseIcon : playIcon}
 				</NavItem>
 				<NavItem>
-					{/* <NavItem> */}
 					<ProgressBar
 						id="song-progress"
 						now={this.state.progress / this.state.duration}
 						max={1}
 					/>
-					{/* </NavItem> */}
 				</NavItem>
 			</Navbar>
 		);

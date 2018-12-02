@@ -68,7 +68,7 @@ class MainRoutes extends React.Component {
 		this.state.firebaseWrapper.joinRoom(roomCode, username);
 	};
 
-	createRoom = (roomCode, roomName, username, access_token, refreshToken, playlistId) => {
+	createRoom = (roomCode, roomName, username, access_token, refreshToken) => {
 		this.setState({
 			user: { username },
 			spotifyWrapper: new SpotifyWrapper(access_token, refreshToken),
