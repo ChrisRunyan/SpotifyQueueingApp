@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import './styles/App.css';
-import { Table, Grid, Row, Col, PageHeader, Button, Image } from 'react-bootstrap';
+import {
+	Grid,
+	Row,
+	Col,
+	PageHeader,
+	Image,
+} from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
 import SongControls from './components/SongControls';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
-import apollo from './images/apollo_icon_black.png'
+import apollo from './images/apollo_icon_black.png';
 
 const pStyle = {
   fontSize: "15px",
@@ -17,16 +23,17 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-      spotify: new SpotifyWrapper(this.props.room.access_token, 
-        this.props.room.refresh_token),
+			spotify: new SpotifyWrapper(
+				this.props.room.access_token,
+				this.props.room.refresh_token
+			),
 		};
-
-  }
+	}
 	componentDidMount() {
 		console.log('App mounted');
 	}
 
-	addSong = (songData) => {
+	addSong = songData => {
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -34,19 +41,22 @@ class App extends Component {
 			artist: {
 				name: songData.artists[0].name,
 				id: songData.artists[0].id,
-				query: songData.artists[0].href
+				query: songData.artists[0].href,
 			},
 			album: {
 				name: songData.album.name,
 				id: songData.album.id,
-				query: songData.album.href
+				query: songData.album.href,
 			},
 			duration: songData.duration_ms,
-
 		});
-		this.state.spotify.addSongToPlaylist(this.props.room.playlistId, song.id, res => res);
+		this.state.spotify.addSongToPlaylist(
+			this.props.room.playlistId,
+			song.id,
+			res => res
+		);
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
-	}
+	};
 
 	removeSong = (song) => {
 		
@@ -56,14 +66,33 @@ class App extends Component {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
 
-	getTopSong = () => {
-		if(!this.props.room.songs) {
-			return null;
-		}
-		const songs = this.props.room.songs;
-		songs.sort((a, b) => b.data.votes - a.data.votes);
-		return songs[0];
-	}
+	reorderSongsInPlaylist = (currentSong, nextSong) => {
+		const playlistId = this.props.room.playlistId;
+		const getIndex = this.state.spotify.getIndexOfSongInPlaylist;
+		getIndex(
+			// Get the index of the curretly playing song
+			playlistId,
+			currentSong.id,
+			cIndex => {
+				// Callback on result of getIndexOfSongInPlaylist
+				getIndex(
+					// Get the index of the song that will be played next
+					playlistId,
+					nextSong.id,
+					nIndex => {
+						// Callback on result of getIndexOfSongInPlaylist
+						this.state.spotify.makeSongNextPlayed(
+							// Reorder the playlist
+							playlistId,
+							nIndex,
+							cIndex,
+							res => res
+						);
+					}
+				);
+			}
+		);
+	};
 
 	render() {
 		let roomCode = this.props.room.roomCode;
@@ -96,16 +125,20 @@ class App extends Component {
           </Row>
 				</PageHeader>
 				<Row>
-					<SongSearch 
+					<SongSearch
 						spotify={this.state.spotify}
 						submit={this.addSong}
 					/>
 				</Row>
 				<Row>
-					<SongList songs={songs} vote={this.vote} />
+					<SongList
+						spotify={this.state.spotify}
+						songs={songs}
+						vote={this.vote}
+					/>
 				</Row>
 				<Row>
-					<SongControls 
+					<SongControls
 						spotify={this.state.spotify}
 						getNext={this.getTopSong}
 					/>

@@ -20,8 +20,6 @@ export class Artist extends SpotifyData {
 
 export class Song extends SpotifyData {
 	constructor(song) {
-		console.log('Song Constructor');
-		console.log(song);
 		super(song.id, song.name, song.query);
 
 		this.addedBy = song.addedBy ? song.addedBy : '';
