@@ -163,6 +163,12 @@ class SpotifyWrapper {
         this.spotify.getPlaylistTracks(playlistId, options, middleware);
     }
 
+    isPlaying = (callback, options = null) => {
+        return this.getPlayerInfo(res => {
+            callback(res.is_playing);
+        }, options)
+    }
+
 }
 
 export default SpotifyWrapper;

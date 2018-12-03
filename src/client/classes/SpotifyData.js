@@ -27,6 +27,8 @@ export class Song extends SpotifyData {
 
 		this.duration = song.duration ? song.duration : 0
 		this.progress = song.progress ? song.progress : 0
+		this.canVote = song.canVote ? song.canVote : true;
+		this.isPlaying = song.isPlaying ? song.isPlaying : false;
 
 		const primaryArtist = song.artists ? song.artists[0] : song.artist;
 
@@ -40,6 +42,14 @@ export class Song extends SpotifyData {
 			primaryArtist.name,
 			primaryArtist.query
 		);
+	}
+
+	disableVoting = () => {
+		this.canVote = false;
+	}
+
+	setIsPlaying = (isPlaying) => {
+		this.isPlaying = isPlaying;
 	}
 
 }

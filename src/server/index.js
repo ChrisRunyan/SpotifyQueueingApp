@@ -35,16 +35,43 @@ io.on('connection', socket => {
 		fb.joinRoom(roomCode, username)
 	);
 
-	socket.on('firebase-create', (roomCode, roomName, username, access_token, refresh_token, playlistId) =>
-		fb.createRoom(roomCode, roomName, username, access_token, refresh_token, playlistId)
+	socket.on(
+		'firebase-create',
+		(
+			roomCode,
+			roomName,
+			username,
+			access_token,
+			refresh_token,
+			playlistId
+		) =>
+			fb.createRoom(
+				roomCode,
+				roomName,
+				username,
+				access_token,
+				refresh_token,
+				playlistId
+			)
 	);
 
-	socket.on('firebase-add-song', (song, username) => fb.addSong(song, username));
+	socket.on('firebase-add-song', (song, username) =>
+		fb.addSong(song, username)
+	);
 
-	socket.on('firebase-vote', (songKey, currentVotes) => fb.voteOnSong(songKey, currentVotes));
-	
-	socket.on('firebase-update-playlist', (roomKey, playlistId) => fb.updatePlaylistId(playlistId));
+	socket.on('firebase-vote', (songKey, currentVotes) =>
+		fb.voteOnSong(songKey, currentVotes)
+	);
 
+	socket.on('firebase-update-playlist', (roomKey, playlistId) =>
+		fb.updatePlaylistId(playlistId)
+	);
+
+	socket.on('firebase-disable', songKey => fb.disableVoting(songKey));
+
+	socket.on('firebase-play', songKey => fb.setIsPlaying(songKey));
+
+	socket.on('firebase-remove', songKey => fb.removeSong(songKey));
 });
 
 app.get('/api/login', (req, res) => {
@@ -57,7 +84,7 @@ app.get('/api/login', (req, res) => {
 			'user-read-playback-state',
 			'user-modify-playback-state',
 			'playlist-modify-private',
-			'playlist-modify-public'
+			'playlist-modify-public',
 		];
 		// Combine scopes into one string
 		const scopes = scopesList.reduce((a, b) => a + ' ' + b);

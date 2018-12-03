@@ -42,6 +42,10 @@ class FirebaseWrapper {
 		this.socket.emit('firebase-add-song', song, username);
 	};
 
+	removeSong = (songKey) => {
+		this.socket.emit('firebase-remove', songKey);
+	}
+
 	updatePlaylistId = (roomKey, newPlaylistId) => {
 		this.socket.emit('firebase-update-playlist', roomKey, newPlaylistId);
 	}
@@ -54,6 +58,11 @@ class FirebaseWrapper {
 	voteOnSong = (songKey, currentVotes) => {
 		this.socket.emit('firebase-vote', songKey, currentVotes) 
 	}
+
+	disableVoting = (songKey) => {
+		this.socket.emit('firebase-disable', songKey);
+	}
+
 }
 
 export default FirebaseWrapper;

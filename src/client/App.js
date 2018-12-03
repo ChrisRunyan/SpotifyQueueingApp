@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import './styles/App.css';
-import {
-	Grid,
-	Row,
-	Col,
-	PageHeader,
-	Image,
-} from 'react-bootstrap';
+import { Grid, Row, Col, PageHeader, Image } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
 import SongControls from './components/SongControls';
 import SongList from './components/SongList';
@@ -15,9 +9,9 @@ import SpotifyWrapper from './classes/SpotifyWrapper';
 import apollo from './images/apollo_icon_black.png';
 
 const pStyle = {
-  fontSize: "15px",
-  color: "#777"
-}
+	fontSize: '15px',
+	color: '#777',
+};
 
 class App extends Component {
 	constructor(props) {
@@ -58,71 +52,51 @@ class App extends Component {
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	};
 
-	removeSong = (song) => {
-		
+	play = () => {
+
 	}
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
 
-	reorderSongsInPlaylist = (currentSong, nextSong) => {
-		const playlistId = this.props.room.playlistId;
-		const getIndex = this.state.spotify.getIndexOfSongInPlaylist;
-		getIndex(
-			// Get the index of the curretly playing song
-			playlistId,
-			currentSong.id,
-			cIndex => {
-				// Callback on result of getIndexOfSongInPlaylist
-				getIndex(
-					// Get the index of the song that will be played next
-					playlistId,
-					nextSong.id,
-					nIndex => {
-						// Callback on result of getIndexOfSongInPlaylist
-						this.state.spotify.makeSongNextPlayed(
-							// Reorder the playlist
-							playlistId,
-							nIndex,
-							cIndex,
-							res => res
-						);
-					}
-				);
-			}
-		);
-	};
+	disableVoting = (songKey) => {
+		this.props.firebaseWrapper.disableVoting(songKey);
+	}
+
+	removeSong = (songKey) => {
+		this.props.firebaseWrapper.removeSong(songKey);
+	}
 
 	render() {
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
 		return (
 			<Grid>
-        {/* <Row>
-        <br/>
-          
-        </Row> */}
 				<PageHeader>
 					<Row>
-            <Col md={3}>Apollo</Col>
-            <Row>
-              <Col mdOffset={11}>
-                <Image src={apollo} style={{width: "50px", float: "right"}} rounded />
-              </Col>
-            </Row>
-            <Row style={{textAlign: "end"}}>
-              <Col mdOffset={9}>
-              <br/>
-                  <p style={pStyle}>Room Code: {roomCode}</p>
-              </Col>
-            </Row>
-            <Row style={{textAlign: "end"}}>
-              <Col mdOffset={9}>
-                <p style={pStyle}>{this.props.room.roomName}</p>
-              </Col>
-            </Row>
-          </Row>
+						<Col md={3}>Apollo</Col>
+						<Row>
+							<Col mdOffset={11}>
+								<Image
+									src={apollo}
+									style={{ width: '50px', float: 'right' }}
+									rounded
+								/>
+							</Col>
+						</Row>
+						<Row style={{ textAlign: 'end' }}>
+							<Col mdOffset={9}>
+								<br />
+								<p style={pStyle}>Room Code: {roomCode}</p>
+							</Col>
+						</Row>
+						<Row style={{ textAlign: 'end' }}>
+							<Col mdOffset={9}>
+								<p style={pStyle}>{this.props.room.roomName}</p>
+							</Col>
+						</Row>
+					</Row>
 				</PageHeader>
 				<Row>
 					<SongSearch
@@ -140,7 +114,10 @@ class App extends Component {
 				<Row>
 					<SongControls
 						spotify={this.state.spotify}
-						getNext={this.getTopSong}
+						songs={songs}
+						lockSong={this.disableVoting}
+						removeSong={this.removeSong}
+						playlistId={this.props.room.playlistId}
 					/>
 				</Row>
 			</Grid>
