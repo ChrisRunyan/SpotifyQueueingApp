@@ -25,45 +25,6 @@ class SongControls extends React.Component {
 		};
 	}
 
-	// componentDidMount() {
-	// 	this.props.spotify.getPlayerInfo(res => {
-	// 		this.setState(
-	// 			{
-	// 				isPlaying: res.is_playing,
-	// 				progress: res.progress_ms,
-	// 				duration: res.item.duration_ms,
-	// 				albumArt: res.item.album.images[2].url,
-	// 				timer: new TimeoutInterval(
-	// 					() => {
-	// 						// for some reason this only runs for ~6.7 seconds (sometimes less)
-	// 						// before pausing
-	// 						// too many state changes?
-	// 						// Runs again after pausing + resuming
-	// 						console.log(`progress: ${this.state.progress}`);
-	// 						console.log(`art: ${this.state.albumArt}`);
-	// 						this.setState({
-
-	// 							progress:
-	// 								this.state.progress + progressInterval,
-	// 						});
-	// 					},
-	// 					progressInterval,
-	// 					res.item.duration_ms - res.progress_ms
-	// 				),
-
-	// 			},
-	// 			() => {
-	// 				if (this.state.isPlaying) {
-	// 					this.state.timer.resume();
-	// 					this.setState({
-	// 						hasSong: true,
-	// 					});
-	// 				}
-	// 			}
-	// 		);
-	// 	});
-	// }
-
 	togglePlayback = () => {
 		if (this.state.isPlaying) {
 			this.props.spotify.pause();
@@ -76,6 +37,7 @@ class SongControls extends React.Component {
 					this.props.playlistId,
 					nextSong.data.id
 				);
+				// wait .5 seconds to allow spotify to start playing
 				setTimeout(() => {
 					this.props.spotify.getPlayerInfo(res => {
 						console.log(`get info: isPlaying=${res.is_playing}`);
@@ -93,9 +55,7 @@ class SongControls extends React.Component {
 										nextSong,
 										secondSong
 									);
-									this.setState({
-										hasSong: true,
-									});
+									this.startPlayback(nextSong);
 								}
 							}
 						);
@@ -111,16 +71,20 @@ class SongControls extends React.Component {
 		});
 	};
 
+	startPlayback = song => {
+		this.setState({
+			hasSong: true,
+		});
+		this.props.setPlaying(song.key);
+	};
+
 	startPlaybackTimers = (currentSong, nextSong) => {
 		const timeOfLockIn =
 			this.state.duration * lockInPercent - this.state.progress;
 		let lockInTimer = null;
 		const playbackTimer = new TimeoutInterval(
 			() => {
-				console.log(`progress: ${this.state.progress} ms`);
-				this.setState({
-					progress: this.state.progress + progressInterval,
-				});
+				this.updateSongProgress(progressInterval);
 			},
 			progressInterval,
 			this.state.duration - this.state.progress,
@@ -130,10 +94,10 @@ class SongControls extends React.Component {
 			}
 		);
 		if (nextSong) {
-			lockInTimer = new Timer(() => {
-				this.props.lockSong(nextSong.key);
-				this.reorderSongsInPlaylist(currentSong, nextSong);
-			}, timeOfLockIn);
+			lockInTimer = new Timer(
+				() => this.lockInNextSong(this.props.songs),
+				timeOfLockIn
+			);
 		}
 		this.setState(
 			{
@@ -144,6 +108,12 @@ class SongControls extends React.Component {
 				this.resumeTimers();
 			}
 		);
+	};
+
+	updateSongProgress = interval => {
+		this.setState({
+			progress: this.state.progress + interval,
+		});
 	};
 
 	pauseTimers = () => {
@@ -181,7 +151,7 @@ class SongControls extends React.Component {
 					nextSong.id,
 					nIndex => {
 						// Callback on result of getIndexOfSongInPlaylist
-						this.state.spotify.makeSongNextPlayed(
+						this.props.spotify.makeSongNextPlayed(
 							// Reorder the playlist
 							playlistId,
 							nIndex,
@@ -194,8 +164,18 @@ class SongControls extends React.Component {
 		);
 	};
 
+	lockInNextSong = songs => {
+		const current = this.getNextSong(songs);
+		const next = this.getNextSong(songs, 1);
+		if (next) {
+			this.props.lockSong(next.key);
+			this.reorderSongsInPlaylist(current, next);
+		}
+	};
+
 	getNextSong = (songs, offset = 0) => {
 		if (songs) {
+            console.log(songs);
 			songs.sort((a, b) => {
 				b.data.votes - a.data.votes;
 			});

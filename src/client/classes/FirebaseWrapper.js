@@ -63,6 +63,10 @@ class FirebaseWrapper {
 		this.socket.emit('firebase-disable', songKey);
 	}
 
+	setIsPlaying = (songKey) => {
+		this.socket.emit('firebase-play', songKey);
+	}
+
 }
 
 export default FirebaseWrapper;

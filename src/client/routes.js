@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
-import App from './App';
+import Room from './Room';
 import JoinPage from './JoinPage';
 import CreatePage from './CreatePage';
 import { Song } from './classes/SpotifyData'
@@ -8,7 +8,7 @@ import Home from './Home';
 import FirebaseWrapper from './classes/FirebaseWrapper';
 import SpotifyWrapper from './classes/SpotifyWrapper';
 import io from 'socket.io-client';
-import { Room } from './classes/FirebaseData';
+import { Room as RoomData } from './classes/FirebaseData';
 import { createBrowserHistory } from 'history';
 import './styles/index.css';
 
@@ -29,10 +29,10 @@ class MainRoutes extends React.Component {
 
 	componentDidMount() {
 		socket.on('firebase-join-success', (key, room) =>
-			this.displayRoom(new Room(key, room))
+			this.displayRoom(new RoomData(key, room))
 		);
 		socket.on('firebase-create-success', (key, room) => {
-			this.displayRoom(new Room(key, room))
+			this.displayRoom(new RoomData(key, room))
 		});
 		socket.on('firebase-refresh', songs => {
 			let sList = []
@@ -127,7 +127,7 @@ class MainRoutes extends React.Component {
 								: null
 						}
 						render={props => (
-							<App
+							<Room
 								room={this.state.room}
 								user={this.state.user}
 								firebaseWrapper={this.state.firebaseWrapper}

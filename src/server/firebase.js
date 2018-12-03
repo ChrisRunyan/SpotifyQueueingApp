@@ -141,7 +141,6 @@ module.exports = class Firebase {
 	setIsPlaying(songKey) {
 		const isPlayingRefKey = `songs/${songKey}/isPlaying`;
 		if (this.currentRoomRef) {
-			this.currentRoomRef.
 			this.currentRoomRef.update({
 				[isPlayingRefKey]: true
 			})

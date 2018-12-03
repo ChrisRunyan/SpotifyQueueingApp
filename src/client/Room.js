@@ -13,7 +13,7 @@ const pStyle = {
 	color: '#777',
 };
 
-class App extends Component {
+class Room extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -62,6 +62,10 @@ class App extends Component {
 
 	disableVoting = (songKey) => {
 		this.props.firebaseWrapper.disableVoting(songKey);
+	}
+
+	setPlaying = (songKey) => {
+		this.props.firebaseWrapper.setIsPlaying(songKey);
 	}
 
 	removeSong = (songKey) => {
@@ -117,6 +121,7 @@ class App extends Component {
 						songs={songs}
 						lockSong={this.disableVoting}
 						removeSong={this.removeSong}
+						setPlaying={this.setPlaying}
 						playlistId={this.props.room.playlistId}
 					/>
 				</Row>
@@ -125,4 +130,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default Room;
