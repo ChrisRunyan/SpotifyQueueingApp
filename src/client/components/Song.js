@@ -1,7 +1,7 @@
 import React from 'react';
 import Vote from './Vote';
 
-export default Song = props => {
+export default (props) => {
 	const {
 		title,
 		artist,

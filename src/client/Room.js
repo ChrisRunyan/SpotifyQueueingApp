@@ -3,6 +3,7 @@ import './styles/App.css';
 import { Grid, Row, Col, PageHeader, Image } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
 import SongControls from './components/SongControls';
+import Player from './components/Player';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
@@ -21,13 +22,29 @@ class Room extends Component {
 				this.props.room.access_token,
 				this.props.room.refresh_token
 			),
+			currentSong: null,
 		};
 	}
-	componentDidMount() {
-		console.log('App mounted');
+
+	getTopSong = (songs) => {
+		if (songs) {
+			const sortedSongs = songs;
+			let topSong = null;
+			sortedSongs.sort((a, b) => b.data.votes - a.data.votes);
+			topSong = sortedSongs[0].data;
+			sortedSongs.forEach(song => {
+				if(song.data.isPlaying) {
+					topSong = song.data;
+				}
+			});
+			return topSong;
+		}
+		return null;
 	}
 
 	addSong = songData => {
+		console.log(songData.album)
+		console.log(songData.album.images)
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -41,6 +58,7 @@ class Room extends Component {
 				name: songData.album.name,
 				id: songData.album.id,
 				query: songData.album.href,
+				images: songData.album.images,
 			},
 			duration: songData.duration_ms,
 		});
@@ -53,7 +71,7 @@ class Room extends Component {
 	};
 
 	play = () => {
-
+		this.state.spotify.play();
 	}
 
 	vote = (songKey, currentVotes) => {
@@ -75,6 +93,7 @@ class Room extends Component {
 	render() {
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
+		let topSong = this.getTopSong(this.props.room.songs);
 		return (
 			<Grid>
 				<PageHeader>
@@ -116,14 +135,24 @@ class Room extends Component {
 					/>
 				</Row>
 				<Row>
-					<SongControls
+					{/* <SongControls
 						spotify={this.state.spotify}
 						songs={songs}
 						lockSong={this.disableVoting}
 						removeSong={this.removeSong}
 						setPlaying={this.setPlaying}
 						playlistId={this.props.room.playlistId}
-					/>
+					/> */}
+					{ topSong ? 
+						<Player
+							song={topSong}
+							play={this.state.spotify.play}
+							pause={this.state.spotify.pause}
+							onFinaleReached={() => null}
+							onSongEnd={() => null}
+						/>
+					:	null
+					}
 				</Row>
 			</Grid>
 		);

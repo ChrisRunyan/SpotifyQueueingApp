@@ -9,7 +9,7 @@ const getTimestring = millis => {
 	return `${minutes}:${remainingSeconds}`
 }
 
-export default SongList = (props) => {
+export default (props) => {
 	const sortableSongs = props.songs;
 	sortableSongs.sort((a, b) => {
 		return b.data.votes - a.data.votes;

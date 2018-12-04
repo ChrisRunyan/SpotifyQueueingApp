@@ -39,8 +39,8 @@ export class TimeoutInterval {
 	 * Create an interval timer which is set to expire after a given amount of time.
 	 * @param {Function} onInterval The function to be run on a given interval
 	 * @param {Number} interval The interval to run (in ms)
-	 * @param {Function} onTimeout The function to be run when the timer ends
 	 * @param {Number} duration The amount of time that the interval will run for
+	 * @param {Function} onTimeout The function to be run when the timer ends
 	 */
 	constructor(onInterval, interval, duration = 0, onTimeout = null) {
 		this.onInterval = onInterval;

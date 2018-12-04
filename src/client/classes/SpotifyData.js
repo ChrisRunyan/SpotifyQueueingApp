@@ -7,8 +7,11 @@ class SpotifyData {
 }
 
 export class Album extends SpotifyData {
-	constructor(id, name, query) {
+	constructor(id, name, query, images) {
 		super(id, name, query);
+		console.log('album constructor');
+		console.log(images);
+		this.images = images;
 	}
 }
 
@@ -35,7 +38,8 @@ export class Song extends SpotifyData {
 		this.album = new Album(
 			song.album.id,
 			song.album.name,
-			song.album.query
+			song.album.query,
+			song.album.images
 		);
 		this.artist = new Artist(
 			primaryArtist.id,

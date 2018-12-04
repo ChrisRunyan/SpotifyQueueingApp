@@ -131,7 +131,10 @@ class SpotifyWrapper {
 	 * the SpotifyAPI
 	 */
 	makeSongNextPlayed = (playlistId, nextSongIndex, currentSongIndex, callback, options = null) => {
-		const middleware = refreshMiddleware(this.refresh_token, callback);
+        const middleware = refreshMiddleware(this.refresh_token, callback);
+        console.log('reordering playlist');
+        console.log(`nextSongIndex=${nextSongIndex}`);
+        console.log(`before=${currentSongIndex + 1}`);
 		this.spotify.reorderTracksInPlaylist(
 			playlistId,
 			nextSongIndex,

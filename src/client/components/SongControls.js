@@ -38,29 +38,7 @@ class SongControls extends React.Component {
 					nextSong.data.id
 				);
 				// wait .5 seconds to allow spotify to start playing
-				setTimeout(() => {
-					this.props.spotify.getPlayerInfo(res => {
-						console.log(`get info: isPlaying=${res.is_playing}`);
-						this.setState(
-							{
-								isPlaying: res.is_playing,
-								progress: res.progress_ms,
-								duration: res.item.duration_ms,
-								albumArt: res.item.album.images[2].url,
-							},
-							() => {
-								if (this.state.isPlaying) {
-									console.log('start timers');
-									this.startPlaybackTimers(
-										nextSong,
-										secondSong
-									);
-									this.startPlayback(nextSong);
-								}
-							}
-						);
-					});
-				}, 500);
+				setTimeout(this.syncPlayerState, 500);
 			} else {
 				this.props.spotify.play();
 				this.resumeTimers();
@@ -90,7 +68,8 @@ class SongControls extends React.Component {
 			this.state.duration - this.state.progress,
 			() => {
 				this.props.removeSong(currentSong.key);
-				this.setState({ hasSong: false });
+                this.setState({ hasSong: false });
+                this.syncPlayerState();
 			}
 		);
 		if (nextSong) {
@@ -108,6 +87,27 @@ class SongControls extends React.Component {
 				this.resumeTimers();
 			}
 		);
+	};
+
+	syncPlayerState = () => {
+		this.props.spotify.getPlayerInfo(res => {
+			console.log(`get info: isPlaying=${res.is_playing}`);
+			this.setState(
+				{
+					isPlaying: res.is_playing,
+					progress: res.progress_ms,
+					duration: res.item.duration_ms,
+					albumArt: res.item.album.images[2].url,
+				},
+				() => {
+					if (this.state.isPlaying) {
+						console.log('start timers');
+						this.startPlaybackTimers(nextSong, secondSong);
+						this.startPlayback(nextSong);
+					}
+				}
+			);
+		});
 	};
 
 	updateSongProgress = interval => {
@@ -142,13 +142,13 @@ class SongControls extends React.Component {
 		getIndex(
 			// Get the index of the curretly playing song
 			playlistId,
-			currentSong.id,
+			currentSong.data.id,
 			cIndex => {
 				// Callback on result of getIndexOfSongInPlaylist
 				getIndex(
 					// Get the index of the song that will be played next
 					playlistId,
-					nextSong.id,
+					nextSong.data.id,
 					nIndex => {
 						// Callback on result of getIndexOfSongInPlaylist
 						this.props.spotify.makeSongNextPlayed(
@@ -175,7 +175,7 @@ class SongControls extends React.Component {
 
 	getNextSong = (songs, offset = 0) => {
 		if (songs) {
-            console.log(songs);
+			console.log(songs);
 			songs.sort((a, b) => {
 				b.data.votes - a.data.votes;
 			});
