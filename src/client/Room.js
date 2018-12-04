@@ -136,10 +136,10 @@ class Room extends Component {
 		if(key) {
 			this.removeSong(key);
 		}
-		console.log(nextSong.id);
+		console.log(nextSong.data.id);
 		this.state.spotify.playNextFromPlaylist(
 			this.props.room.playlistId,
-			nextSong.id
+			nextSong.data.id
 		);
 	}
 
