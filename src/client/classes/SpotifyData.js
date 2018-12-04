@@ -9,8 +9,8 @@ class SpotifyData {
 export class Album extends SpotifyData {
 	constructor(id, name, query, images) {
 		super(id, name, query);
-		console.log('album constructor');
-		console.log(images);
+		// console.log('album constructor');
+		// console.log(images);
 		this.images = images;
 	}
 }
@@ -48,12 +48,12 @@ export class Song extends SpotifyData {
 		);
 	}
 
-	disableVoting = () => {
-		this.canVote = false;
-	}
+	// disableVoting = () => {
+	// 	this.canVote = false;
+	// }
 
-	setIsPlaying = (isPlaying) => {
-		this.isPlaying = isPlaying;
-	}
+	// setIsPlaying = (isPlaying) => {
+	// 	this.isPlaying = isPlaying;
+	// }
 
 }

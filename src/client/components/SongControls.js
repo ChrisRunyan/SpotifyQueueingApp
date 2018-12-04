@@ -200,16 +200,15 @@ class SongControls extends React.Component {
 		return (
 			<Navbar inverse fixedBottom>
 				<Image src={this.state.albumArt} />
-				<Navbar.Brand>Controls</Navbar.Brand>
-				<NavItem onClick={this.togglePlayback}>
-					{this.state.isPlaying ? pauseIcon : playIcon}
-				</NavItem>
 				<NavItem>
 					<ProgressBar
 						id="song-progress"
 						now={this.state.progress / this.state.duration}
 						max={1}
 					/>
+				</NavItem>
+                <NavItem onClick={this.togglePlayback}>
+					{this.state.isPlaying ? pauseIcon : playIcon}
 				</NavItem>
 			</Navbar>
 		);

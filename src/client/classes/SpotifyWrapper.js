@@ -12,12 +12,12 @@ const refreshMiddleware = (refresh_token, callback) => (err, res) => {
 			console.log('access_token expired');
 			// history.pushState(null, null, `/api/refresh?${refresh_token}`)
 		} else if (err.status === 404) {
-            console.log(err);
-        } else if (err.status === 429) {
+			console.log(err);
+		} else if (err.status === 429) {
 			console.log('rate limiting applied');
 		} else if (err.status === 403) {
-            console.log('Forbidden request');
-        }
+			console.log('Forbidden request');
+		}
 	} else {
 		return callback(res);
 	}
@@ -70,25 +70,30 @@ class SpotifyWrapper {
 
 	play = () => {
 		const middleware = refreshMiddleware(this.refresh_token, res => res);
+		console.log('generic play');
 		return this.spotify.play(null, middleware);
 	};
 
 	pause = () => {
 		const middleware = refreshMiddleware(this.refresh_token, res => res);
 		this.spotify.pause(null, middleware);
-    };
-    
-    playNextFromPlaylist = (playlistId, songId) => {
-        const middleware = refreshMiddleware(this.refresh_token, res => res);
-        const playlistURI = `spotify:playlist:${playlistId}`;
-        const songURI = `spotify:track:${songId}`;
-        this.spotify.play({
-            context_uri: playlistURI,
-            offset: {
-                uri: songURI
-            }
-        }, middleware);
-    }
+	};
+
+	playNextFromPlaylist = (playlistId, songId) => {
+		const middleware = refreshMiddleware(this.refresh_token, res => res);
+		const playlistURI = `spotify:playlist:${playlistId}`;
+		const songURI = `spotify:track:${songId}`;
+		console.log(`playing ${songURI} in playlist ${playlistURI}`);
+		this.spotify.play(
+			{
+				context_uri: playlistURI,
+				offset: {
+					uri: songURI,
+				},
+			},
+			middleware
+		);
+	};
 
 	createPlaylist = (name, callback, options = null) => {
 		const middleware = refreshMiddleware(this.refresh_token, callback);
@@ -101,15 +106,15 @@ class SpotifyWrapper {
 		);
 	};
 
-    /**
-     * Append a track to the desired playlist
-     * @param {String} playlistId The ID of the playlist to be changed
-     * @param {String|Int} songId The ID of the song to be added
-     * @param {Function} callback A function to be applied to the result object returned
-     * by the SpotifyAPI.  This result has the format { snapshot_id: <snapshot_id> }
-     * @param {Object} options An optional options object to be passed along with the call
-     * to the SpotifyAPI
-     */
+	/**
+	 * Append a track to the desired playlist
+	 * @param {String} playlistId The ID of the playlist to be changed
+	 * @param {String|Int} songId The ID of the song to be added
+	 * @param {Function} callback A function to be applied to the result object returned
+	 * by the SpotifyAPI.  This result has the format { snapshot_id: <snapshot_id> }
+	 * @param {Object} options An optional options object to be passed along with the call
+	 * to the SpotifyAPI
+	 */
 	addSongToPlaylist = (playlistId, songId, callback, options = null) => {
 		const middleware = refreshMiddleware(this.refresh_token, callback);
 		const uri = `spotify:track:${songId}`;
@@ -125,16 +130,22 @@ class SpotifyWrapper {
 	 * Moves the song at {@link songIndex}
 	 * @param {String} playlistId The ID of the playlist to be changed
 	 * @param {Int} nextSongIndex The index of the song to be moved
-     * @param {Int} currentSongIndex The index of the currently playing song
+	 * @param {Int} currentSongIndex The index of the currently playing song
 	 * @param {Function} callback A function to be applied to the result object of this call
 	 * @param {Object} options An optional options object to be passed along with the call to
 	 * the SpotifyAPI
 	 */
-	makeSongNextPlayed = (playlistId, nextSongIndex, currentSongIndex, callback, options = null) => {
-        const middleware = refreshMiddleware(this.refresh_token, callback);
-        console.log('reordering playlist');
-        console.log(`nextSongIndex=${nextSongIndex}`);
-        console.log(`before=${currentSongIndex + 1}`);
+	makeSongNextPlayed = (
+		playlistId,
+		nextSongIndex,
+		currentSongIndex,
+		callback,
+		options = null
+	) => {
+		const middleware = refreshMiddleware(this.refresh_token, callback);
+		console.log('reordering playlist');
+		console.log(`nextSongIndex=${nextSongIndex}`);
+		console.log(`before=${currentSongIndex + 1}`);
 		this.spotify.reorderTracksInPlaylist(
 			playlistId,
 			nextSongIndex,
@@ -142,36 +153,69 @@ class SpotifyWrapper {
 			options,
 			middleware
 		);
+	};
+
+	queueUpSong = (
+		playlistId,
+		nextSongId,
+		currentSongId,
+		callback,
+		options = null
+	) => {
+		const middleware = refreshMiddleware(this.refresh_token, callback);
+        const getIndex = this.getIndexOfSongInPlaylist;
+        console.log(`queueing song: ${nextSongId}`);
+		getIndex(playlistId, currentSongId, cIndex => {
+			getIndex(playlistId, nextSongId, nIndex => {
+				this.makeSongNextPlayed(
+					playlistId,
+					nIndex,
+					cIndex,
+					middleware,
+					options
+				);
+			});
+		});
     };
     
-    /**
-     * Finds the index of the given songId in the given playlist
-     * @param {String} playlistId The id of the playlist to search
-     * @param {String} songId The id of the song to search for
-     * @param {Function} callback The function to run on the index of the song
-     * @param {Object} options An options object to be passed along with the call to
-     * the SpotifyAPI
-     */
-    getIndexOfSongInPlaylist = (playlistId, songId, callback, options = null) => {
-        const middleware = refreshMiddleware(this.refresh_token, (res) => {
+    next = () => {
+        this.spotify.skipToNext(res => console.log(res));
+    }
+
+	/**
+	 * Finds the index of the given songId in the given playlist
+	 * @param {String} playlistId The id of the playlist to search
+	 * @param {String} songId The id of the song to search for
+	 * @param {Function} callback The function to run on the index of the song
+	 * @param {Object} options An options object to be passed along with the call to
+	 * the SpotifyAPI
+	 */
+	getIndexOfSongInPlaylist = (
+		playlistId,
+		songId,
+		callback,
+		options = null
+	) => {
+		const middleware = refreshMiddleware(this.refresh_token, res => {
             let index = 0;
-            res.items.forEach(item => {
-                if (item.track.id === songId) {
-                    return index;
-                } 
-                index++;
-            })
-            callback(index);
-        })
-        this.spotify.getPlaylistTracks(playlistId, options, middleware);
-    }
+            let idx = 0;
+			res.items.forEach(item => {
+                console.log(`track.id = ${item.track.id}\nsongId = ${songId}`);
+				if (item.track.id === songId) {
+					index = idx;
+				}
+				idx++;
+			});
+			callback(index);
+		});
+		this.spotify.getPlaylistTracks(playlistId, options, middleware);
+	};
 
-    isPlaying = (callback, options = null) => {
-        return this.getPlayerInfo(res => {
-            callback(res.is_playing);
-        }, options)
-    }
-
+	isPlaying = (callback, options = null) => {
+		return this.getPlayerInfo(res => {
+			callback(res.is_playing);
+		}, options);
+	};
 }
 
 export default SpotifyWrapper;

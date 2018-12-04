@@ -12,7 +12,8 @@ import {
 // If there is no current song, then there is no player
 // Parent component decides how to get next song
 // Player schedules events & displays information
-
+const progressInterval = 500;
+const lockInPercent = .95;
 
 class Player extends React.Component {
 
@@ -38,21 +39,36 @@ class Player extends React.Component {
     }
 
     componentDidMount() {
-        const progressInterval = 500;
-        const lockInPercent = .95;
+        this.initializeTimers(this.props.song);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.song.id !== this.props.song.id) {
+            this.initializeTimers(nextProps.song);
+        }
+    }
+
+    initializeTimers = (song) => {
         const durationTimer = new TimeoutInterval(
             () => {
+                console.log(`progress: ${this.state.progress} ms`);
                 this.setState({
                     progress: this.state.progress + progressInterval
                 })
             },
             progressInterval,
-            this.props.song.duration,
-            this.props.onSongEnd
+            song.duration,
+            () => {
+                console.log(`song ending`)
+                this.props.onSongEnd(this.props.song.id);
+            }
         );
         const finaleTimer = new Timer(
-            this.props.onFinaleReached,
-            this.props.song.duration * lockInPercent - this.state.progress
+            () => {
+                console.log('finale');
+                this.props.onFinaleReached(song.id)
+            },
+            song.duration * lockInPercent - this.state.progress
         )
         this.setState({
             durationTimer,
@@ -62,7 +78,7 @@ class Player extends React.Component {
                 this.state.durationTimer.resume();
                 this.state.finaleTimer.resume();
             }
-        })
+        });
     }
 
     play = () => {
@@ -72,7 +88,7 @@ class Player extends React.Component {
         if (this.state.finaleTimer) {
             this.state.finaleTimer.resume();
         }
-        this.props.play();
+        this.props.play(this.props.song.id);
     }
 
     pause = () => {
@@ -96,20 +112,20 @@ class Player extends React.Component {
                 <Glyphicon bsSize="large" glyph="pause" />
             </span>
         );
-        console.log(this.props.song);
+        // console.log(this.props.song);
         return (
 			<Navbar inverse fixedBottom>
 				<Image src={this.props.song ? this.props.song.album.images[2].url : ''} />
-				<Navbar.Brand>Controls</Navbar.Brand>
-				<NavItem onClick={this.togglePlayback}>
-					{this.state.isPlaying ? pauseIcon : playIcon}
-				</NavItem>
+				
 				<NavItem>
 					<ProgressBar
-						id="song-progress"
+                        id="song-progress"
 						now={this.state.progress / this.props.song.duration}
 						max={1}
 					/>
+				</NavItem>
+                <NavItem onClick={this.togglePlayback} >
+					{this.state.isPlaying ? pauseIcon : playIcon}
 				</NavItem>
 			</Navbar>
 		);

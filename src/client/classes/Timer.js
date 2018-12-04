@@ -61,7 +61,9 @@ export class TimeoutInterval {
             this.timerId = setTimeout(() => {
                 this.hasCompleted = true;
                 clearInterval(this.intervalId);
-                this.onTimeout || this.onTimeout();
+                if (this.onTimeout) {
+					this.onTimeout();
+				}
             }, this.remaining);
         }
 		

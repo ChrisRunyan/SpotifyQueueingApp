@@ -26,25 +26,38 @@ class Room extends Component {
 		};
 	}
 
-	getTopSong = (songs) => {
-		if (songs) {
-			const sortedSongs = songs;
-			let topSong = null;
-			sortedSongs.sort((a, b) => b.data.votes - a.data.votes);
-			topSong = sortedSongs[0].data;
+	sortSongs = songs => {
+		const sortableSongs = songs;
+		sortableSongs.sort((a, b) => b.data.votes - a.data.votes);
+		return sortableSongs;
+	};
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.room.songs) {
+			console.log(nextProps.room.songs);
+			this.setState({
+				currentSong: this.getTopSong(nextProps.room.songs)
+			});
+		}
+	}
+
+	getTopSong = songs => {
+		if (songs && songs.length > 0) {
+			const sortedSongs = this.sortSongs(songs);
+			let topSong = sortedSongs[0].data;
 			sortedSongs.forEach(song => {
-				if(song.data.isPlaying) {
+				if (song.data.isPlaying) {
 					topSong = song.data;
 				}
 			});
 			return topSong;
 		}
 		return null;
-	}
+	};
 
 	addSong = songData => {
-		console.log(songData.album)
-		console.log(songData.album.images)
+		console.log(songData.album);
+		console.log(songData.album.images);
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -70,30 +83,92 @@ class Room extends Component {
 		this.props.firebaseWrapper.addSong(song, this.props.user.username);
 	};
 
-	play = () => {
-		this.state.spotify.play();
+	play = songId => {
+		const spotify = this.state.spotify;
+		const playlistId = this.props.room.playlistId;
+		const songKey = this.props.room.songs.filter(
+			song => song.data.id === songId
+		)[0].key;
+		spotify.getPlayerInfo(info => {
+			if (
+				info &&
+				info.context.type === 'playlist' &&
+				info.context.uri.indexOf(playlistId) !== -1 &&
+				info.item.id === songId
+			) {
+				spotify.play();
+			} else {
+				spotify.playNextFromPlaylist(playlistId, songId);
+				this.props.firebaseWrapper.setIsPlaying(songKey);
+			}
+		});
+	};
+
+	queueNextSong = currentSongId => {
+		const sortedSongs = this.sortSongs(this.props.room.songs);
+		let nextSong = sortedSongs[0];
+		if (nextSong.data.id === currentSongId) {
+			if (sortedSongs[1]) {
+				nextSong = sortedSongs[1];
+			}
+		}
+		this.state.spotify.queueUpSong(
+			this.props.room.playlistId,
+			nextSong.data.id,
+			currentSongId,
+			res => res
+		);
+	};
+
+	onSongEnd = (songId) => {
+		const sortedSongs = this.sortSongs(this.props.room.songs);
+		let key = null;
+		sortedSongs.forEach(song => {
+			if(song.data.id === songId) 
+				key = song.key;
+		});
+		let nextSong = sortedSongs[0];
+		if (nextSong.data.id === songId) {
+			if (sortedSongs[1]) {
+				nextSong = sortedSongs[1];
+			}
+		}
+		if(key) {
+			this.removeSong(key);
+		}
+		console.log(nextSong.id);
+		this.state.spotify.playNextFromPlaylist(
+			this.props.room.playlistId,
+			nextSong.id
+		);
 	}
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
 	};
 
-	disableVoting = (songKey) => {
+	disableVoting = songKey => {
 		this.props.firebaseWrapper.disableVoting(songKey);
-	}
+	};
 
-	setPlaying = (songKey) => {
+	setPlaying = songKey => {
 		this.props.firebaseWrapper.setIsPlaying(songKey);
-	}
+	};
 
-	removeSong = (songKey) => {
+	removeSong = songKey => {
+		console.log('removing song');
 		this.props.firebaseWrapper.removeSong(songKey);
-	}
+	};
 
 	render() {
 		let roomCode = this.props.room.roomCode;
 		let songs = this.props.room.songs;
-		let topSong = this.getTopSong(this.props.room.songs);
+		let topSong = null;
+		if (this.state.currentSong) {
+			topSong = this.state.currentSong;
+		} else if (songs && songs.length > 0) {
+			topSong = this.getTopSong(songs);
+		}
 		return (
 			<Grid>
 				<PageHeader>
@@ -143,16 +218,15 @@ class Room extends Component {
 						setPlaying={this.setPlaying}
 						playlistId={this.props.room.playlistId}
 					/> */}
-					{ topSong ? 
+					{topSong ? (
 						<Player
 							song={topSong}
-							play={this.state.spotify.play}
+							play={this.play}
 							pause={this.state.spotify.pause}
-							onFinaleReached={() => null}
-							onSongEnd={() => null}
+							onFinaleReached={this.queueNextSong}
+							onSongEnd={this.onSongEnd}
 						/>
-					:	null
-					}
+					) : null}
 				</Row>
 			</Grid>
 		);

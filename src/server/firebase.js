@@ -94,6 +94,7 @@ module.exports = class Firebase {
 
 	removeSong(songKey) {
 		if (this.currentRoomRef) {
+			console.log(`removing song ${songKey}`);
 			this.currentRoomRef.child('songs').child(songKey).remove();
 		}
 	}
