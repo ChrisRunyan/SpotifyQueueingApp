@@ -23,22 +23,40 @@ class Room extends Component {
 				this.props.room.refresh_token
 			),
 			currentSong: null,
+			queuedSong: null,
 		};
 	}
 
+	/**
+	 * Sort a list of songs based on votes
+	 */
 	sortSongs = songs => {
 		const sortableSongs = songs;
 		sortableSongs.sort((a, b) => b.data.votes - a.data.votes);
 		return sortableSongs;
 	};
 
+	/**
+	 * Get the firebase key for a song given the song's spotify id
+	 */
+	getKeyForId = songId => {
+		return this.props.room.songs.filter(song => 
+			song.data.id === songId
+		)[0].key;
+	}
+
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.room.songs) {
+		let nextSong = null;
+		if (this.state.queuedSong) {
+			console.log('queued song found');
+			nextSong = this.state.queuedSong
+		} else if (nextProps.room.songs) {
 			console.log(nextProps.room.songs);
-			this.setState({
-				currentSong: this.getTopSong(nextProps.room.songs)
-			});
+			nextSong = this.getTopSong(nextProps.room.songs);
 		}
+		this.setState({
+			currentSong: nextSong
+		})
 	}
 
 	getTopSong = songs => {
@@ -56,8 +74,6 @@ class Room extends Component {
 	};
 
 	addSong = songData => {
-		console.log(songData.album);
-		console.log(songData.album.images);
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -86,10 +102,10 @@ class Room extends Component {
 	play = songId => {
 		const spotify = this.state.spotify;
 		const playlistId = this.props.room.playlistId;
-		const songKey = this.props.room.songs.filter(
-			song => song.data.id === songId
-		)[0].key;
+		// get the firebase key of the song to play
+		const songKey = this.getKeyForId(songId);
 		spotify.getPlayerInfo(info => {
+			// check if the correct song and playlist is already playing
 			if (
 				info &&
 				info.context.type === 'playlist' &&
@@ -99,11 +115,13 @@ class Room extends Component {
 				spotify.play();
 			} else {
 				spotify.playNextFromPlaylist(playlistId, songId);
-				this.props.firebaseWrapper.setIsPlaying(songKey);
+				this.setPlaying(songKey);
 			}
 		});
 	};
 
+	// TODO: change queueing so it locks in "nextSong" which is then used in
+	// this.onSongEnd().  Reordering the playlist won't work
 	queueNextSong = currentSongId => {
 		const sortedSongs = this.sortSongs(this.props.room.songs);
 		let nextSong = sortedSongs[0];
@@ -112,27 +130,23 @@ class Room extends Component {
 				nextSong = sortedSongs[1];
 			}
 		}
-		this.state.spotify.queueUpSong(
-			this.props.room.playlistId,
-			nextSong.data.id,
-			currentSongId,
-			res => res
-		);
+		this.setState({
+			queuedSong: nextSong.data
+		});
 	};
 
 	onSongEnd = (songId) => {
 		const sortedSongs = this.sortSongs(this.props.room.songs);
-		let key = null;
-		sortedSongs.forEach(song => {
-			if(song.data.id === songId) 
-				key = song.key;
-		});
 		let nextSong = sortedSongs[0];
+		// if the currently playing song is the highest-voted song,
+		// get the second-highest voted song
 		if (nextSong.data.id === songId) {
 			if (sortedSongs[1]) {
 				nextSong = sortedSongs[1];
 			}
 		}
+		// Remove the song from firebase
+		let key = this.getKeyForId(songId);
 		if(key) {
 			this.removeSong(key);
 		}
@@ -141,6 +155,9 @@ class Room extends Component {
 			this.props.room.playlistId,
 			nextSong.data.id
 		);
+		this.setState({
+			currentSong: null,
+		})
 	}
 
 	vote = (songKey, currentVotes) => {
@@ -170,7 +187,8 @@ class Room extends Component {
 			topSong = this.getTopSong(songs);
 		}
 		return (
-			<Grid>
+			<div>
+				<Grid>
 				<PageHeader>
 					<Row>
 						<Col md={3}>Apollo</Col>
@@ -204,31 +222,23 @@ class Room extends Component {
 				</Row>
 				<Row>
 					<SongList
-						spotify={this.state.spotify}
+						// spotify={this.state.spotify}
 						songs={songs}
+						currentSong={topSong}
 						vote={this.vote}
 					/>
 				</Row>
-				<Row>
-					{/* <SongControls
-						spotify={this.state.spotify}
-						songs={songs}
-						lockSong={this.disableVoting}
-						removeSong={this.removeSong}
-						setPlaying={this.setPlaying}
-						playlistId={this.props.room.playlistId}
-					/> */}
-					{topSong ? (
-						<Player
-							song={topSong}
-							play={this.play}
-							pause={this.state.spotify.pause}
-							onFinaleReached={this.queueNextSong}
-							onSongEnd={this.onSongEnd}
-						/>
-					) : null}
-				</Row>
-			</Grid>
+				</Grid>
+				{topSong ? (
+					<Player
+						song={topSong}
+						play={this.play}
+						pause={this.state.spotify.pause}
+						onFinaleReached={this.queueNextSong}
+						onSongEnd={this.onSongEnd}
+					/>
+				) : null}
+			</div>
 		);
 	}
 }
