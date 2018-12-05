@@ -92,6 +92,13 @@ module.exports = class Firebase {
 		}
 	}
 
+	removeSong(songKey) {
+		if (this.currentRoomRef) {
+			console.log(`removing song ${songKey}`);
+			this.currentRoomRef.child('songs').child(songKey).remove();
+		}
+	}
+
 	updatePlaylistId(playlistId) {
 		if (this.currentRoomRef) {
 			this.currentRoomRef.update({
@@ -120,6 +127,25 @@ module.exports = class Firebase {
 			this.currentRoomRef.update({
 				[votesRefKey]: currentVotes + 1,
 			});
+		}
+	}
+
+	disableVoting(songKey) {
+		const canVoteRefKey = `songs/${songKey}/canVote`;
+		if (this.currentRoomRef) {
+			this.currentRoomRef.update({
+				[canVoteRefKey]: false
+			});
+		}
+	}
+
+	setIsPlaying(songKey) {
+		const isPlayingRefKey = `songs/${songKey}/isPlaying`;
+		if (this.currentRoomRef) {
+			this.currentRoomRef.update({
+				[isPlayingRefKey]: true
+			})
+
 		}
 	}
 
