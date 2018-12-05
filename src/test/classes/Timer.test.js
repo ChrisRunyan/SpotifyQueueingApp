@@ -1,4 +1,4 @@
-import Timer from '../../src/client/classes/Timer';
+import { Timer } from '../../client/classes/Timer';
 
 const testCallback = () => {
 
