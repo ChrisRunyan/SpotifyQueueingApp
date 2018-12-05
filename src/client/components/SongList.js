@@ -36,6 +36,7 @@ export default (props) => {
 							songLength={songLength}
 							votes={song.data.votes}
 							id={song.data.id}
+							canVote={song.data.canVote}
 							key={song.key}
 							songKey={song.key}
 							index={index}

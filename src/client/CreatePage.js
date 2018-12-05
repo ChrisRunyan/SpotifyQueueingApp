@@ -1,5 +1,16 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, FormControl, ControlLabel, Button, Grid, Image, Row, Col, PageHeader, } from 'react-bootstrap';
+import { 
+    Form, 
+    FormGroup,
+    InputGroup, 
+    FormControl, 
+    Button, 
+    Grid, 
+    Image, 
+    Row, 
+    Col, 
+    PageHeader, 
+} from 'react-bootstrap';
 import apollo from './images/apollo_icon_black.png'
 
 const divStyle = {
@@ -48,46 +59,46 @@ class CreatePage extends Component {
                     <br/>
                     <Form horizontal onSubmit={this.handleSubmit}>
                         <FormGroup controlId='roomCode'>
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Enter Room Code
-                            </Col> 
-                            <Col sm={10}>
+                            <InputGroup>
+                                <InputGroup.Addon>
+                                    Enter Room Code
+                                </InputGroup.Addon>
                                 <FormControl
                                     id='roomCode'
                                     type='text'
                                     value={this.state.roomCode}
-                                    placeholder="Room Code"
-                                    onChange={this.handleChange} />
-                            </Col>
+                                    onChange={this.handleChange}
+                                />
+                            </InputGroup>
                         </FormGroup>
                         <FormGroup>
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Enter Username
-                            </Col>
-                            <Col sm={10}>
+                            <InputGroup>
+                                <InputGroup.Addon >
+                                    Enter Alias
+                                </InputGroup.Addon>
                                 <FormControl
                                     id='username'
                                     type='text'
                                     value={this.state.username}
-                                    placeholder="Username"
-                                    onChange={this.handleChange} />
-                            </Col>
+                                    onChange={this.handleChange} 
+                                />
+                            </InputGroup>
                         </FormGroup>
                         <FormGroup>
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Room Name
-                            </Col>
-                            <Col sm={10}>
+                            <InputGroup>
+                                <InputGroup.Addon>
+                                    Enter Room Name
+                                </InputGroup.Addon>
                                 <FormControl
                                     id='roomName'
                                     type='text'
                                     value={this.state.roomName}
-                                    placeholder='Room Name'
-                                    onChange={this.handleChange} />
-                            </Col>
+                                    onChange={this.handleChange} 
+                                />
+                            </InputGroup>
                         </FormGroup>
                         <FormGroup>
-                            <Col smOffset={2} sm={10}>
+                            <Col smOffset={2} sm={8}>
                                 <Button type='submit'>Create Room</Button>
                             </Col>
                         </FormGroup>

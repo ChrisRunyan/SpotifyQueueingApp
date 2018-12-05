@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import './styles/App.css';
-import { Grid, Row, Col, PageHeader, Image } from 'react-bootstrap';
+import { 
+	Grid, 
+	Row, 
+	Col, 
+	PageHeader, 
+	Image,
+} from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
-import SongControls from './components/SongControls';
 import Player from './components/Player';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
@@ -23,22 +28,40 @@ class Room extends Component {
 				this.props.room.refresh_token
 			),
 			currentSong: null,
+			queuedSong: null,
 		};
 	}
 
+	/**
+	 * Sort a list of songs based on votes
+	 */
 	sortSongs = songs => {
 		const sortableSongs = songs;
 		sortableSongs.sort((a, b) => b.data.votes - a.data.votes);
 		return sortableSongs;
 	};
 
+	/**
+	 * Get the firebase key for a song given the song's spotify id
+	 */
+	getSongById = songId => {
+		return this.props.room.songs.filter(song => 
+			song.data.id === songId
+		)[0];
+	}
+
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.room.songs) {
+		let nextSong = null;
+		if (this.state.queuedSong) {
+			console.log('queued song found');
+			nextSong = this.state.queuedSong
+		} else if (nextProps.room.songs) {
 			console.log(nextProps.room.songs);
-			this.setState({
-				currentSong: this.getTopSong(nextProps.room.songs)
-			});
+			nextSong = this.getTopSong(nextProps.room.songs);
 		}
+		this.setState({
+			currentSong: nextSong
+		})
 	}
 
 	getTopSong = songs => {
@@ -56,8 +79,6 @@ class Room extends Component {
 	};
 
 	addSong = songData => {
-		console.log(songData.album);
-		console.log(songData.album.images);
 		const song = new SongData({
 			name: songData.name,
 			id: songData.id,
@@ -86,20 +107,22 @@ class Room extends Component {
 	play = songId => {
 		const spotify = this.state.spotify;
 		const playlistId = this.props.room.playlistId;
-		const songKey = this.props.room.songs.filter(
-			song => song.data.id === songId
-		)[0].key;
+		// get the firebase key of the song to play
+		const song = this.getSongById(songId);
+		const songKey = song.key;
 		spotify.getPlayerInfo(info => {
+			// check if the correct song and playlist is already playing
 			if (
 				info &&
 				info.context.type === 'playlist' &&
 				info.context.uri.indexOf(playlistId) !== -1 &&
 				info.item.id === songId
 			) {
-				spotify.play();
+				spotify.play({ position_ms: info.progress_ms });
+				song.data.progress = info.progress_ms;
 			} else {
 				spotify.playNextFromPlaylist(playlistId, songId);
-				this.props.firebaseWrapper.setIsPlaying(songKey);
+				this.setPlaying(songKey);
 			}
 		});
 	};
@@ -112,27 +135,23 @@ class Room extends Component {
 				nextSong = sortedSongs[1];
 			}
 		}
-		this.state.spotify.queueUpSong(
-			this.props.room.playlistId,
-			nextSong.data.id,
-			currentSongId,
-			res => res
-		);
+		this.setState({
+			queuedSong: nextSong.data
+		});
 	};
 
 	onSongEnd = (songId) => {
 		const sortedSongs = this.sortSongs(this.props.room.songs);
-		let key = null;
-		sortedSongs.forEach(song => {
-			if(song.data.id === songId) 
-				key = song.key;
-		});
 		let nextSong = sortedSongs[0];
+		// if the currently playing song is the highest-voted song,
+		// get the second-highest voted song
 		if (nextSong.data.id === songId) {
 			if (sortedSongs[1]) {
 				nextSong = sortedSongs[1];
 			}
 		}
+		// Remove the song from firebase
+		let key = this.getSongById(songId).key;
 		if(key) {
 			this.removeSong(key);
 		}
@@ -141,14 +160,13 @@ class Room extends Component {
 			this.props.room.playlistId,
 			nextSong.data.id
 		);
+		this.setState({
+			currentSong: null,
+		})
 	}
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
-	};
-
-	disableVoting = songKey => {
-		this.props.firebaseWrapper.disableVoting(songKey);
 	};
 
 	setPlaying = songKey => {
@@ -170,30 +188,29 @@ class Room extends Component {
 			topSong = this.getTopSong(songs);
 		}
 		return (
-			<Grid>
+			<div>
+				<Grid>
 				<PageHeader>
 					<Row>
 						<Col md={3}>Apollo</Col>
-						<Row>
-							<Col mdOffset={11}>
-								<Image
-									src={apollo}
-									style={{ width: '50px', float: 'right' }}
-									rounded
-								/>
-							</Col>
-						</Row>
-						<Row style={{ textAlign: 'end' }}>
-							<Col mdOffset={9}>
-								<br />
-								<p style={pStyle}>Room Code: {roomCode}</p>
-							</Col>
-						</Row>
-						<Row style={{ textAlign: 'end' }}>
-							<Col mdOffset={9}>
-								<p style={pStyle}>{this.props.room.roomName}</p>
-							</Col>
-						</Row>
+						<Col mdOffset={11}>
+							<Image
+								src={apollo}
+								style={{ width: '50px', float: 'right' }}
+								rounded
+							/>
+						</Col>
+					</Row>
+					<Row style={{ textAlign: 'end' }}>
+						<Col mdOffset={9}>
+							<br />
+							<p style={pStyle}>Room Code: {roomCode}</p>
+						</Col>
+					</Row>
+					<Row style={{ textAlign: 'end' }}>
+						<Col mdOffset={9}>
+							<p style={pStyle}>{this.props.room.roomName}</p>
+						</Col>
 					</Row>
 				</PageHeader>
 				<Row>
@@ -204,31 +221,24 @@ class Room extends Component {
 				</Row>
 				<Row>
 					<SongList
-						spotify={this.state.spotify}
 						songs={songs}
+						currentSong={topSong}
 						vote={this.vote}
 					/>
 				</Row>
-				<Row>
-					{/* <SongControls
-						spotify={this.state.spotify}
-						songs={songs}
-						lockSong={this.disableVoting}
-						removeSong={this.removeSong}
-						setPlaying={this.setPlaying}
-						playlistId={this.props.room.playlistId}
-					/> */}
-					{topSong ? (
-						<Player
-							song={topSong}
-							play={this.play}
-							pause={this.state.spotify.pause}
-							onFinaleReached={this.queueNextSong}
-							onSongEnd={this.onSongEnd}
-						/>
-					) : null}
-				</Row>
-			</Grid>
+				</Grid>
+				{topSong ? (
+					<Player
+						song={topSong}
+						isOwner={this.props.isOwner}
+						play={this.play}
+						pause={this.state.spotify.pause}
+						getInfo={this.state.spotify.getPlayerInfo}
+						onFinaleReached={this.queueNextSong}
+						onSongEnd={this.onSongEnd}
+					/>
+				) : null}
+			</div>
 		);
 	}
 }

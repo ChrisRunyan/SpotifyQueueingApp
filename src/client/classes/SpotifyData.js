@@ -48,12 +48,4 @@ export class Song extends SpotifyData {
 		);
 	}
 
-	// disableVoting = () => {
-	// 	this.canVote = false;
-	// }
-
-	// setIsPlaying = (isPlaying) => {
-	// 	this.isPlaying = isPlaying;
-	// }
-
 }
