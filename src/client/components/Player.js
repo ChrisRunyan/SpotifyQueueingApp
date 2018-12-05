@@ -31,17 +31,6 @@ class Player extends React.Component {
 		};
 	}
 
-	togglePlayback = () => {
-		if (this.state.isPlaying) {
-			this.pause();
-		} else {
-			this.play();
-		}
-		this.setState({
-			isPlaying: !this.state.isPlaying,
-		});
-	};
-
 	componentDidMount() {
 		this.initializeTimers(this.props.song);
 	}
@@ -53,6 +42,17 @@ class Player extends React.Component {
 		}
 	}
 
+	togglePlayback = () => {
+		if (this.state.isPlaying) {
+			this.pause();
+		} else {
+			this.play();
+		}
+		this.setState({
+			isPlaying: !this.state.isPlaying,
+		});
+	};
+
 	initializeTimers = song => {
 		const durationTimer = new TimeoutInterval(
 			() => {
@@ -62,7 +62,7 @@ class Player extends React.Component {
 				});
 			},
 			progressInterval,
-			song.duration,
+			song.duration - this.state.progress,
 			() => {
 				console.log(`song ending`);
 				this.props.onSongEnd(this.props.song.id);
@@ -84,7 +84,7 @@ class Player extends React.Component {
 				}
 			}
 		);
-    };
+	};
 
 	resumeTimers = () => {
 		if (this.state.durationTimer) {
@@ -136,32 +136,32 @@ class Player extends React.Component {
 									: ''
 							}
 						/>
-                        
 					</Col>
-                    <Col md={1}>
-                        {/* <table>
-                            <tbody>
-                                <td>
-                                    {this.props.song ? this.props.song.name : ''}
-                                </td>
-                            </tbody>
-                        </table> */}
-                        {this.props.song ? this.props.song.name : ''}
-                    </Col>
+					<Col md={1}>
+						{this.props.song ? (
+							<strong>{this.props.song.name}</strong>
+						) : (
+							''
+						)}
+					</Col>
 					<Col md={9}>
 						<ProgressBar
-                            bsStyle="success"
+							bsStyle="success"
 							now={this.state.progress / this.props.song.duration}
 							max={1}
 						/>
 					</Col>
-					<Col md={1}>
-						<Nav>
-							<NavItem onClick={this.togglePlayback}>
-								{this.state.isPlaying ? pauseIcon : playIcon}
-							</NavItem>
-						</Nav>
-					</Col>
+					{this.props.isOwner ? (
+						<Col md={1}>
+							<Nav>
+								<NavItem onClick={this.togglePlayback}>
+									{this.state.isPlaying
+										? pauseIcon
+										: playIcon}
+								</NavItem>
+							</Nav>
+						</Col>
+					) : null}
 				</Row>
 			</Grid>
 		);

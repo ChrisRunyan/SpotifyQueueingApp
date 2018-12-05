@@ -60,7 +60,6 @@ module.exports = class Firebase {
 	) {
 		console.log(`createRoom(): roomName=${roomName}`);
 		const newRoomRef = this.roomsRef.push({
-			songs: {},
 			users: {
 				username: userId,
 				time_joined: new Date(),
@@ -159,6 +158,14 @@ module.exports = class Firebase {
 
 				this.socket.emit('firebase-refresh', snapshot);
 			});
+			ref.on('value', snapshot => {
+				console.log('child_added');
+				console.log(JSON.stringify(snapshot.val()));
+				const room = snapshot.val()
+				if (room.songs) {
+					this.socket.emit('firebase-refresh', room.songs);
+				}
+			})
 		}
 	}
 };

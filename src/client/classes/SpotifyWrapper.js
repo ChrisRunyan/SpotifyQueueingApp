@@ -68,10 +68,10 @@ class SpotifyWrapper {
 		this.spotify.getMyCurrentPlaybackState(options, middleware);
 	};
 
-	play = () => {
+	play = (options = null) => {
 		const middleware = refreshMiddleware(this.refresh_token, res => res);
 		console.log('generic play');
-		return this.spotify.play(null, middleware);
+		return this.spotify.play(options, middleware);
 	};
 
 	pause = () => {

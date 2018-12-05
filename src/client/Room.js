@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import './styles/App.css';
-import { Grid, Row, Col, PageHeader, Image } from 'react-bootstrap';
+import { 
+	Grid, 
+	Row, 
+	Col, 
+	PageHeader, 
+	Image,
+} from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
-import SongControls from './components/SongControls';
 import Player from './components/Player';
 import SongList from './components/SongList';
 import { Song as SongData } from './classes/SpotifyData';
@@ -39,10 +44,10 @@ class Room extends Component {
 	/**
 	 * Get the firebase key for a song given the song's spotify id
 	 */
-	getKeyForId = songId => {
+	getSongById = songId => {
 		return this.props.room.songs.filter(song => 
 			song.data.id === songId
-		)[0].key;
+		)[0];
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -103,7 +108,8 @@ class Room extends Component {
 		const spotify = this.state.spotify;
 		const playlistId = this.props.room.playlistId;
 		// get the firebase key of the song to play
-		const songKey = this.getKeyForId(songId);
+		const song = this.getSongById(songId);
+		const songKey = song.key;
 		spotify.getPlayerInfo(info => {
 			// check if the correct song and playlist is already playing
 			if (
@@ -112,7 +118,8 @@ class Room extends Component {
 				info.context.uri.indexOf(playlistId) !== -1 &&
 				info.item.id === songId
 			) {
-				spotify.play();
+				spotify.play({ position_ms: info.progress_ms });
+				song.data.progress = info.progress_ms;
 			} else {
 				spotify.playNextFromPlaylist(playlistId, songId);
 				this.setPlaying(songKey);
@@ -120,8 +127,6 @@ class Room extends Component {
 		});
 	};
 
-	// TODO: change queueing so it locks in "nextSong" which is then used in
-	// this.onSongEnd().  Reordering the playlist won't work
 	queueNextSong = currentSongId => {
 		const sortedSongs = this.sortSongs(this.props.room.songs);
 		let nextSong = sortedSongs[0];
@@ -146,7 +151,7 @@ class Room extends Component {
 			}
 		}
 		// Remove the song from firebase
-		let key = this.getKeyForId(songId);
+		let key = this.getSongById(songId).key;
 		if(key) {
 			this.removeSong(key);
 		}
@@ -162,10 +167,6 @@ class Room extends Component {
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
-	};
-
-	disableVoting = songKey => {
-		this.props.firebaseWrapper.disableVoting(songKey);
 	};
 
 	setPlaying = songKey => {
@@ -192,26 +193,24 @@ class Room extends Component {
 				<PageHeader>
 					<Row>
 						<Col md={3}>Apollo</Col>
-						<Row>
-							<Col mdOffset={11}>
-								<Image
-									src={apollo}
-									style={{ width: '50px', float: 'right' }}
-									rounded
-								/>
-							</Col>
-						</Row>
-						<Row style={{ textAlign: 'end' }}>
-							<Col mdOffset={9}>
-								<br />
-								<p style={pStyle}>Room Code: {roomCode}</p>
-							</Col>
-						</Row>
-						<Row style={{ textAlign: 'end' }}>
-							<Col mdOffset={9}>
-								<p style={pStyle}>{this.props.room.roomName}</p>
-							</Col>
-						</Row>
+						<Col mdOffset={11}>
+							<Image
+								src={apollo}
+								style={{ width: '50px', float: 'right' }}
+								rounded
+							/>
+						</Col>
+					</Row>
+					<Row style={{ textAlign: 'end' }}>
+						<Col mdOffset={9}>
+							<br />
+							<p style={pStyle}>Room Code: {roomCode}</p>
+						</Col>
+					</Row>
+					<Row style={{ textAlign: 'end' }}>
+						<Col mdOffset={9}>
+							<p style={pStyle}>{this.props.room.roomName}</p>
+						</Col>
 					</Row>
 				</PageHeader>
 				<Row>
@@ -222,7 +221,6 @@ class Room extends Component {
 				</Row>
 				<Row>
 					<SongList
-						// spotify={this.state.spotify}
 						songs={songs}
 						currentSong={topSong}
 						vote={this.vote}
@@ -232,8 +230,10 @@ class Room extends Component {
 				{topSong ? (
 					<Player
 						song={topSong}
+						isOwner={this.props.isOwner}
 						play={this.play}
 						pause={this.state.spotify.pause}
+						getInfo={this.state.spotify.getPlayerInfo}
 						onFinaleReached={this.queueNextSong}
 						onSongEnd={this.onSongEnd}
 					/>

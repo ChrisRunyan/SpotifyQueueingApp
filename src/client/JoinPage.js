@@ -1,5 +1,17 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, FormControl, ControlLabel, Button, Grid, Image, Row, Col, PageHeader,} from 'react-bootstrap';
+import { 
+    Form, 
+    FormGroup, 
+    InputGroup,
+    FormControl, 
+    ControlLabel, 
+    Button, 
+    Grid, 
+    Image, 
+    Row, 
+    Col, 
+    PageHeader,
+} from 'react-bootstrap';
 import apollo from './images/apollo_icon_black.png'
 import './styles/index.css'
 
@@ -44,33 +56,29 @@ class JoinPage extends Component {
                     <br/>
                 <Form horizontal onSubmit={this.handleSubmit}>
                     <FormGroup controlId='roomCode'>
-                        <Col componentClass={ControlLabel} sm={2}>
-                            Enter Room Code
-                        </Col> 
-                        <Col sm={10}>
+                        <InputGroup>
+                            <InputGroup.Addon>Enter Room code</InputGroup.Addon>
                             <FormControl
                                 id='roomCode'
                                 type='text'
                                 value={this.state.roomCode}
                                 placeholder="Room Code"
                                 onChange={this.handleChange} />
-                        </Col>
+                        </InputGroup>
                     </FormGroup>
                     <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>
-                            Enter Alias
-                        </Col>
-                        <Col sm={10}>
+                        <InputGroup>
+                            <InputGroup.Addon>Enter Alias</InputGroup.Addon>
                             <FormControl
                                 id='username'
                                 type='text'
                                 value={this.state.username}
                                 placeholder="Username"
                                 onChange={this.handleChange} />
-                        </Col>
+                        </InputGroup>
                     </FormGroup>
                     <FormGroup>
-                        <Col smOffset={2} sm={10}>
+                        <Col smOffset={2} sm={8}>
                             <Button type='submit'>Join Room</Button>
                         </Col>
                     </FormGroup>

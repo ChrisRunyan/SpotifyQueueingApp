@@ -22,6 +22,7 @@ class MainRoutes extends React.Component {
 		this.state = {
 			firebaseWrapper: new FirebaseWrapper(socket),
 			spotifyWrapper: null,
+			owner: false,
 			room: null,
 			user: null,
 		};
@@ -29,10 +30,14 @@ class MainRoutes extends React.Component {
 
 	componentDidMount() {
 		socket.on('firebase-join-success', (key, room) =>
-			this.displayRoom(new RoomData(key, room))
+			this.setState({
+				owner: false,
+			}, () => this.displayRoom(new RoomData(key, room)))
 		);
 		socket.on('firebase-create-success', (key, room) => {
-			this.displayRoom(new RoomData(key, room))
+			this.setState({
+				owner: true,
+			}, () => this.displayRoom(new RoomData(key, room)))
 		});
 		socket.on('firebase-refresh', songs => {
 			let sList = []
@@ -130,6 +135,7 @@ class MainRoutes extends React.Component {
 							<Room
 								room={this.state.room}
 								user={this.state.user}
+								isOwner={this.state.owner}
 								firebaseWrapper={this.state.firebaseWrapper}
 							/>
 						)}
