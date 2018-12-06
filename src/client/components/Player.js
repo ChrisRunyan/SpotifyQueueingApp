@@ -3,7 +3,6 @@ import { Timer, TimeoutInterval } from '../classes/Timer';
 import {
 	Image,
 	Nav,
-	Navbar,
 	NavItem,
 	Glyphicon,
 	ProgressBar,
@@ -56,7 +55,7 @@ class Player extends React.Component {
 	initializeTimers = song => {
 		const durationTimer = new TimeoutInterval(
 			() => {
-				console.log(`progress: ${this.state.progress} ms`);
+				// console.log(`progress: ${this.state.progress} ms`);
 				this.setState({
 					progress: this.state.progress + progressInterval,
 				});
@@ -125,32 +124,49 @@ class Player extends React.Component {
 				<Glyphicon bsSize="large" glyph="pause" />
 			</span>
 		);
+		const songInfoWidth = this.props.isOwner ? 1 : 4;
+		const albumName = (
+			<Col md={4}>
+				{this.props.song ? (
+					<strong>{this.props.song.album.name}</strong>
+				) : (
+					''
+				)}
+			</Col>
+		);
+
+		const imageUrl = this.props.song
+			? this.props.song.album.images[2]
+				? this.props.song.album.images[2]
+				: ''
+			: '';
+
 		return (
 			<Grid bsClass="player">
 				<Row bsClass="progress-row">
-					<Col md={1}>
-						<Image
-							src={
-								this.props.song
-									? this.props.song.album.images[2].url
-									: ''
-							}
-						/>
+					<Col md={songInfoWidth}>
+						<Image src={imageUrl} />
 					</Col>
-					<Col md={1}>
+					<Col md={songInfoWidth}>
 						{this.props.song ? (
 							<strong>{this.props.song.name}</strong>
 						) : (
 							''
 						)}
 					</Col>
-					<Col md={9}>
-						<ProgressBar
-							bsStyle="success"
-							now={this.state.progress / this.props.song.duration}
-							max={1}
-						/>
-					</Col>
+					{!this.props.isOwner ? albumName : null}
+					{this.props.isOwner ? (
+						<Col md={9}>
+							<ProgressBar
+								bsStyle="success"
+								now={
+									this.state.progress /
+									this.props.song.duration
+								}
+								max={1}
+							/>
+						</Col>
+					) : null}
 					{this.props.isOwner ? (
 						<Col md={1}>
 							<Nav>

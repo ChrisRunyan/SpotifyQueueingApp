@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
-import './styles/App.css';
-import { 
-	Grid, 
-	Row, 
-	Col, 
-	PageHeader, 
-	Image,
-} from 'react-bootstrap';
+import { Grid, Row, Col, PageHeader, Image } from 'react-bootstrap';
 import SongSearch from './components/SongSearch';
 import Player from './components/Player';
 import SongList from './components/SongList';
-import { Song as SongData } from './classes/SpotifyData';
+import { Song } from './classes/SpotifyData';
 import SpotifyWrapper from './classes/SpotifyWrapper';
 import apollo from './images/apollo_icon_black.png';
 
@@ -45,23 +38,21 @@ class Room extends Component {
 	 * Get the firebase key for a song given the song's spotify id
 	 */
 	getSongById = songId => {
-		return this.props.room.songs.filter(song => 
-			song.data.id === songId
-		)[0];
-	}
+		return this.props.room.songs.filter(song => song.data.id === songId)[0];
+	};
 
 	componentWillReceiveProps(nextProps) {
 		let nextSong = null;
 		if (this.state.queuedSong) {
 			console.log('queued song found');
-			nextSong = this.state.queuedSong
+			nextSong = this.state.queuedSong;
 		} else if (nextProps.room.songs) {
 			console.log(nextProps.room.songs);
 			nextSong = this.getTopSong(nextProps.room.songs);
 		}
 		this.setState({
-			currentSong: nextSong
-		})
+			currentSong: nextSong,
+		});
 	}
 
 	getTopSong = songs => {
@@ -79,7 +70,7 @@ class Room extends Component {
 	};
 
 	addSong = songData => {
-		const song = new SongData({
+		const song = new Song({
 			name: songData.name,
 			id: songData.id,
 			query: songData.href,
@@ -136,11 +127,11 @@ class Room extends Component {
 			}
 		}
 		this.setState({
-			queuedSong: nextSong.data
+			queuedSong: nextSong.data,
 		});
 	};
 
-	onSongEnd = (songId) => {
+	onSongEnd = songId => {
 		const sortedSongs = this.sortSongs(this.props.room.songs);
 		let nextSong = sortedSongs[0];
 		// if the currently playing song is the highest-voted song,
@@ -152,7 +143,7 @@ class Room extends Component {
 		}
 		// Remove the song from firebase
 		let key = this.getSongById(songId).key;
-		if(key) {
+		if (key) {
 			this.removeSong(key);
 		}
 		console.log(nextSong.data.id);
@@ -162,8 +153,8 @@ class Room extends Component {
 		);
 		this.setState({
 			currentSong: null,
-		})
-	}
+		});
+	};
 
 	vote = (songKey, currentVotes) => {
 		this.props.firebaseWrapper.voteOnSong(songKey, currentVotes);
@@ -190,42 +181,42 @@ class Room extends Component {
 		return (
 			<div>
 				<Grid>
-				<PageHeader>
+					<PageHeader>
+						<Row>
+							<Col md={3}>Apollo</Col>
+							<Col mdOffset={11}>
+								<Image
+									src={apollo}
+									style={{ width: '50px', float: 'right' }}
+									rounded
+								/>
+							</Col>
+						</Row>
+						<Row style={{ textAlign: 'end' }}>
+							<Col mdOffset={9}>
+								<br />
+								<p style={pStyle}>Room Code: {roomCode}</p>
+							</Col>
+						</Row>
+						<Row style={{ textAlign: 'end' }}>
+							<Col mdOffset={9}>
+								<p style={pStyle}>{this.props.room.roomName}</p>
+							</Col>
+						</Row>
+					</PageHeader>
 					<Row>
-						<Col md={3}>Apollo</Col>
-						<Col mdOffset={11}>
-							<Image
-								src={apollo}
-								style={{ width: '50px', float: 'right' }}
-								rounded
-							/>
-						</Col>
+						<SongSearch
+							spotify={this.state.spotify}
+							submit={this.addSong}
+						/>
 					</Row>
-					<Row style={{ textAlign: 'end' }}>
-						<Col mdOffset={9}>
-							<br />
-							<p style={pStyle}>Room Code: {roomCode}</p>
-						</Col>
+					<Row>
+						<SongList
+							songs={songs}
+							currentSong={topSong}
+							vote={this.vote}
+						/>
 					</Row>
-					<Row style={{ textAlign: 'end' }}>
-						<Col mdOffset={9}>
-							<p style={pStyle}>{this.props.room.roomName}</p>
-						</Col>
-					</Row>
-				</PageHeader>
-				<Row>
-					<SongSearch
-						spotify={this.state.spotify}
-						submit={this.addSong}
-					/>
-				</Row>
-				<Row>
-					<SongList
-						songs={songs}
-						currentSong={topSong}
-						vote={this.vote}
-					/>
-				</Row>
 				</Grid>
 				{topSong ? (
 					<Player
