@@ -28,21 +28,23 @@ export default (props) => {
 			<tbody>
 				{sortableSongs.map((song, index) => {
 					const songLength = getTimestring(song.data.duration);
-					return (
-						<Song
-							title={song.data.name}
-							artist={song.data.artist.name}
-							album={song.data.album.name}
-							songLength={songLength}
-							votes={song.data.votes}
-							id={song.data.id}
-							canVote={song.data.canVote}
-							key={song.key}
-							songKey={song.key}
-							index={index}
-							vote={props.vote}
-						/>
-					)
+					if (song.data.id !== props.currentSong.data) {
+						return (
+							<Song
+								title={song.data.name}
+								artist={song.data.artist.name}
+								album={song.data.album.name}
+								songLength={songLength}
+								votes={song.data.votes}
+								id={song.data.id}
+								canVote={song.data.canVote}
+								key={song.key}
+								songKey={song.key}
+								index={index}
+								vote={props.vote}
+							/>
+						)
+					}
 				})}
 			</tbody>
 		</Table>

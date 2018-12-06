@@ -11,6 +11,8 @@
 		"babel-loader": "^8.0.4",
 		"clean-webpack-plugin": "^0.1.19",
 		"concurrently": "^3.5.0",
+		"enzyme": "^3.7.0",
+		"enzyme-adapter-react-16": "^1.7.0",
 		"eslint-plugin-react": "^7.11.1",
 		"html-webpack-plugin": "^3.2.0",
 		"url-loader": "^1.1.1",
@@ -44,5 +46,7 @@
 		"client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
 		"server": "nodemon src/server/index.js",
 		"dev": "concurrently \"npm run client\" \"npm run server\""
+	},
+	"jest": {
 	}
 }

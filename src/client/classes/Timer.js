@@ -14,6 +14,7 @@ export class Timer {
 		this.start = new Date();
 		clearTimeout(this.timerId);
 		this.timerId = setTimeout(this.callback, this.remaining);
+		return this.timerId;
 	}
 
 	/**
@@ -22,15 +23,6 @@ export class Timer {
 	pause() {
 		clearTimeout(this.timerId);
 		this.remaining -= new Date() - this.start;
-	}
-
-	skip(ms) {
-		clearTimeout(this.timerId);
-		if (this.remaining - ms < 0) {
-			this.callback();
-		} else {
-			this.timerId = setTimeout(this.callback, this.remaining - ms);
-		}
 	}
 }
 
@@ -64,8 +56,10 @@ export class TimeoutInterval {
                 if (this.onTimeout) {
 					this.onTimeout();
 				}
-            }, this.remaining);
-        }
+			}, this.remaining);
+			return this.timerId;
+		}
+		return 0;
 		
 	}
 
